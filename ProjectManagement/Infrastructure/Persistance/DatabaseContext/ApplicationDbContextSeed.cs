@@ -6,7 +6,20 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Persistance.DatabaseContext
 {
-    class ApplicationDbContextSeed
+    public static class ApplicationDbContextSeed
     {
+        public static async Task SeedSampleDataAsync(ApplicationDbContext context)
+        {
+            // Seed, if necessary
+            if (!context.Projects.Any())
+            {
+                context.Projects.Add( new Domain.Entities.Project
+                    {
+                         Description="Strona",
+                         IsActive = true
+                    });
+                await context.SaveChangesAsync();
+            }
+        }
     }
 }

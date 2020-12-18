@@ -1,7 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+using ProjectManagement.Core.UseCases.Projects.Queries.GetProjects;
 using System.Threading.Tasks;
 
 namespace ProjectManagementApi.Controllers

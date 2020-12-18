@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Domain.Entities;
+using Microsoft.EntityFrameworkCore;
 using ProjectManagement.Core.Base.Interfaces;
 using System.Reflection;
 using System.Threading;
@@ -14,6 +15,10 @@ namespace Infrastructure.Persistance.DatabaseContext
         {
             _domainEventService = domainEventService;
         }
+
+        public DbSet<Domain.Entities.Task> Tasks { get; set; }
+        public DbSet<Step> Steps { get; set; }
+        public DbSet<Project> Projects { get; set; }
 
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())
         {

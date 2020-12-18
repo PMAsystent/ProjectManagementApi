@@ -1,12 +1,10 @@
-﻿using System;
+﻿using ProjectManagement.Core.UseCases.Projects.Queries.GetProjects.Dto;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ProjectManagement.Core.UseCases.Projects.Queries.GetProjects
 {
-    class ProjectVm
+    public class ProjectVm
     {
+        public IList<ProjectDto> ProjectList { get; set; }
     }
 }
