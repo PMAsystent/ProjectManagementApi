@@ -31,6 +31,12 @@ namespace Infrastructure.Persistance.DatabaseContext
             builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
 
             base.OnModelCreating(builder);
+
+            //TODO: Create separate file to this config?
+            builder.Entity<Domain.Entities.Task>()
+                .HasOne(t => t.Oversee)
+                .WithOne(b => b.Task)
+                .HasForeignKey<Oversee>(o => o.TaskId);
         }
     }
 }
