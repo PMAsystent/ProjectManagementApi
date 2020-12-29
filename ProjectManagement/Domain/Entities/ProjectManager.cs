@@ -1,4 +1,5 @@
 ﻿using Domain.Base;
+using System.Collections.Generic;
 
 namespace Domain.Entities
 {
@@ -11,7 +12,7 @@ namespace Domain.Entities
         public string Email { get; set; }
 
         public Boss Boss { get; set; }
-        public Oversee Oversee { get; set; }
-        public Assign Assign { get; set; }
+        public ICollection<Oversee> Oversee { get; set; }
+        public ICollection<Assign> Assign { get; set; }
     }
 }
