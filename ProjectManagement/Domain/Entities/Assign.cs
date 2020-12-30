@@ -17,7 +17,7 @@ namespace Domain.Entities
         // Konrad
 
         // public Role Role { get; set; }
-        // public Employee Employee { get; set; }
+        public Employee Employee { get; set; }
 
     }
 }

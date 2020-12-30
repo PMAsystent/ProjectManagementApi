@@ -16,6 +16,7 @@ namespace ProjectManagement.Core.Base.Interfaces
         public DbSet<Assign> Assigns { get; set; }
         public DbSet<Customer> Customers { get; set; }
         public DbSet<TaskChange> TaskChanges { get; set; }
+        public DbSet<Employee> Employees { get; set; }
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);
     }
 }
