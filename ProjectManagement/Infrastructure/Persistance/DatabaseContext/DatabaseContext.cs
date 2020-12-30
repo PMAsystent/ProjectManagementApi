@@ -35,6 +35,7 @@ namespace Infrastructure.Persistance.DatabaseContext
         public DbSet<Customer> Customers { get; set; }
         public DbSet<TaskChange> TaskChanges { get; set; }
         public DbSet<Employee> Employees { get; set; }
+        public DbSet<Role> Roles { get; set; }
 
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = new())
         {

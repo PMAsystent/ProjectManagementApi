@@ -12,9 +12,9 @@ namespace Infrastructure.Persistance.Configuration
                 .HasMaxLength(100);
 
             builder
-                .HasOne(t => t.Oversee)
+                .HasMany(t => t.Oversees)
                 .WithOne(b => b.Task)
-                .HasForeignKey<Oversee>(o => o.TaskId);
+                .HasForeignKey(o => o.TaskId);
 
             builder
                 .HasMany(t => t.Assigns)

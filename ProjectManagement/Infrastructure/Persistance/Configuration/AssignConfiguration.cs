@@ -11,6 +11,10 @@ namespace Infrastructure.Persistance.Configuration
             builder.HasOne(a => a.Employee)
                 .WithOne(e => e.Assign)
                 .HasForeignKey<Employee>(e => e.AssignId);
+            
+            builder.HasOne(a => a.Role)
+                .WithOne(r => r.Assign)
+                .HasForeignKey<Role>(r => r.AssignId);
         }
     }
 }

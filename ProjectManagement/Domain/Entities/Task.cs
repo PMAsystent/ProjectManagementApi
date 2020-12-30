@@ -18,7 +18,8 @@ namespace Domain.Entities
 
         public int StepId { get; set; }
         public Step Step { get; set; }
-        public Oversee Oversee { get; set; }
+        
+        public ICollection<Oversee> Oversees { get; set; }
         public ICollection<Assign> Assigns { get; set; }
         public ICollection<TaskChange> TaskChanges { get; set; }
     }

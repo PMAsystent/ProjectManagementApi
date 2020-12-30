@@ -13,10 +13,8 @@ namespace Domain.Entities
         public Task Task { get; set; }
         public int ProjectManagerId { get; set; }
         public ProjectManager ProjectManager { get; set; }
-
-        // Konrad
-
-        // public Role Role { get; set; }
+        
+        public Role Role { get; set; }
         public Employee Employee { get; set; }
 
     }
