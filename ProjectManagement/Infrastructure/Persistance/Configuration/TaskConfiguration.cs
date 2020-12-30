@@ -20,6 +20,11 @@ namespace Infrastructure.Persistance.Configuration
                 .HasMany(t => t.Assigns)
                 .WithOne(a => a.Task)
                 .HasForeignKey(a => a.TaskId);
+
+            builder
+                .HasMany(t => t.TaskChanges)
+                .WithOne(tc => tc.Task)
+                .HasForeignKey(tc => tc.TaskId);
         }
     }
 }

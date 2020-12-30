@@ -32,6 +32,8 @@ namespace Infrastructure.Persistance.DatabaseContext
         public DbSet<ProjectManager> ProjectManagers { get; set; }
         public DbSet<Oversee> Oversees { get; set; }
         public DbSet<Assign> Assigns { get; set; }
+        public DbSet<Customer> Customers { get; set; }
+        public DbSet<TaskChange> TaskChanges { get; set; }
 
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = new())
         {

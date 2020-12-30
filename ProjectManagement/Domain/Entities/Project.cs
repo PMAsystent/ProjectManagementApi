@@ -14,5 +14,7 @@ namespace Domain.Entities
         public bool IsActive { get; set; }
 
         public ICollection<Step> Steps { get; set; }
+        public int CustomerId{ get; set; }
+        public Customer Customer { get; set; }
     }
 }
