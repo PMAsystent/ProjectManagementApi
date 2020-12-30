@@ -19,5 +19,7 @@ namespace Domain.Entities
         public bool IsActive { get; set; }
         public int? StepId { get; set; }
         public Step Step { get; set; }
+
+        public ICollection<TaskChange> TaskChanges { get; set; }
     }
 }
