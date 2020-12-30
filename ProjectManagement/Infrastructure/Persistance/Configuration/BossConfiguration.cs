@@ -8,6 +8,12 @@ namespace Infrastructure.Persistance.Configuration
     {
         public void Configure(EntityTypeBuilder<Boss> builder)
         {
+            builder.Property(b => b.Name)
+                .IsRequired();
+
+            builder.Property(b => b.Surname)
+                .IsRequired();
+
             builder
                 .HasMany(b => b.ProjectManagers)
                 .WithOne(p => p.Boss)

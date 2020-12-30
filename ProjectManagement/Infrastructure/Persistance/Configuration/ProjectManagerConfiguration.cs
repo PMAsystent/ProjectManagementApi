@@ -8,6 +8,12 @@ namespace Infrastructure.Persistance.Configuration
     {
         public void Configure(EntityTypeBuilder<ProjectManager> builder)
         {
+            builder.Property(p => p.Name)
+                .IsRequired();
+
+            builder.Property(p => p.Surname)
+                .IsRequired();
+
             builder
                 .HasMany(p => p.Oversee)
                 .WithOne(o => o.ProjectManager)
