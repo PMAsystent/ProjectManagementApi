@@ -10,10 +10,16 @@ namespace Infrastructure.Persistance.Configuration
         {
             builder.Property(t => t.Description)
                 .HasMaxLength(100);
+
             builder
                 .HasOne(t => t.Oversee)
                 .WithOne(b => b.Task)
                 .HasForeignKey<Oversee>(o => o.TaskId);
+
+            builder
+                .HasMany(t => t.Assigns)
+                .WithOne(a => a.Task)
+                .HasForeignKey(a => a.TaskId);
         }
     }
 }
