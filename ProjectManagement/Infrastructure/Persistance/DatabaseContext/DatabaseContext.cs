@@ -28,6 +28,8 @@ namespace Infrastructure.Persistance.DatabaseContext
         {
             var result = await base.SaveChangesAsync(cancellationToken);
 
+            // TODO: AuditableEntity properties fill
+
             return result;
         }
         protected override void OnModelCreating(ModelBuilder builder)
@@ -36,11 +38,6 @@ namespace Infrastructure.Persistance.DatabaseContext
 
             base.OnModelCreating(builder);
 
-            //TODO: Create separate file to this config?
-            builder.Entity<Domain.Entities.Task>()
-                .HasOne(t => t.Oversee)
-                .WithOne(b => b.Task)
-                .HasForeignKey<Oversee>(o => o.TaskId);
         }
     }
 }

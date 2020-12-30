@@ -1,6 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Domain.Entities;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System.Threading.Tasks;
 
 namespace Infrastructure.Persistance.Configuration
 {
@@ -10,6 +10,10 @@ namespace Infrastructure.Persistance.Configuration
         {
             builder.Property(t => t.Description)
                 .HasMaxLength(100);
+            builder
+                .HasOne(t => t.Oversee)
+                .WithOne(b => b.Task)
+                .HasForeignKey<Oversee>(o => o.TaskId);
         }
     }
 }
