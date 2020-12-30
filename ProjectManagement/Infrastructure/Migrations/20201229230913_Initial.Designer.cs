@@ -4,14 +4,16 @@ using Infrastructure.Persistance.DatabaseContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20201229230913_Initial")]
+    partial class Initial
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -41,13 +43,13 @@ namespace Infrastructure.Migrations
                     b.Property<string>("LastModifiedBy")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("ProjectManagerId")
+                    b.Property<int?>("ProjectManagerId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("TaskId")
+                    b.Property<int?>("TaskId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -56,7 +58,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("TaskId");
 
-                    b.ToTable("Assigns");
+                    b.ToTable("Assign");
                 });
 
             modelBuilder.Entity("Domain.Entities.Boss", b =>
@@ -82,19 +84,17 @@ namespace Infrastructure.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PhoneNumber")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Surname")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Bosses");
+                    b.ToTable("Boss");
                 });
 
             modelBuilder.Entity("Domain.Entities.Oversee", b =>
@@ -119,7 +119,7 @@ namespace Infrastructure.Migrations
                     b.Property<string>("LastModifiedBy")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("ProjectManagerId")
+                    b.Property<int?>("ProjectManagerId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("StartDate")
@@ -135,7 +135,7 @@ namespace Infrastructure.Migrations
                     b.HasIndex("TaskId")
                         .IsUnique();
 
-                    b.ToTable("Oversees");
+                    b.ToTable("Oversee");
                 });
 
             modelBuilder.Entity("Domain.Entities.Project", b =>
@@ -185,7 +185,7 @@ namespace Infrastructure.Migrations
                         .HasColumnType("int")
                         .UseIdentityColumn();
 
-                    b.Property<int>("BossId")
+                    b.Property<int?>("BossId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("Created")
@@ -204,21 +204,19 @@ namespace Infrastructure.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PhoneNumber")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Surname")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("BossId");
 
-                    b.ToTable("ProjectManagers");
+                    b.ToTable("ProjectManager");
                 });
 
             modelBuilder.Entity("Domain.Entities.Step", b =>
@@ -250,7 +248,7 @@ namespace Infrastructure.Migrations
                     b.Property<string>("LastModifiedBy")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("ProjectId")
+                    b.Property<int?>("ProjectId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("StartDate")
@@ -304,7 +302,7 @@ namespace Infrastructure.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
-                    b.Property<int>("StepId")
+                    b.Property<int?>("StepId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("TargetDate")
@@ -321,15 +319,11 @@ namespace Infrastructure.Migrations
                 {
                     b.HasOne("Domain.Entities.ProjectManager", "ProjectManager")
                         .WithMany("Assign")
-                        .HasForeignKey("ProjectManagerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ProjectManagerId");
 
                     b.HasOne("Domain.Entities.Task", "Task")
                         .WithMany("Assigns")
-                        .HasForeignKey("TaskId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("TaskId");
 
                     b.Navigation("ProjectManager");
 
@@ -340,9 +334,7 @@ namespace Infrastructure.Migrations
                 {
                     b.HasOne("Domain.Entities.ProjectManager", "ProjectManager")
                         .WithMany("Oversee")
-                        .HasForeignKey("ProjectManagerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ProjectManagerId");
 
                     b.HasOne("Domain.Entities.Task", "Task")
                         .WithOne("Oversee")
@@ -359,9 +351,7 @@ namespace Infrastructure.Migrations
                 {
                     b.HasOne("Domain.Entities.Boss", "Boss")
                         .WithMany("ProjectManagers")
-                        .HasForeignKey("BossId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("BossId");
 
                     b.Navigation("Boss");
                 });
@@ -370,9 +360,7 @@ namespace Infrastructure.Migrations
                 {
                     b.HasOne("Domain.Entities.Project", "Project")
                         .WithMany("Steps")
-                        .HasForeignKey("ProjectId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ProjectId");
 
                     b.Navigation("Project");
                 });
@@ -381,9 +369,7 @@ namespace Infrastructure.Migrations
                 {
                     b.HasOne("Domain.Entities.Step", "Step")
                         .WithMany("Tasks")
-                        .HasForeignKey("StepId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("StepId");
 
                     b.Navigation("Step");
                 });

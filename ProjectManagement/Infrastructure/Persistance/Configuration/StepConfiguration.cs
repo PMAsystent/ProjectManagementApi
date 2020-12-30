@@ -10,6 +10,11 @@ namespace Infrastructure.Persistance.Configuration
         {
             builder.Property(t => t.Description)
                 .HasMaxLength(100);
+
+            builder
+                .HasMany(s => s.Tasks)
+                .WithOne(t => t.Step)
+                .HasForeignKey(t => t.StepId);
         }
     }
 }
