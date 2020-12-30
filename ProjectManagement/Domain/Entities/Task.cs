@@ -16,8 +16,7 @@ namespace Domain.Entities
         public DateTime EndDate { get; set; }
         public bool IsActive { get; set; }
 
-        // TODO: read about conventions
-        //public int? StepId { get; set; }
+        public int StepId { get; set; }
         public Step Step { get; set; }
         public Oversee Oversee { get; set; }
         public ICollection<Assign> Assigns { get; set; }

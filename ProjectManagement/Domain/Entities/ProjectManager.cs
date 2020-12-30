@@ -11,6 +11,7 @@ namespace Domain.Entities
         public string PhoneNumber { get; set; }
         public string Email { get; set; }
 
+        public int BossId { get; set; }
         public Boss Boss { get; set; }
         public ICollection<Oversee> Oversee { get; set; }
         public ICollection<Assign> Assign { get; set; }

@@ -11,6 +11,7 @@ namespace Domain.Entities
 
         public int TaskId { get; set; }
         public Task Task { get; set; }
+        public int ProjectManagerId { get; set; }
         public ProjectManager ProjectManager { get; set; }
     }
 }

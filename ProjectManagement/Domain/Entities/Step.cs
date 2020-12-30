@@ -13,8 +13,7 @@ namespace Domain.Entities
         public DateTime EndDate { get; set; }
         public bool IsActive { get; set; }
 
-        // TODO: read about conventions
-        // public int? ProjectId { get; set; }
+        public int ProjectId { get; set; }
         public Project Project { get; set; }
         public ICollection<Task> Tasks { get; set; }
     }
