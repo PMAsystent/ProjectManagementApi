@@ -19,6 +19,10 @@ namespace Infrastructure.Persistance.DatabaseContext
         public DbSet<Domain.Entities.Task> Tasks { get; set; }
         public DbSet<Step> Steps { get; set; }
         public DbSet<Project> Projects { get; set; }
+        public DbSet<Boss> Bosses { get; set; }
+        public DbSet<ProjectManager> ProjectManagers { get; set; }
+        public DbSet<Oversee> Oversees { get; set; }
+        public DbSet<Assign> Assigns { get; set; }
 
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())
         {
