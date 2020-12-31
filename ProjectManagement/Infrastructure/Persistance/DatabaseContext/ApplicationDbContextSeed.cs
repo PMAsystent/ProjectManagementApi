@@ -62,10 +62,14 @@ namespace Infrastructure.Persistance.DatabaseContext
                                             }
                                         }
                                     }
-                                    
                                 },
                             }
                         },
+                    },
+                    Customer = new ()
+                    {
+                        Name = "Johne",
+                        Surname = "Doe",
                     }
                 });
                 await context.SaveChangesAsync();
