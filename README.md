@@ -1,5 +1,5 @@
 #   Project Management - Api
-Project Management is monopoly application created under university science club - "Referencja"
+Project Management is application created under university science club - "Referencja"
 
 ## Table of contents
 * [General info](#general-info)
