@@ -14,7 +14,7 @@ Project Management is application created under university science club - "Refer
 * [Contact](#contact)
 
 ## General info
-Project Management is group project to train our .NET and React skills by creating interesting useful app for project menagement
+Project Management is group project to train our .NET and React skills by creating interesting useful app for project management
 
 ### Screenshots - Design of application
 <img src="/screenshots/Login.png" alt="First screenshot"> <img src="/screenshots/Projects.png" alt="Second screenshot">
