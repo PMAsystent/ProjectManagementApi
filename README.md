@@ -18,7 +18,7 @@ Project Management is group project to train our .NET and React skills by creati
 
 ### Screenshots - Design of application
 <img src="/screenshots/Login.png" alt="First screenshot"> <img src="/screenshots/Projects.png" alt="Second screenshot">
-<img src="/screenshots/Tasks.png" alt="Second screenshot">
+<img src="/screenshots/Task.png" alt="Thirdscreenshot">
 ## Technologies and libraries
 * ASP.NET Core 5
 * Entity Framework Core 5
