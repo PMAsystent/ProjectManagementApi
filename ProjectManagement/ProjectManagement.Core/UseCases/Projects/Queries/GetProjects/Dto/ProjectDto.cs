@@ -7,7 +7,7 @@ namespace ProjectManagement.Core.UseCases.Projects.Queries.GetProjects.Dto
     public class ProjectDto : IMapFrom<Project>
     {
         [JsonProperty(Order = int.MinValue)]
-        public int ID { get; set; }
+        public int Id { get; set; }
 
         [JsonProperty(Order = int.MinValue)]
         public string Description { get; set; }
@@ -15,12 +15,12 @@ namespace ProjectManagement.Core.UseCases.Projects.Queries.GetProjects.Dto
         [JsonProperty(Order = int.MinValue)]
         public bool IsActive { get; set; }
 
+        // TODO:
+        // Check on AdobeXD project, which properties should be here.
+
         public static void Mapping(MappingProfile profile)
         {
-            profile.CreateMap<Project, ProjectDto>()
-                .ForMember(d => d.ID, opt => opt.MapFrom(s => s.Id))
-                .ForMember(d => d.Description, opt => opt.MapFrom(s => s.Description))
-                .ForMember(d => d.IsActive, opt => opt.MapFrom(s => s.IsActive));
+            profile.CreateMap<Project, ProjectDto>();
         }
     }
 }

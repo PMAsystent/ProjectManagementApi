@@ -4,12 +4,10 @@ using System.Threading.Tasks;
 
 namespace ProjectManagementApi.Controllers
 {
-    public class ProjectController : ApiControllerBase
+    public class ProjectsController : ApiControllerBase
     {
         [HttpGet]
-        [Route("")]
-        [Route("ProjectManagement")]
-        public async Task<ActionResult<ProjectVm>> GetFields()
+        public async Task<ActionResult<ProjectVm>> GetAllProjects()
         {
             return await Mediator.Send(new GetProjectsQuery());
         }
