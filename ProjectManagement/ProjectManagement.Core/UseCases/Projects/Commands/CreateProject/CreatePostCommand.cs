@@ -3,7 +3,7 @@ using System;
 
 namespace ProjectManagement.Core.UseCases.Projects.Commands.CreateProject
 {
-    public class CreatePostCommand : IRequest<int>
+    public class CreatePostCommand : IRequest<CreatePostCommandResponse>
     {
         public string Description { get; set; }
         public DateTime StartDate { get; set; }
