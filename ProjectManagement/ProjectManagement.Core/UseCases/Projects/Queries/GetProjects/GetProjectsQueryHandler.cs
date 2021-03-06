@@ -30,7 +30,8 @@ namespace ProjectManagement.Core.UseCases.Projects.Queries.GetProjects
 
             return new()
             {
-                ProjectList = projects
+                ProjectList = projects,
+                Count = projects.Count
             };
         }
     }

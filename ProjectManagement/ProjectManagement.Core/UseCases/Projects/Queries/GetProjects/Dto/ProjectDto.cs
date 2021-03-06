@@ -1,6 +1,7 @@
 ﻿using Domain.Entities;
 using Newtonsoft.Json;
 using ProjectManagement.Core.Base.Mappings;
+using System;
 
 namespace ProjectManagement.Core.UseCases.Projects.Queries.GetProjects.Dto
 {
@@ -8,15 +9,12 @@ namespace ProjectManagement.Core.UseCases.Projects.Queries.GetProjects.Dto
     {
         [JsonProperty(Order = int.MinValue)]
         public int Id { get; set; }
-
-        [JsonProperty(Order = int.MinValue)]
         public string Description { get; set; }
-
-        [JsonProperty(Order = int.MinValue)]
+        public DateTime StartDate { get; set; }
+        public DateTime TargetDate { get; set; }
+        public DateTime EndDate { get; set; }
         public bool IsActive { get; set; }
-
-        // TODO:
-        // Check on AdobeXD project, which properties should be here.
+        public int CustomerId { get; set; }
 
         public static void Mapping(MappingProfile profile)
         {
