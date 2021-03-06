@@ -23,12 +23,14 @@ namespace ProjectManagement.Core.UseCases.Projects.Queries.GetProjects
 
         public async Task<ProjectVm> Handle(GetProjectsQuery request, CancellationToken cancellationToken)
         {
+            var projects = await _context.Projects
+                .ProjectTo<ProjectDto>(_mapper.ConfigurationProvider)
+                .OrderBy(p => p.Id)
+                .ToListAsync(cancellationToken);
+
             return new()
             {
-                ProjectList = await _context.Projects
-                    .ProjectTo<ProjectDto>(_mapper.ConfigurationProvider)
-                    .OrderBy(p => p.Id)
-                    .ToListAsync(cancellationToken)
+                ProjectList = projects
             };
         }
     }
