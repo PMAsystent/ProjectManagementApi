@@ -3,7 +3,7 @@ using System;
 
 namespace ProjectManagement.Core.UseCases.Projects.Commands.CreateProject
 {
-    public class CreatePostCommandValidator : AbstractValidator<CreatePostCommand>
+    public class CreatePostCommandValidator : AbstractValidator<CreateProjectCommand>
     {
         public CreatePostCommandValidator()
         {

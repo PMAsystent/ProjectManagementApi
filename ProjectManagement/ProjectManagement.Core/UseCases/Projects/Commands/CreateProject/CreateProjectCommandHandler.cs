@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace ProjectManagement.Core.UseCases.Projects.Commands.CreateProject
 {
-    public class CreatePostCommandHandler : IRequestHandler<CreatePostCommand, CreatePostCommandResponse>
+    public class CreatePostCommandHandler : IRequestHandler<CreateProjectCommand, CreatePostCommandResponse>
     {
         private readonly IApplicationDbContext _context;
         private readonly IMapper _mapper;
@@ -19,7 +19,7 @@ namespace ProjectManagement.Core.UseCases.Projects.Commands.CreateProject
             _mapper = mapper;
         }
 
-        public async Task<CreatePostCommandResponse> Handle(CreatePostCommand request, CancellationToken cancellationToken)
+        public async Task<CreatePostCommandResponse> Handle(CreateProjectCommand request, CancellationToken cancellationToken)
         {
             var validator = new CreatePostCommandValidator();
             var validatorResult = await validator.ValidateAsync(request, cancellationToken);
