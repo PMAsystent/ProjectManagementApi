@@ -2,7 +2,6 @@
 using Domain.Entities;
 using MediatR;
 using ProjectManagement.Core.Base.Interfaces;
-using System;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -33,7 +32,6 @@ namespace ProjectManagement.Core.UseCases.Projects.Commands.CreateProject
             await _context.Projects.AddAsync(project, cancellationToken);
             await _context.SaveChangesAsync(cancellationToken);
 
-            Console.WriteLine(project.Id);
             return new(project.Id);
         }
     }
