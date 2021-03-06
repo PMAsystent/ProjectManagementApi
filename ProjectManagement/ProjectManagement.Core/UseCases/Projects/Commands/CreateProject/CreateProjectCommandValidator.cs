@@ -3,9 +3,9 @@ using System;
 
 namespace ProjectManagement.Core.UseCases.Projects.Commands.CreateProject
 {
-    public class CreatePostCommandValidator : AbstractValidator<CreateProjectCommand>
+    public class CreateProjectCommandValidator : AbstractValidator<CreateProjectCommand>
     {
-        public CreatePostCommandValidator()
+        public CreateProjectCommandValidator()
         {
             RuleFor(c => c.Description).NotEmpty();
             RuleFor(c => c.Description).MaximumLength(100);

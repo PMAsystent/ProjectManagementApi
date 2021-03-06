@@ -5,7 +5,7 @@ using System;
 
 namespace ProjectManagement.Core.UseCases.Projects.Commands.CreateProject
 {
-    public class CreatePostCommand : IRequest<CreatePostCommandResponse>, IMapFrom<Project>
+    public class CreateProjectCommand : IRequest<CreateProjectCommandResponse>, IMapFrom<Project>
     {
         public string Description { get; set; }
         public DateTime StartDate { get; set; }
@@ -16,7 +16,7 @@ namespace ProjectManagement.Core.UseCases.Projects.Commands.CreateProject
 
         public void Mapping(MappingProfile profile)
         {
-            profile.CreateMap<CreatePostCommand, Project>();
+            profile.CreateMap<CreateProjectCommand, Project>();
         }
     }
 }
