@@ -7,6 +7,7 @@ namespace ProjectManagement.Core.UseCases.Projects.Commands.CreateProject
 {
     public class CreateProjectCommand : IRequest<CreateProjectCommandResponse>, IMapFrom<Project>
     {
+        public string Name { get; set; }
         public string Description { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime TargetDate { get; set; }
