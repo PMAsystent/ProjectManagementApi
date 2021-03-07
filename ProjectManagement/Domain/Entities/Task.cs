@@ -8,6 +8,7 @@ namespace Domain.Entities
     public class Task : AuditableEntity
     {
         public int Id { get; set; }
+        public string Name { get; set; }
         public string Description { get; set; }
         public Priority Priority { get; set; }
         public Status Status { get; set; }
@@ -18,7 +19,7 @@ namespace Domain.Entities
 
         public int StepId { get; set; }
         public Step Step { get; set; }
-        
+
         public ICollection<Oversee> Oversees { get; set; }
         public ICollection<Assign> Assigns { get; set; }
         public ICollection<TaskChange> TaskChanges { get; set; }

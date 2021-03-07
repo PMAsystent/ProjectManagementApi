@@ -16,6 +16,7 @@ namespace Infrastructure.Persistance.DatabaseContext
             {
                 context.Projects.Add(new()
                 {
+                    Name = "Project1",
                     Description = "Test project",
                     StartDate = DateTime.UtcNow,
                     EndDate = DateTime.UtcNow.AddMonths(1),
@@ -25,7 +26,8 @@ namespace Infrastructure.Persistance.DatabaseContext
                     {
                         new()
                         {
-                            Description = "First step",
+                            Name = "Step",
+                            Description = "Test step",
                             StartDate = DateTime.UtcNow,
                             EndDate = DateTime.UtcNow.AddDays(14),
                             TargetDate = DateTime.UtcNow.AddDays(14),
@@ -34,7 +36,8 @@ namespace Infrastructure.Persistance.DatabaseContext
                             {
                                 new()
                                 {
-                                    Description = "Task#1",
+                                    Name = "Task#1",
+                                    Description = "Test task",
                                     Priority = Priority.Level0,
                                     Status = Status.Start,
                                     StartDate = DateTime.UtcNow,
@@ -66,7 +69,7 @@ namespace Infrastructure.Persistance.DatabaseContext
                             }
                         },
                     },
-                    Customer = new ()
+                    Customer = new()
                     {
                         Name = "Johne",
                         Surname = "Doe",
