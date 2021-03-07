@@ -1,5 +1,4 @@
-﻿using Domain.Entities;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Infrastructure.Persistance.Configuration
@@ -8,6 +7,8 @@ namespace Infrastructure.Persistance.Configuration
     {
         public void Configure(EntityTypeBuilder<Domain.Entities.Task> builder)
         {
+            builder.Property(t => t.Name)
+                .HasMaxLength(30);
             builder.Property(t => t.Description)
                 .HasMaxLength(100);
 
