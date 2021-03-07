@@ -8,7 +8,9 @@ namespace Infrastructure.Persistance.Configuration
     {
         public void Configure(EntityTypeBuilder<Step> builder)
         {
-            builder.Property(t => t.Description)
+            builder.Property(s => s.Name)
+                .HasMaxLength(30);
+            builder.Property(s => s.Description)
                 .HasMaxLength(100);
 
             builder
