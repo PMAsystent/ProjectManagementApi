@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ProjectManagement.Core.UseCases.Projects.Commands.CreateProject;
 using ProjectManagement.Core.UseCases.Projects.Commands.DeleteProject;
+using ProjectManagement.Core.UseCases.Projects.Commands.UpdateProject;
 using ProjectManagement.Core.UseCases.Projects.Dto;
+using ProjectManagement.Core.UseCases.Projects.Queries.GetProjectByCustomer;
 using ProjectManagement.Core.UseCases.Projects.Queries.GetProjectById;
 using ProjectManagement.Core.UseCases.Projects.Queries.GetProjects;
 using ProjectManagement.Core.UseCases.Projects.ViewModels;
@@ -15,6 +17,16 @@ namespace ProjectManagementApi.Controllers
         public async Task<ActionResult<ProjectVm>> GetAllProjects()
         {
             return await Mediator.Send(new GetProjectsQuery());
+        }
+
+        [HttpGet("Customer/{customerId}")]
+        public async Task<ActionResult<ProjectVm>> GetProjectsByCustomer(int customerId)
+        {
+            var getAllProjectsByCustomer = new GetProjectsByCustomerQuery()
+            {
+                CustomerId = customerId
+            };
+            return await Mediator.Send(getAllProjectsByCustomer);
         }
 
         [HttpGet("{id}")]
@@ -32,6 +44,13 @@ namespace ProjectManagementApi.Controllers
         public async Task<ActionResult<int>> AddProject([FromBody] CreateProjectCommand createPostCommand)
         {
             var result = await Mediator.Send(createPostCommand);
+            return Ok(result.ProjectId);
+        }
+
+        [HttpPut]
+        public async Task<ActionResult<int>> UpdateProject([FromBody] UpdateProjectCommand updateProjectCommand)
+        {
+            var result = await Mediator.Send(updateProjectCommand);
             return Ok(result.ProjectId);
         }
 
