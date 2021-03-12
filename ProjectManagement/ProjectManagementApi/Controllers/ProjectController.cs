@@ -4,6 +4,7 @@ using ProjectManagement.Core.UseCases.Projects.Commands.DeleteProject;
 using ProjectManagement.Core.UseCases.Projects.Dto;
 using ProjectManagement.Core.UseCases.Projects.Queries.GetProjectById;
 using ProjectManagement.Core.UseCases.Projects.Queries.GetProjects;
+using ProjectManagement.Core.UseCases.Projects.ViewModels;
 using System.Threading.Tasks;
 
 namespace ProjectManagementApi.Controllers
