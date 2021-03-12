@@ -1,8 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ProjectManagement.Core.UseCases.Projects.Commands.CreateProject;
 using ProjectManagement.Core.UseCases.Projects.Commands.DeleteProject;
+using ProjectManagement.Core.UseCases.Projects.Queries.GetProjectById;
+using ProjectManagement.Core.UseCases.Projects.Queries.GetProjectById.Dto;
 using ProjectManagement.Core.UseCases.Projects.Queries.GetProjects;
-using System;
 using System.Threading.Tasks;
 
 namespace ProjectManagementApi.Controllers
@@ -13,6 +14,17 @@ namespace ProjectManagementApi.Controllers
         public async Task<ActionResult<ProjectVm>> GetAllProjects()
         {
             return await Mediator.Send(new GetProjectsQuery());
+        }
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<DetailedProjectDto>> GetProjectById(int id)
+        {
+            var getProjectByIdQuery = new GetProjectByIdQuery()
+            {
+                ProjectId = id
+            };
+
+            return await Mediator.Send(getProjectByIdQuery);
         }
 
         [HttpPost]
@@ -29,9 +41,8 @@ namespace ProjectManagementApi.Controllers
             {
                 ProjectId = id
             };
-            var test = await Mediator.Send(deleteProjectCommand);
-            Console.WriteLine();
-            // TODO: check if project exist and send 404 when Not Found => create response with response status
+            await Mediator.Send(deleteProjectCommand);
+
             return NoContent();
         }
     }
