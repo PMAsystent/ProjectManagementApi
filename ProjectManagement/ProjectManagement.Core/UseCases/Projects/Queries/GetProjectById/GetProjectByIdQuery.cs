@@ -1,5 +1,5 @@
 ﻿using MediatR;
-using ProjectManagement.Core.UseCases.Projects.Queries.GetProjectById.Dto;
+using ProjectManagement.Core.UseCases.Projects.Dto;
 
 namespace ProjectManagement.Core.UseCases.Projects.Queries.GetProjectById
 {
