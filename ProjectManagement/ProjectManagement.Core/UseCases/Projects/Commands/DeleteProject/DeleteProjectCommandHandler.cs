@@ -21,7 +21,6 @@ namespace ProjectManagement.Core.UseCases.Projects.Commands.DeleteProject
             var project = await _context.Projects.FindAsync(request.ProjectId);
             if (project == null)
             {
-                //TODO: Read about Exceptions in API. It return 404 Not Found, but read about exception vs class with response
                 throw new NotFoundException(nameof(Project), request.ProjectId);
             }
 
