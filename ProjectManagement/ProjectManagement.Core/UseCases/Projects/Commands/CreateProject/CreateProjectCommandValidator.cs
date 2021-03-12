@@ -7,8 +7,14 @@ namespace ProjectManagement.Core.UseCases.Projects.Commands.CreateProject
     {
         public CreateProjectCommandValidator()
         {
+
+            RuleFor(c => c.Name).NotEmpty();
+            RuleFor(c => c.Name).MaximumLength(100);
+
             RuleFor(c => c.Description).NotEmpty();
             RuleFor(c => c.Description).MaximumLength(100);
+
+
             //RuleFor(c => c.StartDate)
             //    .Must(BeAValidDate).WithMessage("Start date is required");
             //RuleFor(c => c.TargetDate)
