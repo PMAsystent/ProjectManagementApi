@@ -1,7 +1,7 @@
 ﻿using ProjectManagement.Core.UseCases.Projects.Dto;
 using System.Collections.Generic;
 
-namespace ProjectManagement.Core.UseCases.Projects.Queries.GetProjects
+namespace ProjectManagement.Core.UseCases.Projects.ViewModels
 {
     public class ProjectVm
     {
