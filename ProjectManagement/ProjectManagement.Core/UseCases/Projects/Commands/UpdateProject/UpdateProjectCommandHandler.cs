@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
+using Domain.Entities;
 using MediatR;
+using ProjectManagement.Core.Base.Exceptions;
 using ProjectManagement.Core.Base.Interfaces;
 using System.Threading;
 using System.Threading.Tasks;
@@ -21,12 +23,18 @@ namespace ProjectManagement.Core.UseCases.Projects.Commands.UpdateProject
             var validator = new UpdateProjectCommandValidator();
             var validatorResult = await validator.ValidateAsync(request, cancellationToken);
 
-            if (validatorResult.IsValid)
+            if (!validatorResult.IsValid)
             {
                 return new UpdateProjectCommandResponse(validatorResult);
             }
 
-            var existingProject = await _context.Projects.FindAsync(request);
+            var existingProject = await _context.Projects.FindAsync(request.Id);
+            if (existingProject == null)
+            {
+                throw new NotFoundException(nameof(Project), request.Id);
+
+            }
+
             var updatedProject = _mapper.Map(request, existingProject);
             await _context.SaveChangesAsync(cancellationToken);
 
