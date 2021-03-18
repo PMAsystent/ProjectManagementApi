@@ -1,8 +1,11 @@
 ﻿using System.Threading.Tasks;
 using Domain.Entities;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ProjectManagement.Core.UseCases.Steps.Commands.CreateStep;
+using ProjectManagement.Core.UseCases.Steps.Commands.UpdateStep;
 using ProjectManagement.Core.UseCases.Steps.Queries.GetSteps;
+using Task = Domain.Entities.Task;
 
 namespace ProjectManagementApi.Controllers
 {
@@ -19,6 +22,16 @@ namespace ProjectManagementApi.Controllers
         {
             var result = await Mediator.Send(createStepCommand);
             return Ok(result.Step);
+        }
+
+        [HttpPut(Name = "UpdateStep")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesDefaultResponseType]
+        public async Task<NoContentResult> Update([FromBody] UpdateStepCommand updateStepCommand)
+        {
+            await Mediator.Send(updateStepCommand);
+            return NoContent();
         }
     }
 }
