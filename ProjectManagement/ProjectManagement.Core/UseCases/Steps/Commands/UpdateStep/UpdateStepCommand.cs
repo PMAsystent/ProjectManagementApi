@@ -6,7 +6,7 @@ using ProjectManagement.Core.UseCases.Steps.Commands.CreateStep;
 
 namespace ProjectManagement.Core.UseCases.Steps.Commands.UpdateStep
 {
-    public class UpdateStepCommand : IRequest, IMapFrom<Step>
+    public class UpdateStepCommand : IRequest<UpdateStepCommandResponse>, IMapFrom<Step>
     {
         public int Id { get; set; }
         public string Name { get; set; }
@@ -20,7 +20,7 @@ namespace ProjectManagement.Core.UseCases.Steps.Commands.UpdateStep
 
         public void Mapping(MappingProfile profile)
         {
-            profile.CreateMap<CreateStepCommand, Step>();
+            profile.CreateMap<UpdateStepCommand, Step>();
         }
     }
 }
