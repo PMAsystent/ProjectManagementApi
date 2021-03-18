@@ -3,6 +3,7 @@ using Domain.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ProjectManagement.Core.UseCases.Steps.Commands.CreateStep;
+using ProjectManagement.Core.UseCases.Steps.Commands.DeleteStep;
 using ProjectManagement.Core.UseCases.Steps.Commands.UpdateStep;
 using ProjectManagement.Core.UseCases.Steps.Queries.GetSteps;
 using Task = Domain.Entities.Task;
@@ -25,12 +26,21 @@ namespace ProjectManagementApi.Controllers
         }
 
         [HttpPut(Name = "UpdateStep")]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesDefaultResponseType]
-        public async Task<NoContentResult> Update([FromBody] UpdateStepCommand updateStepCommand)
+        public async Task<ActionResult> Update([FromBody] UpdateStepCommand updateStepCommand)
         {
-            await Mediator.Send(updateStepCommand);
+            var result = await Mediator.Send(updateStepCommand);
+            return Ok(result.Step);
+        }
+        
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> Delete(int id)
+        {
+            var deleteStepCommand = new DeleteStepCommand()
+            {
+                StepId = id
+            };
+            await Mediator.Send(deleteStepCommand);
+
             return NoContent();
         }
     }
