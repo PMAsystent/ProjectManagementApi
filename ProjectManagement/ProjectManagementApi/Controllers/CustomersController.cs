@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using ProjectManagement.Core.UseCases.Customers.Commands.CreateCustomer;
 using ProjectManagement.Core.UseCases.Customers.Dto;
 using ProjectManagement.Core.UseCases.Customers.Queries.GetCustomerById;
 using ProjectManagement.Core.UseCases.Customers.Queries.GetCustomers;
@@ -23,6 +24,13 @@ namespace ProjectManagementApi.Controllers
                 CustomerId = id
             };
             return await Mediator.Send(getCustomerQuery);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult<int>> AddCustomer([FromBody] CreateCustomerCommand createPostCommand)
+        {
+            var result = await Mediator.Send(createPostCommand);
+            return Ok(result.CustomerId);
         }
     }
 }
