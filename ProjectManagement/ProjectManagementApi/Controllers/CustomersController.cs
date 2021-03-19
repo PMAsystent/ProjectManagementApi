@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ProjectManagement.Core.UseCases.Customers.Commands.CreateCustomer;
+using ProjectManagement.Core.UseCases.Customers.Commands.DeleteCustomer;
 using ProjectManagement.Core.UseCases.Customers.Dto;
 using ProjectManagement.Core.UseCases.Customers.Queries.GetCustomerById;
 using ProjectManagement.Core.UseCases.Customers.Queries.GetCustomers;
@@ -31,6 +32,18 @@ namespace ProjectManagementApi.Controllers
         {
             var result = await Mediator.Send(createPostCommand);
             return Ok(result.CustomerId);
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> Delete(int id)
+        {
+            var deleteCustomerCommand = new DeleteCustomerCommand()
+            {
+                CustomerId = id
+            };
+            await Mediator.Send(deleteCustomerCommand);
+
+            return NoContent();
         }
     }
 }
