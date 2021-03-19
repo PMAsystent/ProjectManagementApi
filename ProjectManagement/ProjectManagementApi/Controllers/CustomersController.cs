@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ProjectManagement.Core.UseCases.Customers.Commands.CreateCustomer;
 using ProjectManagement.Core.UseCases.Customers.Commands.DeleteCustomer;
+using ProjectManagement.Core.UseCases.Customers.Commands.UpdateCustomer;
 using ProjectManagement.Core.UseCases.Customers.Dto;
 using ProjectManagement.Core.UseCases.Customers.Queries.GetCustomerById;
 using ProjectManagement.Core.UseCases.Customers.Queries.GetCustomers;
@@ -31,6 +32,13 @@ namespace ProjectManagementApi.Controllers
         public async Task<ActionResult<int>> AddCustomer([FromBody] CreateCustomerCommand createPostCommand)
         {
             var result = await Mediator.Send(createPostCommand);
+            return Ok(result.CustomerId);
+        }
+
+        [HttpPut]
+        public async Task<ActionResult<int>> UpdateCustomer([FromBody] UpdateCustomerCommand updateProjectCommand)
+        {
+            var result = await Mediator.Send(updateProjectCommand);
             return Ok(result.CustomerId);
         }
 
