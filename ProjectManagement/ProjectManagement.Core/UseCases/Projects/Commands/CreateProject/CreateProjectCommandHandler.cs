@@ -41,9 +41,9 @@ namespace ProjectManagement.Core.UseCases.Projects.Commands.CreateProject
             await _context.Projects.AddAsync(project, cancellationToken);
             await _context.SaveChangesAsync(cancellationToken);
 
-            var projectDto = _mapper.Map<ProjectDto>(project);
+            var detailedProjectDto = _mapper.Map<DetailedProjectDto>(project);
 
-            return new(projectDto);
+            return new(detailedProjectDto);
         }
     }
 }
