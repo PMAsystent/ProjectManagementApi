@@ -2,6 +2,7 @@
 using Domain.Entities;
 using MediatR;
 using ProjectManagement.Core.Base.Interfaces;
+using ProjectManagement.Core.UseCases.Customers.Dto;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -32,7 +33,9 @@ namespace ProjectManagement.Core.UseCases.Customers.Commands.CreateCustomer
             await _context.Customers.AddAsync(customer, cancellationToken);
             await _context.SaveChangesAsync(cancellationToken);
 
-            return new(customer.Id);
+            var customerDto = _mapper.Map<DetailedCustomerDto>(customer);
+
+            return new(customerDto);
         }
     }
 }
