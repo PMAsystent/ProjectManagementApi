@@ -50,10 +50,10 @@ namespace ProjectManagementApi.Controllers
         }
 
         [HttpPut]
-        public async Task<ActionResult<int>> UpdateProject([FromBody] UpdateProjectCommand updateProjectCommand)
+        public async Task<ActionResult<DetailedProjectDto>> UpdateProject([FromBody] UpdateProjectCommand updateProjectCommand)
         {
             var result = await Mediator.Send(updateProjectCommand);
-            return Ok(result.ProjectId);
+            return Ok(result.DetailedProjectDto);
         }
 
         [HttpPatch("{id}")]

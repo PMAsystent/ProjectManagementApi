@@ -3,6 +3,8 @@ using Domain.Entities;
 using MediatR;
 using ProjectManagement.Core.Base.Exceptions;
 using ProjectManagement.Core.Base.Interfaces;
+using ProjectManagement.Core.UseCases.Projects.Dto;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -35,10 +37,17 @@ namespace ProjectManagement.Core.UseCases.Projects.Commands.UpdateProject
 
             }
 
+            if (!_context.Customers.Any(c => c.Id == request.CustomerId))
+            {
+                throw new NotFoundException(nameof(Customer), request.CustomerId);
+            }
+
             var updatedProject = _mapper.Map(request, existingProject);
             await _context.SaveChangesAsync(cancellationToken);
 
-            return new(updatedProject.Id);
+            var detailedProjectDto = _mapper.Map<DetailedProjectDto>(updatedProject);
+
+            return new(detailedProjectDto);
         }
     }
 }
