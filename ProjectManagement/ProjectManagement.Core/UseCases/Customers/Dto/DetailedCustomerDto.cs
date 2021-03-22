@@ -16,7 +16,7 @@ namespace ProjectManagement.Core.UseCases.Customers.Dto
 
         public static void Mapping(MappingProfile profile)
         {
-            profile.CreateMap<Customer, DetailedCustomerDto>();
+            profile.CreateMap<Customer, DetailedCustomerDto>().ReverseMap();
         }
     }
 }
