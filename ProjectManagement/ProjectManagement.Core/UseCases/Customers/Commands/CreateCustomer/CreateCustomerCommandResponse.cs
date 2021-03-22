@@ -6,7 +6,7 @@ namespace ProjectManagement.Core.UseCases.Customers.Commands.CreateCustomer
 {
     public class CreateCustomerCommandResponse : BaseResponse
     {
-        public DetailedCustomerDto? DetailedCustomerDto { get; set; }
+        public DetailedCustomerDto DetailedCustomerDto { get; set; }
 
         public CreateCustomerCommandResponse() : base() { }
         public CreateCustomerCommandResponse(ValidationResult validationResult) : base(validationResult) { }

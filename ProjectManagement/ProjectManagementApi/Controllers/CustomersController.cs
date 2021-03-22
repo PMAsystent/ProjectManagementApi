@@ -36,10 +36,10 @@ namespace ProjectManagementApi.Controllers
         }
 
         [HttpPut]
-        public async Task<ActionResult<int>> UpdateCustomer([FromBody] UpdateCustomerCommand updateProjectCommand)
+        public async Task<ActionResult<DetailedCustomerDto>> UpdateCustomer([FromBody] UpdateCustomerCommand updateProjectCommand)
         {
             var result = await Mediator.Send(updateProjectCommand);
-            return Ok(result.CustomerId);
+            return Ok(result.DetailedCustomerDto);
         }
 
         [HttpDelete("{id}")]

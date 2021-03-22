@@ -3,6 +3,7 @@ using Domain.Entities;
 using MediatR;
 using ProjectManagement.Core.Base.Exceptions;
 using ProjectManagement.Core.Base.Interfaces;
+using ProjectManagement.Core.UseCases.Customers.Dto;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -38,7 +39,9 @@ namespace ProjectManagement.Core.UseCases.Customers.Commands.UpdateCustomer
             var updatedCustomer = _mapper.Map(request, existingCustomer);
             await _context.SaveChangesAsync(cancellationToken);
 
-            return new(updatedCustomer.Id);
+            var detailedCustomerDto = _mapper.Map<DetailedCustomerDto>(updatedCustomer);
+
+            return new(detailedCustomerDto);
         }
     }
 }
