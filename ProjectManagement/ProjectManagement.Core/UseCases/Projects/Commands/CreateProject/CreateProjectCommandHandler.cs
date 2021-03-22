@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
 using Domain.Entities;
 using MediatR;
+using ProjectManagement.Core.Base.Exceptions;
 using ProjectManagement.Core.Base.Interfaces;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -28,7 +30,13 @@ namespace ProjectManagement.Core.UseCases.Projects.Commands.CreateProject
                 return new CreateProjectCommandResponse(validatorResult);
             }
 
+            if (!_context.Customers.Any(c => c.Id == request.CustomerId))
+            {
+                throw new NotFoundException(nameof(Customer), request.CustomerId);
+            }
+
             var project = _mapper.Map<Project>(request);
+
             await _context.Projects.AddAsync(project, cancellationToken);
             await _context.SaveChangesAsync(cancellationToken);
 
