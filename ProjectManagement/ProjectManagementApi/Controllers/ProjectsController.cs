@@ -43,10 +43,10 @@ namespace ProjectManagementApi.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<int>> AddProject([FromBody] CreateProjectCommand createPostCommand)
+        public async Task<ActionResult<ProjectDto>> AddProject([FromBody] CreateProjectCommand createPostCommand)
         {
             var result = await Mediator.Send(createPostCommand);
-            return Ok(result.ProjectId);
+            return Ok(result.ProjectDto);
         }
 
         [HttpPut]

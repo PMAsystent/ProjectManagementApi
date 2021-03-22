@@ -3,6 +3,7 @@ using Domain.Entities;
 using MediatR;
 using ProjectManagement.Core.Base.Exceptions;
 using ProjectManagement.Core.Base.Interfaces;
+using ProjectManagement.Core.UseCases.Projects.Dto;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -40,7 +41,9 @@ namespace ProjectManagement.Core.UseCases.Projects.Commands.CreateProject
             await _context.Projects.AddAsync(project, cancellationToken);
             await _context.SaveChangesAsync(cancellationToken);
 
-            return new(project.Id);
+            var projectDto = _mapper.Map<ProjectDto>(project);
+
+            return new(projectDto);
         }
     }
 }
