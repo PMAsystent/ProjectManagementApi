@@ -5,7 +5,7 @@ namespace ProjectManagement.Core.Base.Responses
 {
     public class BaseResponse
     {
-        public ResponseStatus Status { get; set; }
+        //public ResponseStatus Status { get; set; }
         public bool Success { get; set; }
         public string Message { get; set; }
         public List<string> ValidationErrors { get; set; }
@@ -43,11 +43,11 @@ namespace ProjectManagement.Core.Base.Responses
 
     }
 
-    public enum ResponseStatus
-    {
-        Success = 0,
-        NotFound = 1,
-        BadQuery = 2,
-        ValidationError = 3
-    }
+    //public enum ResponseStatus
+    //{
+    //    Success = 0,
+    //    NotFound = 1,
+    //    BadQuery = 2,
+    //    ValidationError = 3
+    //}
 }

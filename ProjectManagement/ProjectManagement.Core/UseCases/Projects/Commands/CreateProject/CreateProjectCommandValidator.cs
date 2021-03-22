@@ -1,5 +1,4 @@
 ﻿using FluentValidation;
-using System;
 
 namespace ProjectManagement.Core.UseCases.Projects.Commands.CreateProject
 {
@@ -7,25 +6,19 @@ namespace ProjectManagement.Core.UseCases.Projects.Commands.CreateProject
     {
         public CreateProjectCommandValidator()
         {
-
             RuleFor(c => c.Name).NotEmpty();
-            RuleFor(c => c.Name).MaximumLength(100);
 
             RuleFor(c => c.Description).NotEmpty();
-            RuleFor(c => c.Description).MaximumLength(100);
 
+            RuleFor(c => c.StartDate)
+                .LessThan(c => c.EndDate)
+                .WithMessage("Start date must be earlier than end date.")
+                .LessThan(c => c.TargetDate)
+                .WithMessage("Start date must be earlier than target date.");
 
-            //RuleFor(c => c.StartDate)
-            //    .Must(BeAValidDate).WithMessage("Start date is required");
-            //RuleFor(c => c.TargetDate)
-            //    .Must(BeAValidDate).WithMessage("Target date is required");
-            //RuleFor(c => c.EndDate)
-            //    .Must(BeAValidDate).WithMessage("End date is required");
-        }
-
-        private bool BeAValidDate(DateTime date)
-        {
-            return !date.Equals(default(DateTime));
+            RuleFor(c => c.CustomerId)
+                .GreaterThan(0)
+                .WithMessage("Customer id must be more than zero");
         }
     }
 }

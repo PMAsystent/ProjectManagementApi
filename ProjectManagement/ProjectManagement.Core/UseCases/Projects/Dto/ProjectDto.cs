@@ -17,7 +17,7 @@ namespace ProjectManagement.Core.UseCases.Projects.Dto
 
         public static void Mapping(MappingProfile profile)
         {
-            profile.CreateMap<Project, ProjectDto>();
+            profile.CreateMap<Project, ProjectDto>().ReverseMap();
         }
     }
 }
