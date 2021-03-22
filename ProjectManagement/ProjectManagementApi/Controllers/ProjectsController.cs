@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.JsonPatch;
+using Microsoft.AspNetCore.Mvc;
 using ProjectManagement.Core.UseCases.Projects.Commands.CreateProject;
 using ProjectManagement.Core.UseCases.Projects.Commands.DeleteProject;
+using ProjectManagement.Core.UseCases.Projects.Commands.PatchProject;
 using ProjectManagement.Core.UseCases.Projects.Commands.UpdateProject;
 using ProjectManagement.Core.UseCases.Projects.Dto;
 using ProjectManagement.Core.UseCases.Projects.Queries.GetProjectByCustomer;
@@ -52,6 +54,18 @@ namespace ProjectManagementApi.Controllers
         {
             var result = await Mediator.Send(updateProjectCommand);
             return Ok(result.ProjectId);
+        }
+
+        [HttpPatch("{id}")]
+        public async Task<ActionResult> PatchProject(int id, [FromBody] JsonPatchDocument<ProjectDto> patchDocument)
+        {
+            var patchProjectCommand = new PatchProjectCommand()
+            {
+                ProjectId = id,
+                PatchDocument = patchDocument
+            };
+            var result = await Mediator.Send(patchProjectCommand);
+            return Ok(result);
         }
 
         [HttpDelete("{id}")]
