@@ -7,7 +7,7 @@ using ProjectManagement.Core.Base.Interfaces;
 
 namespace ProjectManagement.Core.UseCases.Steps.Commands.DeleteStep
 {
-    public class DeleteStepCommandHandler : IRequest<DeleteStepCommand>
+    public class DeleteStepCommandHandler : IRequestHandler<DeleteStepCommand>
     {
         private readonly IApplicationDbContext _context;
 
