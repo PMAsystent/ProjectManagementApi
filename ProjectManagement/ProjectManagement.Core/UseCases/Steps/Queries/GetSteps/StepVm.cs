@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using ProjectManagement.Core.UseCases.Steps.Queries.GetSteps.Dto;
+using ProjectManagement.Core.UseCases.Steps.Dto;
 
 namespace ProjectManagement.Core.UseCases.Steps.Queries.GetSteps
 {
