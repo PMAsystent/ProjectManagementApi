@@ -11,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using ProjectManagement.Core.Base.Interfaces;
 using ProjectManagement.Core.UseCases.Projects.Queries.GetProjects.Dto;
 using ProjectManagement.Core.UseCases.Steps.Dto;
+using ProjectManagement.Core.UseCases.Steps.ViewModels;
 
 namespace ProjectManagement.Core.UseCases.Steps.Queries.GetSteps
 {

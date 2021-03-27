@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using ProjectManagement.Core.UseCases.Steps.Dto;
 
-namespace ProjectManagement.Core.UseCases.Steps.Queries.GetSteps
+namespace ProjectManagement.Core.UseCases.Steps.ViewModels
 {
     public class StepVm
     {

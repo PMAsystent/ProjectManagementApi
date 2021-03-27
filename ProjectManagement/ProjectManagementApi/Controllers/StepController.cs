@@ -8,6 +8,7 @@ using ProjectManagement.Core.UseCases.Steps.Commands.UpdateStep;
 using ProjectManagement.Core.UseCases.Steps.Dto;
 using ProjectManagement.Core.UseCases.Steps.Queries.GetStepById;
 using ProjectManagement.Core.UseCases.Steps.Queries.GetSteps;
+using ProjectManagement.Core.UseCases.Steps.ViewModels;
 
 
 namespace ProjectManagementApi.Controllers
