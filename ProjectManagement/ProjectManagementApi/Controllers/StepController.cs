@@ -7,6 +7,7 @@ using ProjectManagement.Core.UseCases.Steps.Commands.DeleteStep;
 using ProjectManagement.Core.UseCases.Steps.Commands.UpdateStep;
 using ProjectManagement.Core.UseCases.Steps.Dto;
 using ProjectManagement.Core.UseCases.Steps.Queries.GetStepById;
+using ProjectManagement.Core.UseCases.Steps.Queries.GetStepByProjectId;
 using ProjectManagement.Core.UseCases.Steps.Queries.GetSteps;
 using ProjectManagement.Core.UseCases.Steps.ViewModels;
 
@@ -32,6 +33,17 @@ namespace ProjectManagementApi.Controllers
             return await Mediator.Send(getStepByIdQuery);
         }
 
+        [HttpGet("Project/{projectId}")]
+        public async Task<ActionResult<StepVm>> GetStepsByProjectId(int projectId)
+        {
+            var getStepByProjectIdQuery = new GetStepsByProjectIdQuery()
+            {
+                ProjectId = projectId
+            };
+
+            return await Mediator.Send(getStepByProjectIdQuery);
+        }
+        
         [HttpPost]
         public async Task<ActionResult<Step>> AddStep([FromBody] CreateStepCommand createStepCommand)
         {
