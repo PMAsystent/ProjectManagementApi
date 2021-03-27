@@ -5,8 +5,10 @@ using Microsoft.AspNetCore.Mvc;
 using ProjectManagement.Core.UseCases.Steps.Commands.CreateStep;
 using ProjectManagement.Core.UseCases.Steps.Commands.DeleteStep;
 using ProjectManagement.Core.UseCases.Steps.Commands.UpdateStep;
+using ProjectManagement.Core.UseCases.Steps.Dto;
+using ProjectManagement.Core.UseCases.Steps.Queries.GetStepById;
 using ProjectManagement.Core.UseCases.Steps.Queries.GetSteps;
-using Task = Domain.Entities.Task;
+
 
 namespace ProjectManagementApi.Controllers
 {
@@ -16,6 +18,17 @@ namespace ProjectManagementApi.Controllers
         public async Task<ActionResult<StepVm>> GetAllSteps()
         {
             return await Mediator.Send(new GetStepsQuery());
+        }
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<StepDto>> GetStepById(int id)
+        {
+            var getStepByIdQuery = new GetStepByIdQuery()
+            {
+                StepId = id
+            };
+
+            return await Mediator.Send(getStepByIdQuery);
         }
 
         [HttpPost]
