@@ -1,15 +1,20 @@
 ﻿using FluentValidation.AspNetCore;
 using Infrastructure;
+using Infrastructure.Identity.Helpers;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using ProjectManagement.Core;
+using ProjectManagement.Core.Base.Interfaces;
 using ProjectManagementApi.Filters;
-
+using ProjectManagementApi.Services;
+using System.Text;
 
 namespace ProjectManagementApi
 {
@@ -28,6 +33,13 @@ namespace ProjectManagementApi
             services.AddApplication();
             services.AddInfrastructure(Configuration);
 
+            var settingsSection = Configuration.GetSection("AppSettings");
+            var settings = settingsSection.Get<AppSettings>();
+            services.Configure<AppSettings>(settingsSection);
+
+            services.AddSingleton<ICurrentUserService, CurrentUserService>();
+            services.AddHttpContextAccessor();
+
             services.AddControllersWithViews(options =>
                 options.Filters.Add<ApiExceptionFilterAttribute>())
                     .AddFluentValidation();
@@ -37,7 +49,28 @@ namespace ProjectManagementApi
             {
                 options.SuppressModelStateInvalidFilter = true;
             });
+            services.AddAuthentication(x =>
+            {
+                x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+                .AddJwtBearer(options =>
+                {
+                    // IdentityServer emits a typ header by default, recommended extra check
+                    options.TokenValidationParameters.ValidTypes = new[] { "at+jwt" };
 
+                    //SET ONLY IN-DEV TODO: make this automatic
+                    options.RequireHttpsMetadata = false;
+
+                    options.SaveToken = true;
+                    options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(settings.AuthKey)),
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
+                };
+            });
             //Develop comments for learning purpose:
             //Origin - Out base URL or URL'a used by our WebApi, For example: https://monopolyapi.net
             //Header - HTTP headers - used for passing additional information. CORS have main 10 headers, we can set many others headers, passing it to withheaders method
@@ -47,7 +80,8 @@ namespace ProjectManagementApi
                 options.AddPolicy(name: AllowPolicy,
                     builder =>
                     {
-                        builder.WithOrigins("*")
+                        builder
+                        .AllowAnyOrigin()
                         .AllowAnyHeader()
                         .AllowAnyMethod();
                     });
@@ -87,7 +121,6 @@ namespace ProjectManagementApi
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseMigrationsEndPoint();
 
                 app.UseSwagger();
                 app.UseSwaggerUI(c =>
@@ -107,7 +140,7 @@ namespace ProjectManagementApi
             app.UseRouting();
             app.UseCors(AllowPolicy);
             app.UseAuthorization();
-
+            app.UseAuthorization();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
