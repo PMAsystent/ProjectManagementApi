@@ -25,6 +25,7 @@ namespace ProjectManagementApi.Controllers
             {
                 CustomerId = id
             };
+
             return await Mediator.Send(getCustomerQuery);
         }
 
