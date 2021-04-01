@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using ProjectManagement.Core.UseCases.Bosses.Commands.CreateBoss;
 using ProjectManagement.Core.UseCases.Bosses.Dto;
 using ProjectManagement.Core.UseCases.Bosses.Queries.GetBossById;
 using ProjectManagement.Core.UseCases.Bosses.Queries.GetBosses;
@@ -24,6 +25,13 @@ namespace ProjectManagementApi.Controllers
             };
 
             return await Mediator.Send(getBossQuery);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult<DetailedBossDto>> AddBoss([FromBody] CreateBossCommand createBossCommand)
+        {
+            var result = await Mediator.Send(createBossCommand);
+            return Ok(result.DetailedBossDto);
         }
     }
 }
