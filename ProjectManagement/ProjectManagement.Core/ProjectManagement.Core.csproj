@@ -22,7 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="UseCases\Bosses\Queries\" />
+    <Folder Include="UseCases\Bosses\Commands\" />
   </ItemGroup>
 
 </Project>

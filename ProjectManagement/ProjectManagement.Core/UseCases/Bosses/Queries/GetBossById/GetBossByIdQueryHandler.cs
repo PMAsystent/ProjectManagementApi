@@ -7,7 +7,7 @@ using ProjectManagement.Core.UseCases.Bosses.Dto;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace ProjectManagement.Core.UseCases.Bosses.Commands.GetBossById
+namespace ProjectManagement.Core.UseCases.Bosses.Queries.GetBossById
 {
     public class GetBossByIdQueryHandler : IRequestHandler<GetBossByIdQuery, DetailedBossDto>
     {

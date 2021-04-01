@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using ProjectManagement.Core.UseCases.Bosses.Commands.GetBossById;
-using ProjectManagement.Core.UseCases.Bosses.Commands.GetBosses;
 using ProjectManagement.Core.UseCases.Bosses.Dto;
+using ProjectManagement.Core.UseCases.Bosses.Queries.GetBossById;
+using ProjectManagement.Core.UseCases.Bosses.Queries.GetBosses;
 using ProjectManagement.Core.UseCases.Bosses.ViewModels;
 using System.Threading.Tasks;
 

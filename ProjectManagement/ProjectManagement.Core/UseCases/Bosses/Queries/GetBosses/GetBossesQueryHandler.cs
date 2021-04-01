@@ -8,7 +8,7 @@ using ProjectManagement.Core.UseCases.Bosses.ViewModels;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace ProjectManagement.Core.UseCases.Bosses.Commands.GetBosses
+namespace ProjectManagement.Core.UseCases.Bosses.Queries.GetBosses
 {
     public class GetBossesQueryHandler : IRequestHandler<GetBossesQuery, BossVm>
     {
