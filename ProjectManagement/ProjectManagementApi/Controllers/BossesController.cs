@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ProjectManagement.Core.UseCases.Bosses.Commands.CreateBoss;
+using ProjectManagement.Core.UseCases.Bosses.Commands.DeleteBoss;
 using ProjectManagement.Core.UseCases.Bosses.Dto;
 using ProjectManagement.Core.UseCases.Bosses.Queries.GetBossById;
 using ProjectManagement.Core.UseCases.Bosses.Queries.GetBosses;
@@ -32,6 +33,18 @@ namespace ProjectManagementApi.Controllers
         {
             var result = await Mediator.Send(createBossCommand);
             return Ok(result.DetailedBossDto);
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> DeleteBoss(int id)
+        {
+            var deleteBossCommand = new DeleteBossCommand()
+            {
+                BossId = id
+            };
+            await Mediator.Send(deleteBossCommand);
+
+            return NoContent();
         }
     }
 }
