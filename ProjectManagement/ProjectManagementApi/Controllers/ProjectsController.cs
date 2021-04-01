@@ -62,7 +62,8 @@ namespace ProjectManagementApi.Controllers
             var patchProjectCommand = new PatchProjectCommand()
             {
                 ProjectId = id,
-                PatchDocument = patchDocument
+                PatchDocument = patchDocument,
+                ModelStateDictionary = ModelState
             };
             var result = await Mediator.Send(patchProjectCommand);
             return Ok(result);

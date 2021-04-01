@@ -1,15 +1,17 @@
 ﻿using AutoMapper;
 using Domain.Entities;
 using MediatR;
+using Microsoft.AspNetCore.Mvc;
 using ProjectManagement.Core.Base.Exceptions;
 using ProjectManagement.Core.Base.Interfaces;
 using ProjectManagement.Core.UseCases.Projects.Dto;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace ProjectManagement.Core.UseCases.Projects.Commands.PatchProject
 {
-    public class PatchProjectCommandHandler : IRequestHandler<PatchProjectCommand, int>
+    public class PatchProjectCommandHandler : IRequestHandler<PatchProjectCommand, PatchProjectCommandResponse>
     {
         private readonly IApplicationDbContext _context;
         private readonly IMapper _mapper;
@@ -19,7 +21,7 @@ namespace ProjectManagement.Core.UseCases.Projects.Commands.PatchProject
             _context = context;
             _mapper = mapper;
         }
-        public async Task<int> Handle(
+        public async Task<PatchProjectCommandResponse> Handle(
             PatchProjectCommand request,
             CancellationToken cancellationToken)
         {
@@ -30,14 +32,24 @@ namespace ProjectManagement.Core.UseCases.Projects.Commands.PatchProject
             }
 
             var projectDto = _mapper.Map<ProjectDto>(project);
-            // TODO: zabezpieczenie przed nullem
-            // ten model state by tu siadł... 
-            request.PatchDocument.ApplyTo(projectDto);
+            request.PatchDocument.ApplyTo(projectDto, request.ModelStateDictionary);
+
+            if (!request.ModelStateDictionary.IsValid)
+            {
+                var test =
+                    request.ModelStateDictionary != null
+                        ? new SerializableError(request.ModelStateDictionary)
+                        : throw new ArgumentNullException(nameof(request.ModelStateDictionary));
+                throw new Exception($"{test}");
+
+            }
 
             _mapper.Map(projectDto, project);
             await _context.SaveChangesAsync(cancellationToken);
 
-            return project.Id;
+            var detailedProjectDto = _mapper.Map<DetailedProjectDto>(project);
+
+            return new(detailedProjectDto);
         }
     }
 }

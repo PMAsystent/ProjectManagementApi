@@ -15,7 +15,7 @@ namespace ProjectManagement.Core.UseCases.Projects.Commands.CreateProject
         public bool IsActive { get; set; }
         public int CustomerId { get; set; }
 
-        public void Mapping(MappingProfile profile)
+        public static void Mapping(MappingProfile profile)
         {
             profile.CreateMap<CreateProjectCommand, Project>();
         }
