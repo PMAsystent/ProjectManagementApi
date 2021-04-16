@@ -21,7 +21,7 @@ namespace ProjectManagement.Core.UseCases.Steps.Dto
 
         public static void Mapping(MappingProfile profile)
         {
-            profile.CreateMap<Step, StepDto>();
+            profile.CreateMap<Step, StepDto>().ReverseMap();
         }
     }
 }
