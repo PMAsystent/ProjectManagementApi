@@ -2,28 +2,32 @@
 using Domain.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Infrastructure.Identity;
 using ProjectManagement.Core.Base.Interfaces;
 using System;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Options;
+using IdentityServer4.EntityFramework.Options;
+using Microsoft.AspNetCore.ApiAuthorization.IdentityServer;
 
 namespace Infrastructure.Persistance.DatabaseContext
 {
-    public class ApplicationDbContext : DbContext, IApplicationDbContext
+    public class ApplicationDbContext : ApiAuthorizationDbContext<ApplicationUser>, IApplicationDbContext
     {
         private readonly IDomainEventService _domainEventService;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
         public ApplicationDbContext(
             DbContextOptions options,
-            IDomainEventService domainEventService,
-            IHttpContextAccessor httpContextAccessor) : base(options)
+            IOptions<OperationalStoreOptions> operationalStoreOptions,
+            IDomainEventService domainEventService) : base(options, operationalStoreOptions)
         {
             _domainEventService = domainEventService;
-            _httpContextAccessor = httpContextAccessor;
         }
+
 
         public DbSet<Domain.Entities.Task> Tasks { get; set; }
         public DbSet<Step> Steps { get; set; }
