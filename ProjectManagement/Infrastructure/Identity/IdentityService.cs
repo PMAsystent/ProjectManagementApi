@@ -101,6 +101,7 @@ namespace Infrastructure.Identity
             SignInResult result = new SignInResult();
             if (_signInManager != null)
             {
+                var test = _userManager.Users.Count();
                 var user = _userManager.Users.SingleOrDefault(u => u.Email == email);
                 if (user == null)
                     return JWTAuthorizationResult.Failure(new string[] { "Email not found" });
@@ -154,22 +155,15 @@ namespace Infrastructure.Identity
 
         public async Task<Result> ChangePasswordAsync(string userName, string email, string oldPassword, string newPassword)
         {
-            var user = new ApplicationUser
-            {
-                UserName = userName,
-                Email = email,
-            };
+            var user = _userManager.Users.SingleOrDefault(u => u.Email == email);
+            var test = _userManager.Users.Count();
             var result = await _userManager.ChangePasswordAsync(user, oldPassword, newPassword);
             return result.ToApplicationResult();
         }
 
         public async Task<Result> ResetPasswordAsync(string userName, string email, string newPassword)
         {
-            var user = new ApplicationUser
-            {
-                UserName = userName,
-                Email = email,
-            };
+            var user = _userManager.Users.SingleOrDefault(u => u.Email == email);
             var token = await _userManager.GeneratePasswordResetTokenAsync(user);
             var result = await _userManager.ResetPasswordAsync(user, token, newPassword);
             return result.ToApplicationResult();
@@ -177,11 +171,7 @@ namespace Infrastructure.Identity
 
         public async Task<Result> ChangeEmailAsync(string userName, string email, string newEmail)
         {
-            var user = new ApplicationUser
-            {
-                UserName = userName,
-                Email = email,
-            };
+            var user = _userManager.Users.SingleOrDefault(u => u.Email == email);
             var token = await _userManager.GenerateChangeEmailTokenAsync(user, newEmail);
             var result = await _userManager.ChangeEmailAsync(user, newEmail, token);
             return result.ToApplicationResult();

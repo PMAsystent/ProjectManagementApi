@@ -139,7 +139,7 @@ namespace ProjectManagementApi
             app.UseHttpsRedirection();
             app.UseRouting();
             app.UseCors(AllowPolicy);
-            app.UseAuthorization();
+            app.UseAuthentication();
             app.UseAuthorization();
             app.UseEndpoints(endpoints =>
             {
