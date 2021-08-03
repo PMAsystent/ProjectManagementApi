@@ -42,7 +42,8 @@ namespace ProjectManagementApi
 
             services.AddControllersWithViews(options =>
                 options.Filters.Add<ApiExceptionFilterAttribute>())
-                    .AddFluentValidation();
+                    .AddFluentValidation()
+                    .AddNewtonsoftJson();
 
 
             services.Configure<ApiBehaviorOptions>(options =>
