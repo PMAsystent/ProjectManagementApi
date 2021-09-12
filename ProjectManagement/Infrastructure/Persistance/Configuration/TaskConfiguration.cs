@@ -13,19 +13,9 @@ namespace Infrastructure.Persistance.Configuration
                 .HasMaxLength(100);
 
             builder
-                .HasMany(t => t.Oversees)
-                .WithOne(b => b.Task)
-                .HasForeignKey(o => o.TaskId);
-
-            builder
                 .HasMany(t => t.Assigns)
                 .WithOne(a => a.Task)
                 .HasForeignKey(a => a.TaskId);
-
-            builder
-                .HasMany(t => t.TaskChanges)
-                .WithOne(tc => tc.Task)
-                .HasForeignKey(tc => tc.TaskId);
         }
     }
 }

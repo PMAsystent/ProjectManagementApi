@@ -8,13 +8,6 @@ namespace Infrastructure.Persistance.Configuration
     {
         public void Configure(EntityTypeBuilder<Assign> builder)
         {
-            builder.HasOne(a => a.Employee)
-                .WithOne(e => e.Assign)
-                .HasForeignKey<Employee>(e => e.AssignId);
-            
-            builder.HasOne(a => a.Role)
-                .WithOne(r => r.Assign)
-                .HasForeignKey<Role>(r => r.AssignId);
         }
     }
 }
