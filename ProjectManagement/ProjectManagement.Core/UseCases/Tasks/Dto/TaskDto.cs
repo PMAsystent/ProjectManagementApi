@@ -22,10 +22,8 @@ namespace ProjectManagement.Core.UseCases.Tasks.Dto
         public bool IsActive { get; set; }
         public int StepId { get; set; }
         
-        public ICollection<Oversee> Oversees { get; set; }
-        public ICollection<Assign> Assigns { get; set; }
-        public ICollection<TaskChange> TaskChanges { get; set; }
-        
+        public ICollection<TaskAssigment> TaskAssigments { get; set; }
+
         public static void Mapping(MappingProfile profile)
         {
             profile.CreateMap<Task, TaskDto>().ReverseMap();

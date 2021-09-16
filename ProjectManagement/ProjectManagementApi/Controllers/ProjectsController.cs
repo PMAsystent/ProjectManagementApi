@@ -5,7 +5,6 @@ using ProjectManagement.Core.UseCases.Projects.Commands.DeleteProject;
 using ProjectManagement.Core.UseCases.Projects.Commands.PatchProject;
 using ProjectManagement.Core.UseCases.Projects.Commands.UpdateProject;
 using ProjectManagement.Core.UseCases.Projects.Dto;
-using ProjectManagement.Core.UseCases.Projects.Queries.GetProjectByCustomer;
 using ProjectManagement.Core.UseCases.Projects.Queries.GetProjectById;
 using ProjectManagement.Core.UseCases.Projects.Queries.GetProjects;
 using ProjectManagement.Core.UseCases.Projects.ViewModels;
@@ -20,17 +19,7 @@ namespace ProjectManagementApi.Controllers
         {
             return await Mediator.Send(new GetProjectsQuery());
         }
-
-        [HttpGet("Customer/{customerId}")]
-        public async Task<ActionResult<ProjectVm>> GetProjectsByCustomer(int customerId)
-        {
-            var getAllProjectsByCustomer = new GetProjectsByCustomerQuery()
-            {
-                CustomerId = customerId
-            };
-            return await Mediator.Send(getAllProjectsByCustomer);
-        }
-
+        
         [HttpGet("{id}")]
         public async Task<ActionResult<DetailedProjectDto>> GetProjectById(int id)
         {

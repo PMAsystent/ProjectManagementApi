@@ -36,12 +36,7 @@ namespace ProjectManagement.Core.UseCases.Projects.Commands.UpdateProject
                 throw new NotFoundException(nameof(Project), request.Id);
 
             }
-
-            if (!_context.Customers.Any(c => c.Id == request.CustomerId))
-            {
-                throw new NotFoundException(nameof(Customer), request.CustomerId);
-            }
-
+            
             var updatedProject = _mapper.Map(request, existingProject);
             await _context.SaveChangesAsync(cancellationToken);
 
