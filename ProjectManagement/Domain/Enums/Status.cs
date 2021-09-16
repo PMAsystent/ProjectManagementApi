@@ -9,7 +9,7 @@ namespace Domain.Enums
     public enum Status
     {
         Start,
-        InWrok,
+        InProgress,
         Stop,
         Done
     }

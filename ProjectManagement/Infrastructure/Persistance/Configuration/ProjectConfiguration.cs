@@ -17,6 +17,11 @@ namespace Infrastructure.Persistance.Configuration
                 .HasMany(p => p.Steps)
                 .WithOne(s => s.Project)
                 .HasForeignKey(s => s.ProjectId);
+            
+            builder
+                .HasMany(p => p.Assigns)
+                .WithOne(s => s.Project)
+                .HasForeignKey(s => s.ProjectId);
 
         }
     }

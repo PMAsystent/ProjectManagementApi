@@ -30,17 +30,12 @@ namespace Infrastructure.Persistance.DatabaseContext
 
 
         public DbSet<Domain.Entities.Task> Tasks { get; set; }
-        public DbSet<Step> Steps { get; set; }
+        public DbSet<Step> Steps { get; set; } 
         public DbSet<Project> Projects { get; set; }
-        public DbSet<Boss> Bosses { get; set; }
-        public DbSet<ProjectManager> ProjectManagers { get; set; }
-        public DbSet<Oversee> Oversees { get; set; }
-        public DbSet<Assign> Assigns { get; set; }
-        public DbSet<Customer> Customers { get; set; }
-        public DbSet<TaskChange> TaskChanges { get; set; }
-        public DbSet<Employee> Employees { get; set; }
-        public DbSet<Role> Roles { get; set; }
-
+        public DbSet<TaskAssigment> TaskAssigments { get; set; }
+        public DbSet<ProjectAssigment> ProjectAssigments { get; set; }
+        public DbSet<Subtask> Subtasks { get; set; }
+        
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = new())
         {
             var entries = ChangeTracker

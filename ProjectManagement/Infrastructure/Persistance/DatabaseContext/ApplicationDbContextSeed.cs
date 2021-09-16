@@ -11,7 +11,6 @@ namespace Infrastructure.Persistance.DatabaseContext
     {
         public static async Task SeedSampleDataAsync(ApplicationDbContext context)
         {
-            // Seed, if necessary
             if (!context.Projects.Any())
             {
                 context.Projects.Add(new()
@@ -43,38 +42,11 @@ namespace Infrastructure.Persistance.DatabaseContext
                                     StartDate = DateTime.UtcNow,
                                     EndDate = DateTime.UtcNow.AddDays(14),
                                     TargetDate = DateTime.UtcNow.AddDays(14),
-                                    Oversees = new List<Oversee>()
-                                    {
-                                        new ()
-                                        {
-                                            StartDate = DateTime.UtcNow,
-                                            EndDate = DateTime.UtcNow.AddDays(14),
-                                            ProjectManager = new ()
-                                            {
-                                                Name = "Jan",
-                                                Surname = "Kowalski",
-                                                PhoneNumber = "123123123",
-                                                Email = "jan@kowalski.com",
-                                                Boss = new ()
-                                                {
-                                                    Name = "Andrzej",
-                                                    Surname = "Nowak",
-                                                    PhoneNumber = "123123123",
-                                                    Email = "andrzej@nowak.com",
-                                                }
-                                            }
-                                        }
-                                    }
+                                }
                                 },
                             }
                         },
-                    },
-                    Customer = new()
-                    {
-                        Name = "Johne",
-                        Surname = "Doe",
-                    }
-                });
+                    });
                 await context.SaveChangesAsync();
             }
         }

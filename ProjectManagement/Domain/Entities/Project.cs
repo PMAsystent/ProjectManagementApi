@@ -14,8 +14,7 @@ namespace Domain.Entities
         public DateTime EndDate { get; set; }
         public bool IsActive { get; set; }
 
+        public ICollection<ProjectAssigment> Assigns { get; set; }
         public ICollection<Step> Steps { get; set; }
-        public int CustomerId { get; set; }
-        public Customer Customer { get; set; }
     }
 }
