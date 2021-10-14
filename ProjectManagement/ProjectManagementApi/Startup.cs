@@ -69,8 +69,10 @@ namespace ProjectManagementApi
                     ValidateIssuerSigningKey = true,
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(settings.AuthKey)),
                     ValidateIssuer = false,
-                    ValidateAudience = false,
-                };
+                    ValidateLifetime = true,
+                    ValidAudience = Configuration["Tokens:Audience"],
+                    ValidateAudience = true
+                    };
             });
             //Develop comments for learning purpose:
             //Origin - Out base URL or URL'a used by our WebApi, For example: https://monopolyapi.net

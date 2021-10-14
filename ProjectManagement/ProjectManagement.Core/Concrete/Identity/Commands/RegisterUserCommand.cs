@@ -2,10 +2,12 @@
 using MediatR;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Collections.Generic;
+using ProjectManagement.Core.Concrete.Identity.Dto;
 
 namespace ProjectManagement.Core.Concrete.Identity.Commands
 {
-    public class RegisterUserCommand : IRequest<bool>
+    public class RegisterUserCommand : IRequest<RegisterResponseDto>
     {
         public string UserName { get; set; }
 
@@ -14,7 +16,7 @@ namespace ProjectManagement.Core.Concrete.Identity.Commands
         public string Password { get; set; }
     }
 
-    public class RegisterUserCommandHandler : IRequestHandler<RegisterUserCommand, bool>
+    public class RegisterUserCommandHandler : IRequestHandler<RegisterUserCommand, RegisterResponseDto>
     {
         private readonly IIdentityService _identityService;
 
@@ -23,10 +25,10 @@ namespace ProjectManagement.Core.Concrete.Identity.Commands
             _identityService = identityService;
         }
 
-        public async Task<bool> Handle(RegisterUserCommand request, CancellationToken cancellationToken)
+        public async Task<RegisterResponseDto> Handle(RegisterUserCommand request, CancellationToken cancellationToken)
         {
-            var (Result, UserId) = await _identityService.RegisterUserAsync(request.Email,request.UserName, request.Password);
-            return Result.Succeeded;
+            var (Result, UserName, Email) = await _identityService.RegisterUserAsync(request.Email,request.UserName, request.Password);
+            return new RegisterResponseDto { UserName=UserName, Email=Email, Errors = new List<string>(Result.Errors) };
         }
     }
 }

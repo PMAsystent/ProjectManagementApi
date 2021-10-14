@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using ProjectManagement.Core.Base.Model;
 using ProjectManagement.Core.Concrete.Identity.Commands;
+using ProjectManagement.Core.Concrete.Identity.Dto;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,19 +14,11 @@ namespace ProjectManagementApi.Controllers
     public class AuthController : ApiControllerBase
     {
         [HttpPost("RegisterUser")]
-        public async Task<ActionResult<bool>> RegisterUser(RegisterUserCommand command)
+        public async Task<RegisterResponseDto> RegisterUser(RegisterUserCommand command)
         {
             return await Mediator.Send(command);
         }
 
-        /// <summary>
-        /// Logins users, and returns JWT token on successfull auth
-        /// </summary>
-        /// <param name="command"></param>
-        /// <returns>
-        /// 200, JWT token - if successful
-        /// 401 - if email, password pair not found
-        /// </returns>
         [HttpPost("LoginUser")]
         public async Task<ActionResult<JWTAuthorizationResult>> LoginUser(LoginUserCommand command)
         {
@@ -67,6 +60,13 @@ namespace ProjectManagementApi.Controllers
         [Authorize]
         public async Task<ActionResult<bool>> ResetPassword(ResetPasswordCommand command)
         {
+            return await Mediator.Send(command);
+        }
+
+        [HttpPatch("GetCurrentUserByToken")]
+        public async Task<ActionResult<CheckTokenResponseDto>> GetCurrentUserByToken(CheckTokenCommand command)
+        {
+            var test = HttpContext.User.Identity.IsAuthenticated;
             return await Mediator.Send(command);
         }
     }

@@ -77,7 +77,7 @@ namespace Infrastructure.Identity
         }
 
 
-        public async Task<(Result Result, string UserId)> RegisterUserAsync(string email, string userName, string password)
+        public async Task<(Result Result, string UserName, string Email)> RegisterUserAsync(string email, string userName, string password)
         {
             var user = new ApplicationUser
             {
@@ -86,8 +86,15 @@ namespace Infrastructure.Identity
             };
 
             var result = await _userManager.CreateAsync(user, password);
+            string userNameResponse = "";
+            string emailResponse = "";
+            if(result.Succeeded)
+            {
+                userNameResponse = userName;
+                emailResponse = email;
+            }
 
-            return (result.ToApplicationResult(), user.Id);
+            return (result.ToApplicationResult(), userNameResponse, emailResponse);
         }
 
         /// <summary>
@@ -101,8 +108,8 @@ namespace Infrastructure.Identity
             SignInResult result = new SignInResult();
             if (_signInManager != null)
             {
-                var test = _userManager.Users.Count();
                 var user = _userManager.Users.SingleOrDefault(u => u.Email == email);
+
                 if (user == null)
                     return JWTAuthorizationResult.Failure(new string[] { "Email not found" });
 
@@ -115,12 +122,16 @@ namespace Infrastructure.Identity
                     //TODO: take key from keystore
                     var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_settings.AuthKey));
                     var expiration = _settings.Expire; //[s]
-                    return JWTAuthorizationResult.Success(new JwtSecurityTokenHandler().WriteToken(new JwtSecurityToken(
+                    var apiresult = JWTAuthorizationResult.Success(new JwtSecurityTokenHandler().WriteToken(new JwtSecurityToken(
                         claims: GetClaimTokens(user.Id),
                         notBefore: DateTime.Now,
                         expires: DateTime.Now.Add(TimeSpan.FromSeconds(expiration)),
                         signingCredentials: new SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256)
                     )));
+
+                    await _userManager.SetAuthenticationTokenAsync(user, user.Email, "userToken", apiresult.Token);
+
+                    return apiresult;
                 }
                 else
                 {
@@ -175,6 +186,20 @@ namespace Infrastructure.Identity
             var token = await _userManager.GenerateChangeEmailTokenAsync(user, newEmail);
             var result = await _userManager.ChangeEmailAsync(user, newEmail, token);
             return result.ToApplicationResult();
+        }
+
+        public async Task<(Result Result, string UserName, string Email)> CheckTokenAsync(string token)
+        {
+            var allUsers = await _userManager.Users.ToListAsync();
+            for (int i = 0; i < allUsers.Count(); i++)
+            {
+                var userToken = await _userManager.GetAuthenticationTokenAsync(allUsers[i], allUsers[i].Email, "userToken");
+                if (token == userToken)
+                {
+                    return (Result.Success(), allUsers[i].UserName, allUsers[i].Email);
+                }
+            }
+            return (Result.Failure(new List<string> { "User not found" }), "", "");
         }
     }
 }

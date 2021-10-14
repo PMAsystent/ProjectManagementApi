@@ -14,7 +14,7 @@ namespace ProjectManagement.Core.Base.Model
         public string Token { get; set; }
 
 
-        new public static JWTAuthorizationResult Success(string token)
+        public static JWTAuthorizationResult Success(string token)
         {
             return new JWTAuthorizationResult(true, new string[] { }) { Token = token };
         }

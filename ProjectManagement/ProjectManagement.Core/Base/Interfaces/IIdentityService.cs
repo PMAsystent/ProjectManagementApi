@@ -22,8 +22,8 @@ namespace ProjectManagement.Core.Base.Interfaces
         Task<Result> ResetPasswordAsync(string userName, string email, string newPassword);
         Task<Result> ConfirmEmailAsync();
         Task<Result> ChangeEmailAsync(string userName, string email, string newEmail);
-        Task<(Result Result, string UserId)> RegisterUserAsync(string email, string userName, string password);
-
+        Task<(Result Result, string UserName, string Email)> RegisterUserAsync(string email, string userName, string password);
         Task<Result> DeleteUserAsync(string userId);
+        Task<(Result Result, string UserName, string Email)> CheckTokenAsync(string token);
     }
 }
