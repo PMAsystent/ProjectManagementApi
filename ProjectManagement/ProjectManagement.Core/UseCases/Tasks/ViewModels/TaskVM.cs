@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using ProjectManagement.Core.UseCases.Tasks.Dto;
 
 namespace ProjectManagement.Core.UseCases.Tasks.ViewModels

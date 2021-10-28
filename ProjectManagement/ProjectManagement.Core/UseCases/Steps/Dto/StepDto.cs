@@ -2,7 +2,6 @@
 using Newtonsoft.Json;
 using ProjectManagement.Core.Base.Mappings;
 using System;
-using System.Collections.Generic;
 
 namespace ProjectManagement.Core.UseCases.Steps.Dto
 {

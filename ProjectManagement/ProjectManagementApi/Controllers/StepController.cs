@@ -1,6 +1,5 @@
 ﻿using System.Threading.Tasks;
 using Domain.Entities;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using ProjectManagement.Core.UseCases.Steps.Commands.CreateStep;
@@ -12,7 +11,6 @@ using ProjectManagement.Core.UseCases.Steps.Queries.GetStepById;
 using ProjectManagement.Core.UseCases.Steps.Queries.GetStepByProjectId;
 using ProjectManagement.Core.UseCases.Steps.Queries.GetSteps;
 using ProjectManagement.Core.UseCases.Steps.ViewModels;
-using Task = Domain.Entities.Task;
 
 
 namespace ProjectManagementApi.Controllers

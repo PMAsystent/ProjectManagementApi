@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -9,7 +6,6 @@ using AutoMapper.QueryableExtensions;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using ProjectManagement.Core.Base.Interfaces;
-using ProjectManagement.Core.UseCases.Projects.Queries.GetProjects.Dto;
 using ProjectManagement.Core.UseCases.Steps.Dto;
 using ProjectManagement.Core.UseCases.Steps.ViewModels;
 

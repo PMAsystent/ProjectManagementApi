@@ -2,6 +2,7 @@
 using MediatR;
 using System.Threading;
 using System.Threading.Tasks;
+using Domain.Events;
 
 namespace ProjectManagement.Core.Concrete.Identity.Commands
 {
@@ -17,16 +18,22 @@ namespace ProjectManagement.Core.Concrete.Identity.Commands
     public class RegisterUserCommandHandler : IRequestHandler<RegisterUserCommand, bool>
     {
         private readonly IIdentityService _identityService;
+        private readonly IDomainEventService _domainEventService;
 
-        public RegisterUserCommandHandler (IIdentityService identityService)
+        public RegisterUserCommandHandler(IIdentityService identityService, IDomainEventService domainEventService)
         {
             _identityService = identityService;
+            _domainEventService = domainEventService;
         }
 
         public async Task<bool> Handle(RegisterUserCommand request, CancellationToken cancellationToken)
         {
-            var (Result, UserId) = await _identityService.RegisterUserAsync(request.Email,request.UserName, request.Password);
-            return Result.Succeeded;
+            var (result, userId) =
+                await _identityService.RegisterUserAsync(request.Email, request.UserName, request.Password);
+
+            await _domainEventService.Publish(new UserRegisteredEvent(userId));
+
+            return result.Succeeded;
         }
     }
 }

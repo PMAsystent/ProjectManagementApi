@@ -1,6 +1,5 @@
 ﻿using Domain.Base;
 using Domain.Entities;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Infrastructure.Identity;
 using ProjectManagement.Core.Base.Interfaces;
@@ -18,43 +17,42 @@ namespace Infrastructure.Persistance.DatabaseContext
     public class ApplicationDbContext : ApiAuthorizationDbContext<ApplicationUser>, IApplicationDbContext
     {
         private readonly IDomainEventService _domainEventService;
-        private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly ICurrentUserService _currentUserService;
 
         public ApplicationDbContext(
             DbContextOptions options,
             IOptions<OperationalStoreOptions> operationalStoreOptions,
-            IDomainEventService domainEventService) : base(options, operationalStoreOptions)
+            IDomainEventService domainEventService,
+            ICurrentUserService currentUserService) : base(options, operationalStoreOptions)
         {
             _domainEventService = domainEventService;
+            _currentUserService = currentUserService;
         }
 
 
+        public DbSet<Project> Projects { get; set; }
         public DbSet<Domain.Entities.Task> Tasks { get; set; }
         public DbSet<Step> Steps { get; set; }
-        public DbSet<Project> Projects { get; set; }
-        public DbSet<Boss> Bosses { get; set; }
-        public DbSet<ProjectManager> ProjectManagers { get; set; }
-        public DbSet<Oversee> Oversees { get; set; }
-        public DbSet<Assign> Assigns { get; set; }
-        public DbSet<Customer> Customers { get; set; }
-        public DbSet<TaskChange> TaskChanges { get; set; }
-        public DbSet<Employee> Employees { get; set; }
-        public DbSet<Role> Roles { get; set; }
+        public DbSet<Subtask> Subtasks { get; set; }
+
+        public DbSet<TaskAssignment> TaskAssignments { get; set; }
+        public DbSet<ProjectAssignment> ProjectAssignments { get; set; }
+
+        public DbSet<User> Users { get; set; }
 
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = new())
         {
             var entries = ChangeTracker
                 .Entries()
-                .Where(e =>
-                    e.Entity is AuditableEntity && (e.State == EntityState.Added || e.State == EntityState.Modified));
+                .Where(e => e.Entity is AuditableEntity &&
+                            (e.State == EntityState.Added || e.State == EntityState.Modified));
 
             foreach (var entityEntry in entries)
             {
                 if (entityEntry.State == EntityState.Added)
                 {
                     ((AuditableEntity)entityEntry.Entity).Created = DateTime.UtcNow;
-                    ((AuditableEntity)entityEntry.Entity).CreatedBy =
-                        _httpContextAccessor?.HttpContext?.User?.Identity?.Name ?? "SuperAdmin";
+                    ((AuditableEntity)entityEntry.Entity).CreatedBy = _currentUserService.UserId;
                 }
                 else
                 {
@@ -67,18 +65,17 @@ namespace Infrastructure.Persistance.DatabaseContext
                 }
 
                 ((AuditableEntity)entityEntry.Entity).LastModified = DateTime.UtcNow;
-                ((AuditableEntity)entityEntry.Entity).LastModifiedBy =
-                    _httpContextAccessor?.HttpContext?.User?.Identity?.Name ?? "SuperAdmin";
+                ((AuditableEntity)entityEntry.Entity).LastModifiedBy = _currentUserService.UserId;
             }
 
             return await base.SaveChangesAsync(cancellationToken);
         }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
 
             base.OnModelCreating(builder);
-
         }
     }
 }
