@@ -51,14 +51,16 @@ namespace Infrastructure.Persistance.DatabaseContext
                 if (entityEntry.State == EntityState.Added)
                 {
                     ((AuditableEntity)entityEntry.Entity).Created = DateTime.UtcNow;
+                    // TODO: Insert ID instead of name
                     ((AuditableEntity)entityEntry.Entity).CreatedBy =
-                        _httpContextAccessor?.HttpContext?.User?.Identity?.Name ?? "SuperAdmin";
+                        _httpContextAccessor?.HttpContext?.User?.Identity?.Name ?? "default";
                 }
                 else
                 {
                     Entry((AuditableEntity)entityEntry.Entity)
                         .Property(p => p.Created)
                         .IsModified = false;
+                    // TODO: Insert ID instead of name
                     Entry((AuditableEntity)entityEntry.Entity)
                         .Property(p => p.CreatedBy)
                         .IsModified = false;
@@ -66,7 +68,7 @@ namespace Infrastructure.Persistance.DatabaseContext
 
                 ((AuditableEntity)entityEntry.Entity).LastModified = DateTime.UtcNow;
                 ((AuditableEntity)entityEntry.Entity).LastModifiedBy =
-                    _httpContextAccessor?.HttpContext?.User?.Identity?.Name ?? "SuperAdmin";
+                    _httpContextAccessor?.HttpContext?.User?.Identity?.Name ?? "default";
             }
 
             return await base.SaveChangesAsync(cancellationToken);
