@@ -2,9 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using ProjectManagement.Core.Base.Model;
 using ProjectManagement.Core.Concrete.Identity.Commands;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace ProjectManagementApi.Controllers

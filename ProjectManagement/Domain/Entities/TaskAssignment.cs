@@ -1,5 +1,4 @@
 ﻿using Domain.Base;
-using System;
 
 namespace Domain.Entities
 {

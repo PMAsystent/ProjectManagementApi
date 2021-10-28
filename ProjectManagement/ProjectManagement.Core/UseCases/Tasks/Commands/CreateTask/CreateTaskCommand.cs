@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using AutoMapper;
 using Domain.Entities;
 using Domain.Enums;
 using MediatR;
-using Newtonsoft.Json;
 using ProjectManagement.Core.Base.Mappings;
-using ProjectManagement.Core.UseCases.Tasks.Dto;
 
 namespace ProjectManagement.Core.UseCases.Tasks.Commands.CreateTask
 {

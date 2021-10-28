@@ -3,7 +3,6 @@ using Domain.Entities;
 using Domain.Enums;
 using MediatR;
 using ProjectManagement.Core.Base.Mappings;
-using ProjectManagement.Core.UseCases.Tasks.Dto;
 
 namespace ProjectManagement.Core.UseCases.Tasks.Commands.UpdateTask
 {

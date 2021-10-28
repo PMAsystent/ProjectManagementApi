@@ -1,4 +1,3 @@
-using System;
 using Domain.Base;
 
 namespace Domain.Entities

@@ -1,6 +1,5 @@
 using System;
 using FluentValidation;
-using ProjectManagement.Core.UseCases.Steps.Commands.CreateStep;
 
 namespace ProjectManagement.Core.UseCases.Steps.Commands.UpdateStep
 {

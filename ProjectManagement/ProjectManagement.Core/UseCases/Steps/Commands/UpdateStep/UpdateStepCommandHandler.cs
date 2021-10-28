@@ -5,7 +5,6 @@ using Domain.Entities;
 using MediatR;
 using ProjectManagement.Core.Base.Exceptions;
 using ProjectManagement.Core.Base.Interfaces;
-using ProjectManagement.Core.Base.Mappings;
 
 namespace ProjectManagement.Core.UseCases.Steps.Commands.UpdateStep
 {

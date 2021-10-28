@@ -1,10 +1,8 @@
 ﻿using AutoMapper;
 using Domain.Entities;
 using MediatR;
-using ProjectManagement.Core.Base.Exceptions;
 using ProjectManagement.Core.Base.Interfaces;
 using ProjectManagement.Core.UseCases.Projects.Dto;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 

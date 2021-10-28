@@ -1,5 +1,4 @@
 ﻿using System;
-using AutoMapper;
 using Domain.Entities;
 using MediatR;
 using ProjectManagement.Core.Base.Mappings;

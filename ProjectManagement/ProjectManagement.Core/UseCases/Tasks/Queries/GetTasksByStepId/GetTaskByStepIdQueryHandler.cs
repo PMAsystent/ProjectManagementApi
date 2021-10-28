@@ -7,7 +7,6 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using ProjectManagement.Core.Base.Interfaces;
 using ProjectManagement.Core.UseCases.Tasks.Dto;
-using ProjectManagement.Core.UseCases.Tasks.Queries.GetTasks;
 using ProjectManagement.Core.UseCases.Tasks.ViewModels;
 
 namespace ProjectManagement.Core.UseCases.Tasks.Queries.GetTasksByStepId
