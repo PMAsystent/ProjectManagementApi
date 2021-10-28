@@ -3,6 +3,7 @@ using ProjectManagement.Core.Base.Interfaces;
 using MediatR;
 using System.Threading;
 using System.Threading.Tasks;
+using Domain.Events;
 using ProjectManagement.Core.Concrete.Identity.Events;
 
 namespace ProjectManagement.Core.Concrete.Identity.Commands

@@ -1,23 +1,12 @@
-﻿using System;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
-using Domain.Base;
+using Domain.Events;
 using MediatR;
 using ProjectManagement.Core.Base.Model;
 using ProjectManagement.Core.Concrete.Identity.Commands;
 
 namespace ProjectManagement.Core.Concrete.Identity.Events
 {
-    public class UserRegisteredEvent : DomainEvent
-    {
-        public string ApplicationUserId { get; }
-
-        public UserRegisteredEvent(string applicationUserId)
-        {
-            ApplicationUserId = applicationUserId;
-        }
-    }
-
     public class UserRegisteredEventHandler : INotificationHandler<DomainEventNotification<UserRegisteredEvent>>
     {
         private readonly IMediator _mediator;
