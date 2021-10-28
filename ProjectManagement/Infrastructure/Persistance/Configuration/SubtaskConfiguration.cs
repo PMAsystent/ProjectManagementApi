@@ -8,10 +8,6 @@ namespace Infrastructure.Persistance.Configuration
     {
         public void Configure(EntityTypeBuilder<Subtask> builder)
         {
-            builder.Property(t => t.Name)
-                .HasMaxLength(30);
-            builder.Property(t => t.Description)
-                .HasMaxLength(100);
         }
     }
 }

@@ -29,13 +29,16 @@ namespace Infrastructure.Persistance.DatabaseContext
         }
 
 
-        public DbSet<Domain.Entities.Task> Tasks { get; set; }
-        public DbSet<Step> Steps { get; set; } 
         public DbSet<Project> Projects { get; set; }
-        public DbSet<TaskAssigment> TaskAssigments { get; set; }
-        public DbSet<ProjectAssigment> ProjectAssigments { get; set; }
+        public DbSet<Domain.Entities.Task> Tasks { get; set; }
+        public DbSet<Step> Steps { get; set; }
         public DbSet<Subtask> Subtasks { get; set; }
-        
+
+        public DbSet<TaskAssignment> TaskAssignments { get; set; }
+        public DbSet<ProjectAssignment> ProjectAssignments { get; set; }
+
+        public DbSet<User> Users { get; set; }
+
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = new())
         {
             var entries = ChangeTracker
@@ -68,12 +71,12 @@ namespace Infrastructure.Persistance.DatabaseContext
 
             return await base.SaveChangesAsync(cancellationToken);
         }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
 
             base.OnModelCreating(builder);
-
         }
     }
 }

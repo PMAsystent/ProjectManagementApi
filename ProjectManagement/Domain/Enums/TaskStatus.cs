@@ -6,11 +6,10 @@ using System.Threading.Tasks;
 
 namespace Domain.Enums
 {
-    public enum Priority
+    public enum TaskStatus
     {
-        Level0,
-        Level1,
-        Level2,
-        LevelMax
+        ToDo,
+        InProgress,
+        Done
     }
 }

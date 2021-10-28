@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Infrastructure.Persistance.Configuration
 {
-    public class ProjectAssigmentConfiguration : IEntityTypeConfiguration<ProjectAssigment>
+    public class ProjectAssigmentConfiguration : IEntityTypeConfiguration<ProjectAssignment>
     {
-        public void Configure(EntityTypeBuilder<ProjectAssigment> builder)
+        public void Configure(EntityTypeBuilder<ProjectAssignment> builder)
         {
         }
     }

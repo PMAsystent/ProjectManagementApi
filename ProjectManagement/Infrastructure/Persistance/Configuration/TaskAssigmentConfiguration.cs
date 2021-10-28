@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Infrastructure.Persistance.Configuration
 {
-    public class TaskAssigmentConfiguration : IEntityTypeConfiguration<TaskAssigment>
+    public class TaskAssigmentConfiguration : IEntityTypeConfiguration<TaskAssignment>
     {
-        public void Configure(EntityTypeBuilder<TaskAssigment> builder)
+        public void Configure(EntityTypeBuilder<TaskAssignment> builder)
         {
         }
     }
