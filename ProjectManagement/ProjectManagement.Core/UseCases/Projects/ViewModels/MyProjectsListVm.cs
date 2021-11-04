@@ -3,9 +3,9 @@ using System.Collections.Generic;
 
 namespace ProjectManagement.Core.UseCases.Projects.ViewModels
 {
-    public class ProjectVm
+    public class MyProjectsListVm
     {
-        public IList<ProjectDto> ProjectList { get; set; }
+        public ICollection<ProjectDto> ProjectsList { get; set; }
         public int Count { get; set; }
     }
 }
