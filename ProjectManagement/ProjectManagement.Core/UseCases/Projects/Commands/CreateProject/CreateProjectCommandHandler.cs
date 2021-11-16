@@ -13,7 +13,7 @@ using Task = System.Threading.Tasks.Task;
 
 namespace ProjectManagement.Core.UseCases.Projects.Commands.CreateProject
 {
-    public class CreateProjectCommandHandler : IRequestHandler<CreateProjectCommand>
+    public class CreateProjectCommandHandler : IRequestHandler<CreateProjectCommand, DetailedProjectDto>
     {
         private readonly IApplicationDbContext _context;
         private readonly IMapper _mapper;
@@ -24,7 +24,7 @@ namespace ProjectManagement.Core.UseCases.Projects.Commands.CreateProject
             _mapper = mapper;
         }
 
-        public async Task<Unit> Handle(CreateProjectCommand request, CancellationToken cancellationToken)
+        public async Task<DetailedProjectDto> Handle(CreateProjectCommand request, CancellationToken cancellationToken)
         {
             var project = _mapper.Map<Project>(request);
             project.IsActive = true;
@@ -42,7 +42,7 @@ namespace ProjectManagement.Core.UseCases.Projects.Commands.CreateProject
             }, cancellationToken);
             await _context.SaveChangesAsync(cancellationToken);
 
-            return Unit.Value;
+            return await GetDetailedProjectDto(project, projectAssignments);
         }
 
         private async Task<List<ProjectAssignment>> GetProjectAssignments(string currentUserId, int projectId,
@@ -71,6 +71,50 @@ namespace ProjectManagement.Core.UseCases.Projects.Commands.CreateProject
                 }));
 
             return projectAssignments;
+        }
+
+        private async Task<List<ProjectAssignedUserDto>> GetProjectAssignedUsers(
+            IEnumerable<ProjectAssignment> projectAssignments)
+        {
+            var assignedUsers =
+                await _context.Users
+                    .Where(u => projectAssignments
+                        .Select(a => a.UserId)
+                        .Contains(u.Id))
+                    .ToListAsync();
+
+            return (
+                from projectAssignment in projectAssignments
+                let user = assignedUsers.SingleOrDefault(u => u.Id == projectAssignment.UserId)
+                where user != null
+                select new ProjectAssignedUserDto()
+                {
+                    UserId = user.Id,
+                    UserName = "", //TODO: Konrad podstaw tutaj user.UserName :*
+                    MemberType = projectAssignment.MemberType
+                }).ToList();
+        }
+
+        private async Task<DetailedProjectDto> GetDetailedProjectDto(Project project,
+            List<ProjectAssignment> projectAssignments)
+        {
+            var projectToReturn = _mapper.Map<DetailedProjectDto>(project);
+            projectToReturn.ProjectTasks = new List<ProjectTaskDto>();
+            projectToReturn.ProjectAssignedUsers = new List<ProjectAssignedUserDto>();
+
+            var assignedUsers = await GetProjectAssignedUsers(projectAssignments);
+
+            foreach (var assignment in projectAssignments)
+            {
+                projectToReturn.ProjectAssignedUsers.Add(new()
+                {
+                    UserId = assignment.UserId,
+                    UserName = assignedUsers.SingleOrDefault(u => u.UserId == assignment.UserId)?.UserName,
+                    MemberType = assignment.MemberType
+                });
+            }
+
+            return projectToReturn;
         }
     }
 }

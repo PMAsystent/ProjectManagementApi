@@ -7,7 +7,7 @@ using ProjectManagement.Core.UseCases.Projects.Dto;
 
 namespace ProjectManagement.Core.UseCases.Projects.Commands.CreateProject
 {
-    public class CreateProjectCommand : IRequest, IMapFrom<Project>
+    public class CreateProjectCommand : IRequest<DetailedProjectDto>, IMapFrom<Project>
     {
         public string Name { get; set; }
         public string Description { get; set; }

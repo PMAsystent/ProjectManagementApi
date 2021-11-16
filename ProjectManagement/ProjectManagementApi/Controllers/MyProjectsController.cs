@@ -61,7 +61,6 @@ namespace ProjectManagementApi.Controllers
         {
             try
             {
-                //TODO: Add project in response?
                 var command = new CreateProjectCommand()
                 {
                     Name = createProjectRequest.Name,

@@ -46,10 +46,19 @@ namespace ProjectManagement.Core.UseCases.Projects.Queries.GetProjectWithDetails
                     .ProjectTo<ProjectTaskDto>(_mapper.ConfigurationProvider)
                     .ToListAsync(cancellationToken);
             projectToReturn.ProjectAssignedUsers = await GetProjectAssignedUsers(projectToReturn.Id);
-            
-            var stepsInProject = 
+
+            var stepsInProject =
                 await _context.Steps.Where(s => s.ProjectId == projectToReturn.Id).ToListAsync(cancellationToken);
-            projectToReturn.ProgressPercentage = _projectsPercentageService.GetProgressPercentageForProject(stepsInProject);
+
+            projectToReturn.ProjectSteps = stepsInProject.Select(step => new ProjectStepDto()
+            {
+                Id = step.Id,
+                Name = step.Name,
+                ProgressPercentage = _projectsPercentageService.GetProgressPercentageForProject(new List<Step> { step })
+            }).ToList();
+
+            projectToReturn.ProgressPercentage =
+                _projectsPercentageService.GetProgressPercentageForProject(stepsInProject);
 
             return projectToReturn;
         }
@@ -64,7 +73,7 @@ namespace ProjectManagement.Core.UseCases.Projects.Queries.GetProjectWithDetails
             var assignedUsers =
                 await _context.Users
                     .Where(u => projectAssignments
-                        .Select(a => a.Id)
+                        .Select(a => a.UserId)
                         .Contains(u.Id))
                     .ToListAsync();
 
@@ -75,7 +84,7 @@ namespace ProjectManagement.Core.UseCases.Projects.Queries.GetProjectWithDetails
                 select new ProjectAssignedUserDto()
                 {
                     UserId = user.Id,
-                    UserName = "",//TODO: Konrad podstaw tutaj user.UserName :*
+                    UserName = "", //TODO: Konrad podstaw tutaj user.UserName :*
                     MemberType = projectAssignment.MemberType
                 }).ToList();
         }
