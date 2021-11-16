@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using IdentityServer4.EntityFramework.Options;
 using Microsoft.AspNetCore.ApiAuthorization.IdentityServer;
+using Task = System.Threading.Tasks.Task;
 
 namespace Infrastructure.Persistance.DatabaseContext
 {
