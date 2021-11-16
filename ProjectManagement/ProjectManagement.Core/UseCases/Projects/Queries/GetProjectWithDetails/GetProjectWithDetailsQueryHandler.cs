@@ -84,9 +84,9 @@ namespace ProjectManagement.Core.UseCases.Projects.Queries.GetProjectWithDetails
                 select new ProjectAssignedUserDto()
                 {
                     UserId = user.Id,
-                    UserName = "", //TODO: Konrad podstaw tutaj user.UserName :*
+                    UserName = user.UserName,
                     MemberType = projectAssignment.MemberType
                 }).ToList();
         }
     }
-}
+} 

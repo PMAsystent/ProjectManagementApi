@@ -31,7 +31,7 @@ namespace ProjectManagement.Core.Concrete.Identity.Commands
             var (result, userId) =
                 await _identityService.RegisterUserAsync(request.Email, request.UserName, request.Password);
 
-            await _domainEventService.Publish(new UserRegisteredEvent(userId));
+            await _domainEventService.Publish(new UserRegisteredEvent(userId, request.UserName, request.Email));
 
             return result.Succeeded;
         }
