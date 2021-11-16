@@ -21,5 +21,7 @@ namespace ProjectManagement.Core.Base.Interfaces
         Task<(Result Result, string UserId)> RegisterUserAsync(string email, string userName, string password);
 
         Task<Result> DeleteUserAsync(string userId);
+
+        Task<bool> CheckIfUserWithEmailExists(string email);
     }
 }

@@ -1,21 +1,22 @@
-﻿using Domain.Entities;
-using Newtonsoft.Json;
+﻿using System;
+using Domain.Entities;
 using ProjectManagement.Core.Base.Mappings;
-using System;
 
 namespace ProjectManagement.Core.UseCases.Projects.Dto
 {
-    public class ProjectDto : IMapFrom<Project>
+    public class ProjectTaskDto : IMapFrom<Task>
     {
         public int Id { get; set; }
         public string Name { get; set; }
+        public string Priority { get; set; }
+        public string TaskStatus { get; set; }
         public DateTime DueDate { get; set; }
-        public bool IsActive { get; set; }
         public int ProgressPercentage { get; set; }
+        public int StepId { get; set; }
 
         public static void Mapping(MappingProfile profile)
         {
-            profile.CreateMap<Project, ProjectDto>().ReverseMap();
+            profile.CreateMap<Task, ProjectTaskDto>().ReverseMap();
         }
     }
 }

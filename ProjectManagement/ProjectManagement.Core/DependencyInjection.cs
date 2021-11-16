@@ -4,6 +4,7 @@ using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using ProjectManagement.Core.Base.Behaviours;
 using System.Reflection;
+using ProjectManagement.Core.UseCases.Projects.Utils;
 
 namespace ProjectManagement.Core
 {
@@ -18,6 +19,8 @@ namespace ProjectManagement.Core
             //services.AddTransient(typeof(IPipelineBehavior<,>), typeof(AuthorizationBehaviour<,>));
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(PerformanceBehaviour<,>));
+
+            services.AddTransient<IProjectsPercentageService, ProjectsPercentageService>();
 
             return services;
         }
