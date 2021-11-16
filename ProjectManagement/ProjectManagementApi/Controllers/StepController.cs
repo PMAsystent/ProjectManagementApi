@@ -17,72 +17,72 @@ namespace ProjectManagementApi.Controllers
 {
     public class StepController : ApiControllerBase
     {
-        [HttpGet]
-        public async Task<ActionResult<StepVm>> GetAllSteps()
-        {
-            return await Mediator.Send(new GetStepsQuery());
-        }
-
-        [HttpGet("{id}")]
-        public async Task<ActionResult<StepDto>> GetStepById(int id)
-        {
-            var getStepByIdQuery = new GetStepByIdQuery()
-            {
-                StepId = id
-            };
-
-            return await Mediator.Send(getStepByIdQuery);
-        }
-
-        [HttpGet("Project/{projectId}")]
-        public async Task<ActionResult<StepVm>> GetStepsByProjectId(int projectId)
-        {
-            var getStepByProjectIdQuery = new GetStepsByProjectIdQuery()
-            {
-                ProjectId = projectId
-            };
-
-            return await Mediator.Send(getStepByProjectIdQuery);
-        }
-        
-        [HttpPost]
-        public async Task<ActionResult<Step>> AddStep([FromBody] CreateStepCommand createStepCommand)
-        {
-            var result = await Mediator.Send(createStepCommand);
-            return Ok(result.Step);
-        }
-
-        [HttpPut(Name = "UpdateStep")]
-        public async Task<ActionResult> Update([FromBody] UpdateStepCommand updateStepCommand)
-        {
-            var result = await Mediator.Send(updateStepCommand);
-            return Ok(result.Step);
-        }
-
-        [HttpPatch("{id}")]
-        public async Task<ActionResult> PatchStep(int id, [FromBody] JsonPatchDocument<StepDto> patchDocument)
-        {
-            var patchStepCommand = new PatchStepCommand()
-            {
-                StepId = id,
-                PatchDocument = patchDocument,
-                ModelStateDictionary = ModelState
-            };
-
-            var result = await Mediator.Send(patchStepCommand);
-            return Ok(result);
-        }
-        
-        [HttpDelete("{id}")]
-        public async Task<ActionResult> Delete(int id)
-        {
-            var deleteStepCommand = new DeleteStepCommand()
-            {
-                StepId = id
-            };
-            await Mediator.Send(deleteStepCommand);
-
-            return NoContent();
-        }
+        // [HttpGet]
+        // public async Task<ActionResult<StepVm>> GetAllSteps()
+        // {
+        //     return await Mediator.Send(new GetStepsQuery());
+        // }
+        //
+        // [HttpGet("{id}")]
+        // public async Task<ActionResult<StepDto>> GetStepById(int id)
+        // {
+        //     var getStepByIdQuery = new GetStepByIdQuery()
+        //     {
+        //         StepId = id
+        //     };
+        //
+        //     return await Mediator.Send(getStepByIdQuery);
+        // }
+        //
+        // [HttpGet("Project/{projectId}")]
+        // public async Task<ActionResult<StepVm>> GetStepsByProjectId(int projectId)
+        // {
+        //     var getStepByProjectIdQuery = new GetStepsByProjectIdQuery()
+        //     {
+        //         ProjectId = projectId
+        //     };
+        //
+        //     return await Mediator.Send(getStepByProjectIdQuery);
+        // }
+        //
+        // [HttpPost]
+        // public async Task<ActionResult<Step>> AddStep([FromBody] CreateStepCommand createStepCommand)
+        // {
+        //     var result = await Mediator.Send(createStepCommand);
+        //     return Ok(result.Step);
+        // }
+        //
+        // [HttpPut(Name = "UpdateStep")]
+        // public async Task<ActionResult> Update([FromBody] UpdateStepCommand updateStepCommand)
+        // {
+        //     var result = await Mediator.Send(updateStepCommand);
+        //     return Ok(result.Step);
+        // }
+        //
+        // [HttpPatch("{id}")]
+        // public async Task<ActionResult> PatchStep(int id, [FromBody] JsonPatchDocument<StepDto> patchDocument)
+        // {
+        //     var patchStepCommand = new PatchStepCommand()
+        //     {
+        //         StepId = id,
+        //         PatchDocument = patchDocument,
+        //         ModelStateDictionary = ModelState
+        //     };
+        //
+        //     var result = await Mediator.Send(patchStepCommand);
+        //     return Ok(result);
+        // }
+        //
+        // [HttpDelete("{id}")]
+        // public async Task<ActionResult> Delete(int id)
+        // {
+        //     var deleteStepCommand = new DeleteStepCommand()
+        //     {
+        //         StepId = id
+        //     };
+        //     await Mediator.Send(deleteStepCommand);
+        //
+        //     return NoContent();
+        // }
     }
 }

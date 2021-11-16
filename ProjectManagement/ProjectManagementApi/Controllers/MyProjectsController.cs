@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.JsonPatch;
+﻿using System;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using ProjectManagement.Core.UseCases.Projects.Commands.CreateProject;
 using ProjectManagement.Core.UseCases.Projects.Commands.DeleteProject;
@@ -6,10 +7,10 @@ using ProjectManagement.Core.UseCases.Projects.Commands.PatchProject;
 using ProjectManagement.Core.UseCases.Projects.Commands.UpdateProject;
 using ProjectManagement.Core.UseCases.Projects.Dto;
 using ProjectManagement.Core.UseCases.Projects.Queries.GetProjectById;
-using ProjectManagement.Core.UseCases.Projects.Queries.GetProjects;
 using ProjectManagement.Core.UseCases.Projects.ViewModels;
 using System.Threading.Tasks;
 using ProjectManagement.Core.Base.Interfaces;
+using ProjectManagement.Core.Requests;
 using ProjectManagement.Core.UseCases.Projects.Queries.GetMyProjectsList;
 
 namespace ProjectManagementApi.Controllers
@@ -26,31 +27,83 @@ namespace ProjectManagementApi.Controllers
         [HttpGet]
         public async Task<ActionResult<MyProjectsListVm>> GetMyProjects()
         {
-            var query = new GetMyProjectsQuery()
+            try
             {
-                CurrentUserGuid = _currentUserService.UserId
-            };
-            var result = await Mediator.Send(query);
-            return Ok(result);
+                var query = new GetMyProjectsQuery()
+                {
+                    CurrentUserGuid = _currentUserService.UserId
+                };
+
+                var result = await Mediator.Send(query);
+                return Ok(result);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(500, e.Message);
+            }
         }
-        //
-        // [HttpGet("{id}")]
-        // public async Task<ActionResult<DetailedProjectDto>> GetProjectById(int id)
-        // {
-        //     var getProjectByIdQuery = new GetProjectByIdQuery()
-        //     {
-        //         ProjectId = id
-        //     };
-        //
-        //     return await Mediator.Send(getProjectByIdQuery);
-        // }
-        //
-        // [HttpPost]
-        // public async Task<ActionResult<ProjectDto>> AddProject([FromBody] CreateProjectCommand createPostCommand)
-        // {
-        //     var result = await Mediator.Send(createPostCommand);
-        //     return Ok(result.DetailedProjectDto);
-        // }
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<DetailedProjectDto>> GetProjectWithDetails(int id)
+        {
+            try
+            {
+                var getProjectByIdQuery = new GetProjectWithDetailsQuery()
+                {
+                    ProjectId = id
+                };
+                var result = await Mediator.Send(getProjectByIdQuery);
+                return Ok(result);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(500, e.Message);
+            }
+        }
+
+
+        [HttpPost]
+        public async Task<ActionResult> AddProject([FromBody] CreateProjectRequest createProjectRequest)
+        {
+            try
+            {
+                //TODO: Add project in response?
+                var command = new CreateProjectCommand()
+                {
+                    Name = createProjectRequest.Name,
+                    Description = createProjectRequest.Description,
+                    AssignedEmails = createProjectRequest.AssignedEmails,
+                    CurrentUserId = _currentUserService.UserId
+                };
+
+                await Mediator.Send(command);
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> Delete(int id)
+        {
+            try
+            {
+                var deleteProjectCommand = new DeleteProjectCommand()
+                {
+                    ProjectId = id
+                };
+                await Mediator.Send(deleteProjectCommand);
+
+                return NoContent();
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
         //
         // [HttpPut]
         // public async Task<ActionResult<DetailedProjectDto>> UpdateProject([FromBody] UpdateProjectCommand updateProjectCommand)
@@ -72,16 +125,5 @@ namespace ProjectManagementApi.Controllers
         //     return Ok(result);
         // }
         //
-        // [HttpDelete("{id}")]
-        // public async Task<ActionResult> Delete(int id)
-        // {
-        //     var deleteProjectCommand = new DeleteProjectCommand()
-        //     {
-        //         ProjectId = id
-        //     };
-        //     await Mediator.Send(deleteProjectCommand);
-        //
-        //     return NoContent();
-        // }
     }
 }

@@ -1,14 +1,17 @@
-﻿using AutoMapper;
+﻿using System.Collections.Generic;
+using AutoMapper;
 using Domain.Entities;
 using MediatR;
 using ProjectManagement.Core.Base.Interfaces;
 using ProjectManagement.Core.UseCases.Projects.Dto;
 using System.Threading;
 using System.Threading.Tasks;
+using Domain.Enums;
+using Microsoft.EntityFrameworkCore;
 
 namespace ProjectManagement.Core.UseCases.Projects.Commands.CreateProject
 {
-    public class CreateProjectCommandHandler : IRequestHandler<CreateProjectCommand, CreateProjectCommandResponse>
+    public class CreateProjectCommandHandler : IRequestHandler<CreateProjectCommand>
     {
         private readonly IApplicationDbContext _context;
         private readonly IMapper _mapper;
@@ -19,24 +22,40 @@ namespace ProjectManagement.Core.UseCases.Projects.Commands.CreateProject
             _mapper = mapper;
         }
 
-        public async Task<CreateProjectCommandResponse> Handle(CreateProjectCommand request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(CreateProjectCommand request, CancellationToken cancellationToken)
         {
-            var validator = new CreateProjectCommandValidator();
-            var validatorResult = await validator.ValidateAsync(request, cancellationToken);
-
-            if (!validatorResult.IsValid)
-            {
-                return new CreateProjectCommandResponse(validatorResult);
-            }
-
             var project = _mapper.Map<Project>(request);
+            project.IsActive = true;
 
             await _context.Projects.AddAsync(project, cancellationToken);
             await _context.SaveChangesAsync(cancellationToken);
 
-            var detailedProjectDto = _mapper.Map<DetailedProjectDto>(project);
+            var currentUser = await _context.Users
+                .SingleOrDefaultAsync(u => u.ApplicationUserId == request.CurrentUserId,
+                    cancellationToken);
+            
+            // TODO: Move to project created event?
+            var projectAssignments = new List<ProjectAssignment>
+            {
+                new()
+                {
+                    UserId = currentUser.Id,
+                    ProjectId = project.Id,
+                    MemberType = ProjectMemberType.Manager.ToString(),
+                    ProjectRole = ProjectMemberType.Manager.ToString()
+                }
+            };
 
-            return new(detailedProjectDto);
+            // TODO: Move to project created event?
+            foreach (var email in request.AssignedEmails)
+            {
+                //TODO: 
+            }
+
+            await _context.ProjectAssignments.AddRangeAsync(projectAssignments);
+            await _context.SaveChangesAsync(cancellationToken);
+
+            return Unit.Value;
         }
     }
 }
