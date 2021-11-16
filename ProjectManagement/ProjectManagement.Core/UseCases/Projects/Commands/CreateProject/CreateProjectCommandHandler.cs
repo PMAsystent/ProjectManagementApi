@@ -1,13 +1,15 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using AutoMapper;
 using Domain.Entities;
 using MediatR;
 using ProjectManagement.Core.Base.Interfaces;
-using ProjectManagement.Core.UseCases.Projects.Dto;
 using System.Threading;
 using System.Threading.Tasks;
 using Domain.Enums;
 using Microsoft.EntityFrameworkCore;
+using ProjectManagement.Core.UseCases.Projects.Dto;
+using Task = System.Threading.Tasks.Task;
 
 namespace ProjectManagement.Core.UseCases.Projects.Commands.CreateProject
 {
@@ -30,32 +32,45 @@ namespace ProjectManagement.Core.UseCases.Projects.Commands.CreateProject
             await _context.Projects.AddAsync(project, cancellationToken);
             await _context.SaveChangesAsync(cancellationToken);
 
-            var currentUser = await _context.Users
-                .SingleOrDefaultAsync(u => u.ApplicationUserId == request.CurrentUserId,
-                    cancellationToken);
-            
-            // TODO: Move to project created event?
+            var projectAssignments =
+                await GetProjectAssignments(request.CurrentUserId, project.Id, request.AssignedUsersIds);
+            await _context.ProjectAssignments.AddRangeAsync(projectAssignments, cancellationToken);
+            await _context.Steps.AddAsync(new()
+            {
+                Name = "First step",
+                ProjectId = project.Id
+            }, cancellationToken);
+            await _context.SaveChangesAsync(cancellationToken);
+
+            return Unit.Value;
+        }
+
+        private async Task<List<ProjectAssignment>> GetProjectAssignments(string currentUserId, int projectId,
+            IEnumerable<CreateProjectAssignmentsDto> assignedUsers)
+        {
+            var currentUser = await _context.Users.SingleOrDefaultAsync(u => u.ApplicationUserId == currentUserId);
+
             var projectAssignments = new List<ProjectAssignment>
             {
                 new()
                 {
                     UserId = currentUser.Id,
-                    ProjectId = project.Id,
+                    ProjectId = projectId,
                     MemberType = ProjectMemberType.Manager.ToString(),
-                    ProjectRole = ProjectMemberType.Manager.ToString()
+                    ProjectRole = ProjectRole.SuperMember.ToString()
                 }
             };
 
-            // TODO: Move to project created event?
-            foreach (var email in request.AssignedEmails)
-            {
-                //TODO: 
-            }
+            projectAssignments.AddRange(assignedUsers.Select(
+                assignedUser => new ProjectAssignment()
+                {
+                    UserId = assignedUser.UserId,
+                    ProjectId = projectId,
+                    MemberType = assignedUser.MemberType,
+                    ProjectRole = assignedUser.ProjectRole,
+                }));
 
-            await _context.ProjectAssignments.AddRangeAsync(projectAssignments);
-            await _context.SaveChangesAsync(cancellationToken);
-
-            return Unit.Value;
+            return projectAssignments;
         }
     }
 }
