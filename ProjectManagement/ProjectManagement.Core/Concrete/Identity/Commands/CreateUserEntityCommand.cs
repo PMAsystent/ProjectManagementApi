@@ -9,6 +9,8 @@ namespace ProjectManagement.Core.Concrete.Identity.Commands
     public class CreateUserEntityCommand : IRequest
     {
         public string ApplicationUserId { get; set; }
+        public string ApplicationUserName { get; set; }
+        public string ApplicationUserEmail { get; set; }
     }
 
     public class CreateUserEntityCommandHandler : IRequestHandler<CreateUserEntityCommand>
@@ -25,8 +27,8 @@ namespace ProjectManagement.Core.Concrete.Identity.Commands
             var user = new User()
             {
                 ApplicationUserId = request.ApplicationUserId,
-                FirstName = "",
-                LastName = ""
+                UserName = request.ApplicationUserName,
+                Email = request.ApplicationUserEmail
             };
             await _context.Users.AddAsync(user, cancellationToken);
             await _context.SaveChangesAsync(cancellationToken);

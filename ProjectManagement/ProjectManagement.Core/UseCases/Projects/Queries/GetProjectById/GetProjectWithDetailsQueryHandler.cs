@@ -69,8 +69,8 @@ namespace ProjectManagement.Core.UseCases.Projects.Queries.GetProjectById
                 select new ProjectAssignedUserDto()
                 {
                     UserId = user.Id,
-                    UserFirstName = user.FirstName,
-                    UserLastName = user.LastName,
+                    UserName = user.UserName,
+                    UserEmail = user.Email,
                     MemberType = projectAssignment.MemberType
                 }).ToList();
         }

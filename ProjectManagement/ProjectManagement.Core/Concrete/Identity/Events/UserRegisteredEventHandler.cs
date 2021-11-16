@@ -21,7 +21,9 @@ namespace ProjectManagement.Core.Concrete.Identity.Events
         {
             var createUserEntityCommand = new CreateUserEntityCommand()
             {
-                ApplicationUserId = notification.DomainEvent.ApplicationUserId
+                ApplicationUserId = notification.DomainEvent.ApplicationUserId,
+                ApplicationUserName = notification.DomainEvent.ApplicationUserName,
+                ApplicationUserEmail = notification.DomainEvent.ApplicationUserEmail
             };
 
             await _mediator.Send(createUserEntityCommand, cancellationToken);
