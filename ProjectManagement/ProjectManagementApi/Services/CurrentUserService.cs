@@ -13,7 +13,6 @@ namespace ProjectManagementApi.Services
             _httpContextAccessor = httpContextAccessor;
         }
 
-        //TODO: Doesn't work...
         public string UserId => _httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.NameIdentifier);
     }
 }
