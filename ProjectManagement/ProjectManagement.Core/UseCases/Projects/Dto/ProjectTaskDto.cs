@@ -12,6 +12,7 @@ namespace ProjectManagement.Core.UseCases.Projects.Dto
         public string TaskStatus { get; set; }
         public DateTime DueDate { get; set; }
         public int ProgressPercentage { get; set; }
+        public int StepId { get; set; }
 
         public static void Mapping(MappingProfile profile)
         {
