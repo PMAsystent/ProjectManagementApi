@@ -1,28 +1,31 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using Domain.Entities;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using ProjectManagement.Core.Base.Exceptions;
 using ProjectManagement.Core.Base.Interfaces;
 using ProjectManagement.Core.UseCases.Projects.Dto;
-using System.Threading;
-using System.Threading.Tasks;
-using AutoMapper.QueryableExtensions;
-using Microsoft.EntityFrameworkCore;
+using ProjectManagement.Core.UseCases.Projects.Utils;
 
-namespace ProjectManagement.Core.UseCases.Projects.Queries.GetProjectById
+namespace ProjectManagement.Core.UseCases.Projects.Queries.GetProjectWithDetails
 {
     public class GetProjectWithDetailsQueryHandler : IRequestHandler<GetProjectWithDetailsQuery, DetailedProjectDto>
     {
         private readonly IApplicationDbContext _context;
         private readonly IMapper _mapper;
+        private readonly IProjectsPercentageService _projectsPercentageService;
 
-        public GetProjectWithDetailsQueryHandler(IApplicationDbContext context, IMapper mapper)
+        public GetProjectWithDetailsQueryHandler(IApplicationDbContext context, IMapper mapper,
+            IProjectsPercentageService projectsPercentageService)
         {
             _context = context;
             _mapper = mapper;
+            _projectsPercentageService = projectsPercentageService;
         }
 
         public async Task<DetailedProjectDto> Handle(GetProjectWithDetailsQuery request,
@@ -43,7 +46,10 @@ namespace ProjectManagement.Core.UseCases.Projects.Queries.GetProjectById
                     .ProjectTo<ProjectTaskDto>(_mapper.ConfigurationProvider)
                     .ToListAsync(cancellationToken);
             projectToReturn.ProjectAssignedUsers = await GetProjectAssignedUsers(projectToReturn.Id);
-            projectToReturn.ProgressPercentage = await GetProgressPercentageForProject(projectToReturn.Id);
+            
+            var stepsInProject = 
+                await _context.Steps.Where(s => s.ProjectId == projectToReturn.Id).ToListAsync(cancellationToken);
+            projectToReturn.ProgressPercentage = _projectsPercentageService.GetProgressPercentageForProject(stepsInProject);
 
             return projectToReturn;
         }
@@ -69,31 +75,9 @@ namespace ProjectManagement.Core.UseCases.Projects.Queries.GetProjectById
                 select new ProjectAssignedUserDto()
                 {
                     UserId = user.Id,
-                    UserFirstName = user.FirstName,
-                    UserLastName = user.LastName,
+                    UserName = "",//TODO: Konrad podstaw tutaj user.UserName :*
                     MemberType = projectAssignment.MemberType
                 }).ToList();
-        }
-
-        // TODO: Duplicated code
-        private async Task<int> GetProgressPercentageForProject(int projectId)
-        {
-            var stepsInProject = await _context.Steps.Where(s => s.ProjectId == projectId).ToListAsync();
-
-            //TODO: What if 0 steps/tasks?
-            if (stepsInProject.Count == 0)
-            {
-                return 0;
-            }
-
-            var allTasksInProject = new List<Domain.Entities.Task>();
-            foreach (var step in stepsInProject)
-            {
-                allTasksInProject.AddRange(step.Tasks);
-            }
-
-            return allTasksInProject.Count(t => t.TaskStatus == Domain.Enums.TaskStatus.Done.ToString()) * 100 /
-                   allTasksInProject.Count;
         }
     }
 }

@@ -12,7 +12,7 @@ namespace ProjectManagement.Core.UseCases.Projects.Commands.CreateProject
         public string Name { get; set; }
         public string Description { get; set; }
         public DateTime DueDate { get; set; }
-        public ICollection<CreateProjectAssignmentsDto> AssignedUsersIds { get; set; }
+        public ICollection<CreateProjectAssignmentsDto> AssignedUsers { get; set; }
         public string CurrentUserId { get; set; }
 
         public static void Mapping(MappingProfile profile)

@@ -33,7 +33,7 @@ namespace ProjectManagement.Core.UseCases.Projects.Commands.CreateProject
             await _context.SaveChangesAsync(cancellationToken);
 
             var projectAssignments =
-                await GetProjectAssignments(request.CurrentUserId, project.Id, request.AssignedUsersIds);
+                await GetProjectAssignments(request.CurrentUserId, project.Id, request.AssignedUsers);
             await _context.ProjectAssignments.AddRangeAsync(projectAssignments, cancellationToken);
             await _context.Steps.AddAsync(new()
             {
