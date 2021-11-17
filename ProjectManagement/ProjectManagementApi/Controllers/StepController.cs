@@ -50,24 +50,25 @@ namespace ProjectManagementApi.Controllers
              var result = await Mediator.Send(createStepCommand);
              return Ok(result.Step);
         }
-        //
-        // [HttpPut(Name = "UpdateStep")]
-        // public async Task<ActionResult> Update([FromBody] UpdateStepCommand updateStepCommand)
-        // {
-        //     var result = await Mediator.Send(updateStepCommand);
-        //     return Ok(result.Step);
-        // }
-        //
-        // [HttpDelete("{id}")]
-        // public async Task<ActionResult> Delete(int id)
-        // {
-        //     var deleteStepCommand = new DeleteStepCommand()
-        //     {
-        //         StepId = id
-        //     };
-        //     await Mediator.Send(deleteStepCommand);
-        //
-        //     return NoContent();
-        // }
+        
+        [HttpPut(Name = "UpdateStep")]
+        public async Task<ActionResult> Update([FromBody] UpdateStepCommand updateStepCommand)
+        {
+            var result = await Mediator.Send(updateStepCommand);
+            return Ok(result.Step);
+        }
+        
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> Delete([FromRoute] int id, [FromQuery] bool moveTasks)
+        {
+            var deleteStepCommand = new DeleteStepCommand()
+            {
+                StepId = id,
+                MoveTasks = moveTasks
+            };
+            await Mediator.Send(deleteStepCommand);
+        
+            return Ok();
+        }
     }
 }

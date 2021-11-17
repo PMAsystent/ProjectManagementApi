@@ -5,6 +5,7 @@ using Domain.Entities;
 using MediatR;
 using ProjectManagement.Core.Base.Exceptions;
 using ProjectManagement.Core.Base.Interfaces;
+using ProjectManagement.Core.UseCases.Steps.Dto;
 
 namespace ProjectManagement.Core.UseCases.Steps.Commands.UpdateStep
 {
@@ -34,11 +35,13 @@ namespace ProjectManagement.Core.UseCases.Steps.Commands.UpdateStep
             {
                 throw new NotFoundException(nameof(Step), request.Id);
             }
-
+            
+            
+            
             var updatedStep = _mapper.Map(request, existingStep);
             await _context.SaveChangesAsync(cancellationToken);
 
-            return new(updatedStep);
+            return new(_mapper.Map<StepDto>(updatedStep));
 
         }
     }
