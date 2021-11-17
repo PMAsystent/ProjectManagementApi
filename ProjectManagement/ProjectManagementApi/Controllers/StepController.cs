@@ -45,12 +45,12 @@ namespace ProjectManagementApi.Controllers
         //     return await Mediator.Send(getStepByProjectIdQuery);
         // }
         //
-        // [HttpPost]
-        // public async Task<ActionResult<Step>> AddStep([FromBody] CreateStepCommand createStepCommand)
-        // {
-        //     var result = await Mediator.Send(createStepCommand);
-        //     return Ok(result.Step);
-        // }
+        [HttpPost]
+        public async Task<ActionResult<Step>> AddStep([FromBody] CreateStepCommand createStepCommand)
+        {
+             var result = await Mediator.Send(createStepCommand);
+             return Ok(result.Step);
+        }
         //
         // [HttpPut(Name = "UpdateStep")]
         // public async Task<ActionResult> Update([FromBody] UpdateStepCommand updateStepCommand)
