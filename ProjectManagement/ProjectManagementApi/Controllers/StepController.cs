@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using ProjectManagement.Core.UseCases.Steps.Commands.CreateStep;
 using ProjectManagement.Core.UseCases.Steps.Commands.DeleteStep;
-using ProjectManagement.Core.UseCases.Steps.Commands.PatchStep;
 using ProjectManagement.Core.UseCases.Steps.Commands.UpdateStep;
 using ProjectManagement.Core.UseCases.Steps.Dto;
 using ProjectManagement.Core.UseCases.Steps.Queries.GetStepById;
@@ -57,20 +56,6 @@ namespace ProjectManagementApi.Controllers
         // {
         //     var result = await Mediator.Send(updateStepCommand);
         //     return Ok(result.Step);
-        // }
-        //
-        // [HttpPatch("{id}")]
-        // public async Task<ActionResult> PatchStep(int id, [FromBody] JsonPatchDocument<StepDto> patchDocument)
-        // {
-        //     var patchStepCommand = new PatchStepCommand()
-        //     {
-        //         StepId = id,
-        //         PatchDocument = patchDocument,
-        //         ModelStateDictionary = ModelState
-        //     };
-        //
-        //     var result = await Mediator.Send(patchStepCommand);
-        //     return Ok(result);
         // }
         //
         // [HttpDelete("{id}")]
