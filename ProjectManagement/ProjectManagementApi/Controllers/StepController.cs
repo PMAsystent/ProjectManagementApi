@@ -16,34 +16,34 @@ namespace ProjectManagementApi.Controllers
 {
     public class StepController : ApiControllerBase
     {
-        // [HttpGet]
-        // public async Task<ActionResult<StepVm>> GetAllSteps()
-        // {
-        //     return await Mediator.Send(new GetStepsQuery());
-        // }
-        //
-        // [HttpGet("{id}")]
-        // public async Task<ActionResult<StepDto>> GetStepById(int id)
-        // {
-        //     var getStepByIdQuery = new GetStepByIdQuery()
-        //     {
-        //         StepId = id
-        //     };
-        //
-        //     return await Mediator.Send(getStepByIdQuery);
-        // }
-        //
-        // [HttpGet("Project/{projectId}")]
-        // public async Task<ActionResult<StepVm>> GetStepsByProjectId(int projectId)
-        // {
-        //     var getStepByProjectIdQuery = new GetStepsByProjectIdQuery()
-        //     {
-        //         ProjectId = projectId
-        //     };
-        //
-        //     return await Mediator.Send(getStepByProjectIdQuery);
-        // }
-        //
+         [HttpGet]
+         public async Task<ActionResult<StepVm>> GetAllSteps()
+         {
+             return await Mediator.Send(new GetStepsQuery());
+         }
+        
+         [HttpGet("{id}")]
+         public async Task<ActionResult<StepDto>> GetStepById(int id)
+         {
+             var getStepByIdQuery = new GetStepByIdQuery()
+             {
+                 StepId = id
+             };
+        
+             return await Mediator.Send(getStepByIdQuery);
+         }
+        
+         [HttpGet("Project/{projectId}")]
+         public async Task<ActionResult<StepVm>> GetStepsByProjectId(int projectId)
+         {
+             var getStepByProjectIdQuery = new GetStepsByProjectIdQuery()
+            {
+                ProjectId = projectId
+            };
+        
+            return await Mediator.Send(getStepByProjectIdQuery);
+        }
+        
         [HttpPost]
         public async Task<ActionResult<Step>> AddStep([FromBody] CreateStepCommand createStepCommand)
         {

@@ -34,14 +34,12 @@ namespace ProjectManagement.Core.UseCases.Steps.Commands.DeleteStep
                     .OrderBy(s => s.Id)
                     .ToListAsync(cancellationToken);
 
-                if (steps?.Count > 2)
-                {
-                    steps.First(s => s.Id != request.StepId).Tasks.ToList().AddRange(step.Tasks);
-                }
-                else
+                if (steps?.Count < 2)
                 {
                     throw new Exception("No more steps in the project");
                 }
+                
+                var t =  steps.FirstOrDefault(s => s.Id != request.StepId).Tasks;
             }
             
             

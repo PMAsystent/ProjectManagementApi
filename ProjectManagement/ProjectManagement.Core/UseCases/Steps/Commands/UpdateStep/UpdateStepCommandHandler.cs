@@ -22,21 +22,11 @@ namespace ProjectManagement.Core.UseCases.Steps.Commands.UpdateStep
 
         public async Task<UpdateStepCommandResponse> Handle(UpdateStepCommand request, CancellationToken cancellationToken)
         {
-            var validator = new UpdateStepCommandValidator();
-            var validatorResult = await validator.ValidateAsync(request, cancellationToken);
-
-            if (!validatorResult.IsValid)
-            {
-                return new UpdateStepCommandResponse(validatorResult);
-            }
-
             var existingStep = await _context.Steps.FindAsync(request.Id);
             if (existingStep == null)
             {
                 throw new NotFoundException(nameof(Step), request.Id);
             }
-            
-            
             
             var updatedStep = _mapper.Map(request, existingStep);
             await _context.SaveChangesAsync(cancellationToken);
