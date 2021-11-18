@@ -118,9 +118,8 @@ namespace ProjectManagementApi
                 });
             });
             
-            // Adds the transient pipeline behavior and additionally registers all `IAuthorizationHandlers` for a given assembly
+
             services.AddMediatorAuthorization(Assembly.GetExecutingAssembly());
-            // Register all `IAuthorizer` implementations for a given assembly
             services.AddAuthorizersFromAssembly(Assembly.GetExecutingAssembly());
         }
 
