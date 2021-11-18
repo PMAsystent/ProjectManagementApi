@@ -1,4 +1,5 @@
-﻿using FluentValidation.AspNetCore;
+﻿using System.Reflection;
+using FluentValidation.AspNetCore;
 using Infrastructure;
 using Infrastructure.Identity.Helpers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -15,6 +16,7 @@ using ProjectManagement.Core.Base.Interfaces;
 using ProjectManagementApi.Filters;
 using ProjectManagementApi.Services;
 using System.Text;
+using MediatR.Behaviors.Authorization.Extensions.DependencyInjection;
 
 namespace ProjectManagementApi
 {
@@ -115,6 +117,11 @@ namespace ProjectManagementApi
                     }
                 });
             });
+            
+            // Adds the transient pipeline behavior and additionally registers all `IAuthorizationHandlers` for a given assembly
+            services.AddMediatorAuthorization(Assembly.GetExecutingAssembly());
+            // Register all `IAuthorizer` implementations for a given assembly
+            services.AddAuthorizersFromAssembly(Assembly.GetExecutingAssembly());
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
