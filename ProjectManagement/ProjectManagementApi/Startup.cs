@@ -34,7 +34,7 @@ namespace ProjectManagementApi
         {
             services.AddApplication();
             services.AddInfrastructure(Configuration);
-
+            
             var settingsSection = Configuration.GetSection("AppSettings");
             var settings = settingsSection.Get<AppSettings>();
             services.Configure<AppSettings>(settingsSection);
@@ -117,10 +117,6 @@ namespace ProjectManagementApi
                     }
                 });
             });
-            
-
-            services.AddMediatorAuthorization(Assembly.GetExecutingAssembly());
-            services.AddAuthorizersFromAssembly(Assembly.GetExecutingAssembly());
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
