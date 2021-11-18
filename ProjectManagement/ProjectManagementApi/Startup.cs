@@ -1,5 +1,4 @@
-﻿using System.Reflection;
-using FluentValidation.AspNetCore;
+﻿using FluentValidation.AspNetCore;
 using Infrastructure;
 using Infrastructure.Identity.Helpers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -16,7 +15,6 @@ using ProjectManagement.Core.Base.Interfaces;
 using ProjectManagementApi.Filters;
 using ProjectManagementApi.Services;
 using System.Text;
-using MediatR.Behaviors.Authorization.Extensions.DependencyInjection;
 
 namespace ProjectManagementApi
 {
@@ -46,8 +44,7 @@ namespace ProjectManagementApi
                 options.Filters.Add<ApiExceptionFilterAttribute>())
                     .AddFluentValidation()
                     .AddNewtonsoftJson();
-
-
+            
             services.Configure<ApiBehaviorOptions>(options =>
             {
                 options.SuppressModelStateInvalidFilter = true;
