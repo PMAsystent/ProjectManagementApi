@@ -33,7 +33,7 @@ namespace ProjectManagement.Core.UseCases.Users.Queries.FindUser
             string term = request.Term.Contains("@") ? request.Term.Split("@")[0] : request.Term;
             
             var usersByUserEmail = await _context.Users
-                .Where(u => u.Email.Contains(term))
+                .Where(u => u.Email.Contains(term) && !usersByUserName.Select(i => i.Id).Contains(u.Id))
                 .ProjectTo<UserDto>(_mapper.ConfigurationProvider)
                 .ToListAsync(cancellationToken);
 
@@ -41,7 +41,7 @@ namespace ProjectManagement.Core.UseCases.Users.Queries.FindUser
             var users = new List<UserDto>();
             
             users.AddRange(usersByUserEmail);
-            users.AddRange(usersByUserName.Where(u => !usersByUserEmail.Select(i => i.Id).Contains(u.Id)));
+            users.AddRange(usersByUserName);
             
             return new()
             {
