@@ -5,6 +5,8 @@ using ProjectManagement.Core.UseCases.Projects.Commands.DeleteProject;
 using ProjectManagement.Core.UseCases.Projects.Dto;
 using ProjectManagement.Core.UseCases.Projects.ViewModels;
 using System.Threading.Tasks;
+using MediatR.Behaviors.Authorization.Exceptions;
+using Microsoft.AspNetCore.Authorization;
 using ProjectManagement.Core.Base.Interfaces;
 using ProjectManagement.Core.Requests;
 using ProjectManagement.Core.UseCases.Projects.Queries.GetMyProjectsList;
@@ -36,7 +38,7 @@ namespace ProjectManagementApi.Controllers
                 return StatusCode(500, e.Message);
             }
         }
-
+        
         [HttpGet("{id}")]
         public async Task<ActionResult<DetailedProjectDto>> GetProjectWithDetails(int id)
         {
@@ -48,6 +50,10 @@ namespace ProjectManagementApi.Controllers
                 };
                 var result = await Mediator.Send(getProjectByIdQuery);
                 return Ok(result);
+            }
+            catch (UnauthorizedException e)
+            {
+                return StatusCode(401, e.Message);
             }
             catch (Exception e)
             {
@@ -91,6 +97,10 @@ namespace ProjectManagementApi.Controllers
                 await Mediator.Send(deleteProjectCommand);
 
                 return NoContent();
+            }
+            catch (UnauthorizedException e)
+            {
+                return StatusCode(401, e.Message);
             }
             catch (Exception e)
             {
