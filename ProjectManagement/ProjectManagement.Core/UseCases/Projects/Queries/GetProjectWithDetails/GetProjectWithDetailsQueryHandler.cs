@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -37,30 +38,34 @@ namespace ProjectManagement.Core.UseCases.Projects.Queries.GetProjectWithDetails
                 throw new NotFoundException(nameof(Project), request.ProjectId);
             }
 
-            var projectToReturn = _mapper.Map<DetailedProjectDto>(project);
+            var detailedProjectDto = _mapper.Map<DetailedProjectDto>(project);
 
-            projectToReturn.ProjectTasks =
-                await _context.Tasks.Where(t => projectToReturn.ProjectSteps
+            detailedProjectDto.ProjectTasks =
+                await _context.Tasks.Where(t => detailedProjectDto.ProjectSteps
                         .Select(s => s.Id)
                         .Contains(t.StepId))
                     .ProjectTo<ProjectTaskDto>(_mapper.ConfigurationProvider)
                     .ToListAsync(cancellationToken);
-            projectToReturn.ProjectAssignedUsers = await GetProjectAssignedUsers(projectToReturn.Id);
+            detailedProjectDto.ProjectAssignedUsers = await GetProjectAssignedUsers(detailedProjectDto.Id);
 
             var stepsInProject =
-                await _context.Steps.Where(s => s.ProjectId == projectToReturn.Id).ToListAsync(cancellationToken);
+                await _context.Steps.Where(s => s.ProjectId == detailedProjectDto.Id).ToListAsync(cancellationToken);
 
-            projectToReturn.ProjectSteps = stepsInProject.Select(step => new ProjectStepDto()
+            detailedProjectDto.ProjectSteps = stepsInProject.Select(step => new ProjectStepDto()
             {
                 Id = step.Id,
                 Name = step.Name,
                 ProgressPercentage = _projectsPercentageService.GetProgressPercentageForProject(new List<Step> { step })
             }).ToList();
 
-            projectToReturn.ProgressPercentage =
+            detailedProjectDto.ProgressPercentage =
                 _projectsPercentageService.GetProgressPercentageForProject(stepsInProject);
 
-            return projectToReturn;
+            detailedProjectDto.CurrentUserInfoInProject =
+                await GetCurrentUserInfoInProject(request.CurrentUserId, detailedProjectDto.ProjectAssignedUsers);
+
+
+            return detailedProjectDto;
         }
 
         private async Task<ICollection<ProjectAssignedUserDto>> GetProjectAssignedUsers(int projectId)
@@ -85,8 +90,26 @@ namespace ProjectManagement.Core.UseCases.Projects.Queries.GetProjectWithDetails
                 {
                     UserId = user.Id,
                     UserName = user.UserName,
-                    MemberType = projectAssignment.MemberType
+                    MemberType = projectAssignment.MemberType,
+                    ProjectRole = projectAssignment.ProjectRole
                 }).ToList();
         }
+
+        private async Task<CurrentUserInfoInProject> GetCurrentUserInfoInProject(string userId,
+            ICollection<ProjectAssignedUserDto> assignments)
+        {
+            var currentUser = await _context.Users.SingleOrDefaultAsync(u => u.ApplicationUserId == userId);
+            var currentUserAssignment = assignments.SingleOrDefault(a => a.UserId == currentUser.Id);
+            if (currentUserAssignment == null)
+            {
+                throw new Exception("User isn't assigned to this project.");
+            }
+
+            return new()
+            {
+                ProjectRole = currentUserAssignment.ProjectRole,
+                MemberType = currentUserAssignment.MemberType
+            };
+        }
     }
-} 
+}

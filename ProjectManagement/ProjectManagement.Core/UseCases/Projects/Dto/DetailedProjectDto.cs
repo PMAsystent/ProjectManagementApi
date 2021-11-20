@@ -15,6 +15,7 @@ namespace ProjectManagement.Core.UseCases.Projects.Dto
         public ICollection<ProjectStepDto> ProjectSteps { get; set; }
         public ICollection<ProjectTaskDto> ProjectTasks { get; set; }
         public ICollection<ProjectAssignedUserDto> ProjectAssignedUsers { get; set; }
+        public CurrentUserInfoInProject CurrentUserInfoInProject { get; set; }
 
         public static void Mapping(MappingProfile profile)
         {

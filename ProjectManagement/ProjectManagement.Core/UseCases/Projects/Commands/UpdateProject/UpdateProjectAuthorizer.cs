@@ -1,7 +1,6 @@
 ﻿using MediatR.Behaviors.Authorization;
 using ProjectManagement.Core.Authorization;
 using ProjectManagement.Core.Base.Interfaces;
-using ProjectManagement.Core.UseCases.Projects.Commands.DeleteProject;
 
 namespace ProjectManagement.Core.UseCases.Projects.Commands.UpdateProject
 {

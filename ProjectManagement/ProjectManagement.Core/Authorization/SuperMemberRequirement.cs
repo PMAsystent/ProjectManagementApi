@@ -28,7 +28,7 @@ namespace ProjectManagement.Core.Authorization
                 
                 var assignment = await _context.ProjectAssignments
                     .FirstOrDefaultAsync(a => 
-                        a.ProjectId == projectId && a.User.ApplicationUserId == userId && a.MemberType == ProjectRole.SuperMember.ToString(),cancellationToken);
+                        a.ProjectId == projectId && a.User.ApplicationUserId == userId && a.ProjectRole == ProjectRole.SuperMember.ToString(),cancellationToken);
 
                 if (assignment != null)
                 {
