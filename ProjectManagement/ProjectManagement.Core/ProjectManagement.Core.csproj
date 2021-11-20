@@ -23,6 +23,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="UseCases\ProjectAssignments\Dto" />
+    <Folder Include="UseCases\ProjectAssignments\ViewModels" />
     <Folder Include="UseCases\Steps\Commands\" />
     <Folder Include="UseCases\Tasks\Queries" />
   </ItemGroup>
