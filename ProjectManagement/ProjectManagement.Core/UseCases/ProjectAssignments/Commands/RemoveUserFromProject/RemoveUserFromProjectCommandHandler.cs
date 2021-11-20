@@ -30,6 +30,8 @@ namespace ProjectManagement.Core.UseCases.ProjectAssignments.Commands.RemoveUser
             _context.ProjectAssignments.Remove(projectAssignment);
             await _context.SaveChangesAsync(cancellationToken);
             
+            //TODO: Remove assigned tasks
+            
             return Unit.Value;
         }
     }
