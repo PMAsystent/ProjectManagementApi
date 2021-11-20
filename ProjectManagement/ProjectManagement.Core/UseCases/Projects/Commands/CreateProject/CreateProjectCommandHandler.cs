@@ -90,8 +90,9 @@ namespace ProjectManagement.Core.UseCases.Projects.Commands.CreateProject
                 select new ProjectAssignedUserDto()
                 {
                     UserId = user.Id,
-                    UserName = "", //TODO: Konrad podstaw tutaj user.UserName :*
-                    MemberType = projectAssignment.MemberType
+                    UserName = user.UserName,
+                    MemberType = projectAssignment.MemberType,
+                    ProjectRole = projectAssignment.ProjectRole
                 }).ToList();
         }
 

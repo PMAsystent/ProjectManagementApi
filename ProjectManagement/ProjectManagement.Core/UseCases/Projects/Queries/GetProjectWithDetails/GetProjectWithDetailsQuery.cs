@@ -6,5 +6,6 @@ namespace ProjectManagement.Core.UseCases.Projects.Queries.GetProjectWithDetails
     public class GetProjectWithDetailsQuery : IRequest<DetailedProjectDto>
     {
         public int ProjectId { get; set; }
+        public string CurrentUserId { get; set; }
     }
 }
