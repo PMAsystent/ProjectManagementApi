@@ -22,6 +22,7 @@ namespace ProjectManagement.Core.UseCases.ProjectAssignments.Commands.AddUserToP
         {
             var projectAssignment = _mapper.Map<ProjectAssignment>(request);
             await _context.ProjectAssignments.AddAsync(projectAssignment, cancellationToken);
+            await _context.SaveChangesAsync(cancellationToken);
             
             return Unit.Value;
         }
