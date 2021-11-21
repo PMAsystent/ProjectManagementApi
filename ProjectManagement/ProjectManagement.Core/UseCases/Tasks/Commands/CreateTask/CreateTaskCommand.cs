@@ -3,10 +3,11 @@ using Domain.Entities;
 using Domain.Enums;
 using MediatR;
 using ProjectManagement.Core.Base.Mappings;
+using ProjectManagement.Core.UseCases.Tasks.Dto;
 
 namespace ProjectManagement.Core.UseCases.Tasks.Commands.CreateTask
 {
-    public class CreateTaskCommand : IRequest<CreateTaskCommandResponse>, IMapFrom<Task>
+    public class CreateTaskCommand : IRequest<DetailedTaskDto>, IMapFrom<Task>
     {
 
         public string Name { get; set; }
@@ -16,15 +17,9 @@ namespace ProjectManagement.Core.UseCases.Tasks.Commands.CreateTask
         public DateTime StartDate { get; set; }
         public DateTime TargetDate { get; set; }
         public DateTime EndDate { get; set; }
-        
         public bool IsActive { get; set; }
-        
         public int StepId { get; set; }
         
-        /*public ICollection<Oversee> Oversees { get; set; }
-        public ICollection<Assign> Assigns { get; set; }
-        public ICollection<TaskChange> TaskChanges { get; set; }*/
-
         public void Mapping(MappingProfile profile)
         {
             profile.CreateMap<CreateTaskCommand, Task>();

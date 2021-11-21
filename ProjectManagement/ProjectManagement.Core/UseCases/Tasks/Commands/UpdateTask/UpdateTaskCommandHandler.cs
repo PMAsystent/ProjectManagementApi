@@ -8,7 +8,7 @@ using Task = Domain.Entities.Task;
 
 namespace ProjectManagement.Core.UseCases.Tasks.Commands.UpdateTask
 {
-    public class UpdateTaskCommandHandler : IRequestHandler<UpdateTaskCommand, UpdateTaskCommandResponse>
+    public class UpdateTaskCommandHandler : IRequestHandler<UpdateTaskCommand>
     {
 
         private readonly IApplicationDbContext _context;
@@ -21,16 +21,8 @@ namespace ProjectManagement.Core.UseCases.Tasks.Commands.UpdateTask
         }
         
         
-        public async Task<UpdateTaskCommandResponse> Handle(UpdateTaskCommand request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(UpdateTaskCommand request, CancellationToken cancellationToken)
         {
-            var validator = new UpdateTaskCommandValidator();
-            var validatorResult = await validator.ValidateAsync(request, cancellationToken);
-
-            if (!validatorResult.IsValid)
-            {
-                return new(validatorResult);
-            }
-
             var existingTask = await _context.Tasks.FindAsync(request.Id);
             if (existingTask == null)
             {
@@ -40,8 +32,7 @@ namespace ProjectManagement.Core.UseCases.Tasks.Commands.UpdateTask
             var updatedTask = _mapper.Map(request, existingTask);
             await _context.SaveChangesAsync(cancellationToken);
 
-            return new UpdateTaskCommandResponse(updatedTask);
-
+            return Unit.Value;
         }
     }
 }

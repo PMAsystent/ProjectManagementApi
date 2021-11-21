@@ -8,18 +8,18 @@ using ProjectManagement.Core.UseCases.Tasks.Dto;
 
 namespace ProjectManagement.Core.UseCases.Tasks.Queries.GetTaskById
 {
-    public class GetTaskByIdQueryHandler : IRequestHandler<GetTaskByIdQuery, TaskDto>
+    public class GetTaskWithDetailsQueryHandler : IRequestHandler<GetTaskWithDetailsQuery, DetailedTaskDto>
     {
         private readonly IApplicationDbContext _context;
         private readonly IMapper _mapper;
 
-        public GetTaskByIdQueryHandler(IApplicationDbContext context, IMapper mapper)
+        public GetTaskWithDetailsQueryHandler(IApplicationDbContext context, IMapper mapper)
         {
             _mapper = mapper;
             _context = context;
         }
 
-        public async Task<TaskDto> Handle(GetTaskByIdQuery request, CancellationToken cancellationToken)
+        public async Task<DetailedTaskDto> Handle(GetTaskWithDetailsQuery request, CancellationToken cancellationToken)
         {
             var task = await _context.Tasks.FindAsync(request.TaskId);
             if (task == null)
@@ -27,7 +27,7 @@ namespace ProjectManagement.Core.UseCases.Tasks.Queries.GetTaskById
                 throw new NotFoundException(nameof(Task), request.TaskId);
             }
 
-            var taskToReturn = _mapper.Map<TaskDto>(task);
+            var taskToReturn = _mapper.Map<DetailedTaskDto>(task);
 
             return taskToReturn;
         }

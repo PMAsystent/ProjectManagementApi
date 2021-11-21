@@ -6,7 +6,7 @@ using ProjectManagement.Core.Base.Mappings;
 
 namespace ProjectManagement.Core.UseCases.Tasks.Commands.UpdateTask
 {
-    public class UpdateTaskCommand : IRequest<UpdateTaskCommandResponse>, IMapFrom<Task>
+    public class UpdateTaskCommand : IRequest<Unit>, IMapFrom<Task>
     {
         public int Id { get; set; }
         public string Name { get; set; }
