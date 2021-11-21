@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
 using MediatR;
@@ -26,6 +27,9 @@ namespace ProjectManagement.Core.UseCases.Tasks.Commands.CreateTask
             await _context.SaveChangesAsync(cancellationToken);
             
             var taskDto = _mapper.Map<DetailedTaskDto>(task);
+            taskDto.Assigns = new List<TaskAssignemntDto>();
+            taskDto.Subtasks = new List<SubtaskDto>();
+            
             return taskDto;
         }
     }

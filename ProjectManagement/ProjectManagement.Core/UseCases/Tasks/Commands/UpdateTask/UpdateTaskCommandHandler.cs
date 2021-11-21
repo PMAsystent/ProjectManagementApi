@@ -10,7 +10,6 @@ namespace ProjectManagement.Core.UseCases.Tasks.Commands.UpdateTask
 {
     public class UpdateTaskCommandHandler : IRequestHandler<UpdateTaskCommand>
     {
-
         private readonly IApplicationDbContext _context;
         private readonly IMapper _mapper;
 
@@ -19,8 +18,8 @@ namespace ProjectManagement.Core.UseCases.Tasks.Commands.UpdateTask
             _context = context;
             _mapper = mapper;
         }
-        
-        
+
+
         public async Task<Unit> Handle(UpdateTaskCommand request, CancellationToken cancellationToken)
         {
             var existingTask = await _context.Tasks.FindAsync(request.Id);
@@ -29,7 +28,7 @@ namespace ProjectManagement.Core.UseCases.Tasks.Commands.UpdateTask
                 throw new NotFoundException(nameof(Task), request.Id);
             }
 
-            var updatedTask = _mapper.Map(request, existingTask);
+            _mapper.Map(request, existingTask);
             await _context.SaveChangesAsync(cancellationToken);
 
             return Unit.Value;
