@@ -3,9 +3,9 @@ using System.Linq;
 using Domain.Entities;
 using Domain.Enums;
 
-namespace ProjectManagement.Core.UseCases.Projects.Utils
+namespace ProjectManagement.Core.Base.Utils
 {
-    public class ProjectsPercentageService : IProjectsPercentageService
+    public class ProgressPercentageService : IProgressPercentageService
     {
         public int GetProgressPercentageForProject(List<Step> stepsInProject)
         {
@@ -29,6 +29,10 @@ namespace ProjectManagement.Core.UseCases.Projects.Utils
 
             return allTasksInProject.Count(t => t.TaskStatus == TaskStatus.Done.ToString()) * 100 /
                    allTasksInProject.Count;
+        }
+        public int GetProgressPercentageForStep(List<Task> tasksInStep)
+        {
+            return tasksInStep.Count(t => t.TaskStatus == TaskStatus.Done.ToString()) * 100 / tasksInStep.Count;
         }
     }
 }
