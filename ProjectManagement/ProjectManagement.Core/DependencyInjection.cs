@@ -4,6 +4,8 @@ using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using ProjectManagement.Core.Base.Behaviours;
 using System.Reflection;
+using MediatR.Behaviors.Authorization.Extensions.DependencyInjection;
+using ProjectManagement.Core.UseCases.Projects.Utils;
 
 namespace ProjectManagement.Core
 {
@@ -18,6 +20,12 @@ namespace ProjectManagement.Core
             //services.AddTransient(typeof(IPipelineBehavior<,>), typeof(AuthorizationBehaviour<,>));
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(PerformanceBehaviour<,>));
+
+            services.AddMediatorAuthorization(Assembly.GetExecutingAssembly());
+            // Register all `IAuthorizer` implementations for a given assembly
+            services.AddAuthorizersFromAssembly(Assembly.GetExecutingAssembly());
+            
+            services.AddTransient<IProjectsPercentageService, ProjectsPercentageService>();
 
             return services;
         }

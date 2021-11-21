@@ -32,7 +32,7 @@ namespace ProjectManagementApi
         {
             services.AddApplication();
             services.AddInfrastructure(Configuration);
-
+            
             var settingsSection = Configuration.GetSection("AppSettings");
             var settings = settingsSection.Get<AppSettings>();
             services.Configure<AppSettings>(settingsSection);
@@ -44,8 +44,7 @@ namespace ProjectManagementApi
                 options.Filters.Add<ApiExceptionFilterAttribute>())
                     .AddFluentValidation()
                     .AddNewtonsoftJson();
-
-
+            
             services.Configure<ApiBehaviorOptions>(options =>
             {
                 options.SuppressModelStateInvalidFilter = true;

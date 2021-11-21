@@ -19,10 +19,12 @@ namespace ProjectManagement.Core.Concrete.Identity.Commands
     public class RegisterUserCommandHandler : IRequestHandler<RegisterUserCommand, RegisterResponseDto>
     {
         private readonly IIdentityService _identityService;
+        private readonly IDomainEventService _domainEventService;
 
-        public RegisterUserCommandHandler (IIdentityService identityService)
+        public RegisterUserCommandHandler(IIdentityService identityService, IDomainEventService domainEventService)
         {
             _identityService = identityService;
+            _domainEventService = domainEventService;
         }
 
         public async Task<RegisterResponseDto> Handle(RegisterUserCommand request, CancellationToken cancellationToken)

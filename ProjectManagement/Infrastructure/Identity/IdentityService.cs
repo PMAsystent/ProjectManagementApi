@@ -37,6 +37,7 @@ namespace Infrastructure.Identity
             _authorizationService = authorizationService;
             _settings = settings.Value;
         }
+
         public async Task<bool> AuthorizeAsync(string userName, string policyName)
         {
             var user = _userManager.Users.SingleOrDefault(u => u.UserName == userName);
@@ -56,6 +57,10 @@ namespace Infrastructure.Identity
 
             return Result.Success();
         }
+
+        public async Task<bool> CheckIfUserWithEmailExists(string email) =>
+            _userManager.Users.SingleOrDefault(u => u.Email == email) != null;
+
         public async Task<Result> DeleteUserAsync(ApplicationUser user)
         {
             var result = await _userManager.DeleteAsync(user);
@@ -149,7 +154,8 @@ namespace Infrastructure.Identity
             return new List<Claim>
             {
                 new Claim(JwtRegisteredClaimNames.Sub, userID), //Subject
-                new Claim(JwtRegisteredClaimNames.Iat, new DateTimeOffset(DateTime.Now).ToUnixTimeSeconds().ToString()), //Issued at
+                new Claim(JwtRegisteredClaimNames.Iat,
+                    new DateTimeOffset(DateTime.Now).ToUnixTimeSeconds().ToString()), //Issued at
             };
         }
 
@@ -164,7 +170,8 @@ namespace Infrastructure.Identity
             throw new NotImplementedException();
         }
 
-        public async Task<Result> ChangePasswordAsync(string userName, string email, string oldPassword, string newPassword)
+        public async Task<Result> ChangePasswordAsync(string userName, string email, string oldPassword,
+            string newPassword)
         {
             var user = _userManager.Users.SingleOrDefault(u => u.Email == email);
             var test = _userManager.Users.Count();

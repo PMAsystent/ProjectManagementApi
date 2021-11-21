@@ -4,13 +4,12 @@ using MediatR;
 using ProjectManagement.Core.Base.Exceptions;
 using ProjectManagement.Core.Base.Interfaces;
 using ProjectManagement.Core.UseCases.Projects.Dto;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace ProjectManagement.Core.UseCases.Projects.Commands.UpdateProject
 {
-    public class UpdateProjectCommandHandler : IRequestHandler<UpdateProjectCommand, UpdateProjectCommandResponse>
+    public class UpdateProjectCommandHandler : IRequestHandler<UpdateProjectCommand, Unit>
     {
         private readonly IApplicationDbContext _context;
         private readonly IMapper _mapper;
@@ -20,34 +19,19 @@ namespace ProjectManagement.Core.UseCases.Projects.Commands.UpdateProject
             _context = context;
             _mapper = mapper;
         }
-        public async Task<UpdateProjectCommandResponse> Handle(UpdateProjectCommand request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(UpdateProjectCommand request, CancellationToken cancellationToken)
         {
-            var validator = new UpdateProjectCommandValidator();
-            var validatorResult = await validator.ValidateAsync(request, cancellationToken);
-
-            if (!validatorResult.IsValid)
-            {
-                return new UpdateProjectCommandResponse(validatorResult);
-            }
-
-            var existingProject = await _context.Projects.FindAsync(request.Id);
-            if (existingProject == null)
+            var project = await _context.Projects.FindAsync(request.Id);
+            if (project == null)
             {
                 throw new NotFoundException(nameof(Project), request.Id);
 
             }
-
-            if (!_context.Customers.Any(c => c.Id == request.CustomerId))
-            {
-                throw new NotFoundException(nameof(Customer), request.CustomerId);
-            }
-
-            var updatedProject = _mapper.Map(request, existingProject);
+            
+            _mapper.Map(request, project);
             await _context.SaveChangesAsync(cancellationToken);
 
-            var detailedProjectDto = _mapper.Map<DetailedProjectDto>(updatedProject);
-
-            return new(detailedProjectDto);
+            return Unit.Value;
         }
     }
 }
