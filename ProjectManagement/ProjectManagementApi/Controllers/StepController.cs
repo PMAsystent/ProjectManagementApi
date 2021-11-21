@@ -16,7 +16,7 @@ namespace ProjectManagementApi.Controllers
 {
     public class StepController : ApiControllerBase
     {
-         [HttpGet]
+         /*[HttpGet]
          public async Task<ActionResult<StepVm>> GetAllSteps()
          {
              return await Mediator.Send(new GetStepsQuery());
@@ -42,7 +42,7 @@ namespace ProjectManagementApi.Controllers
             };
         
             return await Mediator.Send(getStepByProjectIdQuery);
-        }
+        }*/
         
         [HttpPost]
         public async Task<ActionResult<Step>> AddStep([FromBody] CreateStepCommand createStepCommand)
