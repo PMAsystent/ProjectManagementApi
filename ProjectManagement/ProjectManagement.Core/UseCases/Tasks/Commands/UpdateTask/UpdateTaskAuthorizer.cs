@@ -8,7 +8,7 @@ namespace ProjectManagement.Core.UseCases.Tasks.Commands.UpdateTask
     {
         private readonly ICurrentUserService _currentUserService;
 
-        public UpdateTaskAuthorizer(ICurrentUserService currentUserService, I)
+        public UpdateTaskAuthorizer(ICurrentUserService currentUserService)
         {
             _currentUserService = currentUserService;
         }
@@ -17,7 +17,7 @@ namespace ProjectManagement.Core.UseCases.Tasks.Commands.UpdateTask
         {
             UseRequirement(new AssignedToProjectRequirement()
             {
-                ProjectId = request.ProjectId,
+                StepId = request.StepId,
                 UserId = _currentUserService.UserId
             });
         }

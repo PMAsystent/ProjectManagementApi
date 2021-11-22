@@ -18,8 +18,9 @@ namespace ProjectManagement.Core.UseCases.Tasks.Commands.CreateTask
         {
             UseRequirement(new AssignedToProjectRequirement()
             {
-                ProjectId = request.ProjectId,
+                StepId = request.StepId,
                 UserId = _currentUserService.UserId
-            });        }
+            });
+        }
     }
 }

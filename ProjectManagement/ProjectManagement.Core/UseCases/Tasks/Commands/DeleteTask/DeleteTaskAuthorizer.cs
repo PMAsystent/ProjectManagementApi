@@ -1,4 +1,5 @@
 ﻿using MediatR.Behaviors.Authorization;
+using ProjectManagement.Core.Authorization;
 using ProjectManagement.Core.Base.Interfaces;
 
 namespace ProjectManagement.Core.UseCases.Tasks.Commands.DeleteTask
@@ -13,7 +14,11 @@ namespace ProjectManagement.Core.UseCases.Tasks.Commands.DeleteTask
         }
         public override void BuildPolicy(DeleteTaskCommand request)
         {
-            throw new System.NotImplementedException();
+            UseRequirement(new AssignedToProjectRequirement()
+            {
+                TaskId = request.TaskId,
+                UserId = _currentUserService.UserId
+            });
         }
     }
 }
