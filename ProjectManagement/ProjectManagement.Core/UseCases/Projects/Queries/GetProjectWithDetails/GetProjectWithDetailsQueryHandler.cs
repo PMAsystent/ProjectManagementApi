@@ -10,8 +10,8 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using ProjectManagement.Core.Base.Exceptions;
 using ProjectManagement.Core.Base.Interfaces;
+using ProjectManagement.Core.Base.Utils;
 using ProjectManagement.Core.UseCases.Projects.Dto;
-using ProjectManagement.Core.UseCases.Projects.Utils;
 
 namespace ProjectManagement.Core.UseCases.Projects.Queries.GetProjectWithDetails
 {
@@ -19,10 +19,10 @@ namespace ProjectManagement.Core.UseCases.Projects.Queries.GetProjectWithDetails
     {
         private readonly IApplicationDbContext _context;
         private readonly IMapper _mapper;
-        private readonly IProjectsPercentageService _projectsPercentageService;
+        private readonly IProgressPercentageService _projectsPercentageService;
 
         public GetProjectWithDetailsQueryHandler(IApplicationDbContext context, IMapper mapper,
-            IProjectsPercentageService projectsPercentageService)
+            IProgressPercentageService projectsPercentageService)
         {
             _context = context;
             _mapper = mapper;

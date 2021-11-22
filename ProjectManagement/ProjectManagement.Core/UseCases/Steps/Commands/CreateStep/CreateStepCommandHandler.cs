@@ -4,6 +4,7 @@ using AutoMapper;
 using Domain.Entities;
 using MediatR;
 using ProjectManagement.Core.Base.Interfaces;
+using ProjectManagement.Core.UseCases.Steps.Dto;
 
 namespace ProjectManagement.Core.UseCases.Steps.Commands.CreateStep
 {
@@ -20,19 +21,11 @@ namespace ProjectManagement.Core.UseCases.Steps.Commands.CreateStep
 
         public async Task<CreateStepCommandResponse> Handle(CreateStepCommand request, CancellationToken cancellationToken)
         {
-            var validator = new CreateStepCommandValidator();
-            var validatorResult = await validator.ValidateAsync(request, cancellationToken);
-
-            if (!validatorResult.IsValid)
-            {
-                return new(validatorResult);
-            }
-
             var step = _mapper.Map<Step>(request);
             await _context.Steps.AddAsync(step, cancellationToken);
             await _context.SaveChangesAsync(cancellationToken);
             
-            return new(step);
+            return new(_mapper.Map<StepDto>(step));
         }
     }
 }
