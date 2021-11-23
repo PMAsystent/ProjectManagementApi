@@ -16,7 +16,7 @@ namespace ProjectManagement.Core.Authorization
         public int? ProjectId { get; set; }
         public int? StepId { get; set; }
         public int? TaskId { get; set; }
-        
+
         class AssignedToProjectRequirementHandler : IAuthorizationHandler<AssignedToProjectRequirement>
         {
             private readonly IApplicationDbContext _context;
@@ -25,37 +25,36 @@ namespace ProjectManagement.Core.Authorization
             {
                 _context = context;
             }
-            
+
             public async Task<AuthorizationResult> Handle(AssignedToProjectRequirement requirement, CancellationToken cancellationToken)
             {
                 var userId = requirement.UserId;
                 var projectId = requirement.ProjectId;
                 
-                //TODO: Maybe it will be better to move that to the authorizer?
-                
                 if (projectId == null)
                 {
                     var step = new Step();
-                    
+
                     if (requirement.StepId != null)
                     {
                         step = await _context.Steps.FindAsync(requirement.StepId);
                     }
                     else if (requirement.TaskId != null)
                     {
-                        step = await _context.Steps.FirstOrDefaultAsync(s =>
-                            s.Tasks.FirstOrDefault(t => t.Id == requirement.TaskId) != null, cancellationToken);
+                        var task = await _context.Tasks.Include(t => t.Step)
+                            .FirstOrDefaultAsync(t => t.Id == requirement.TaskId, cancellationToken);
+                        step = task?.Step;
                     }
                     else
                     {
                         throw new Exception();
                     }
-                    
+
                     if (step == null)
                     {
                         return AuthorizationResult.Fail("Can not access");
                     }
-                    
+
                     projectId = step.ProjectId;
                 }
 
