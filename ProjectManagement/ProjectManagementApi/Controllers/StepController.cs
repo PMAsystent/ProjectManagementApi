@@ -1,5 +1,7 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Domain.Entities;
+using MediatR.Behaviors.Authorization.Exceptions;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using ProjectManagement.Core.UseCases.Steps.Commands.CreateStep;
@@ -47,28 +49,61 @@ namespace ProjectManagementApi.Controllers
         [HttpPost]
         public async Task<ActionResult<Step>> AddStep([FromBody] CreateStepCommand createStepCommand)
         {
-             var result = await Mediator.Send(createStepCommand);
-             return Ok(result.Step);
+            try
+            {
+                var result = await Mediator.Send(createStepCommand);
+                return Ok(result.Step);
+            }
+            catch (UnauthorizedException e)
+            {
+                return StatusCode(401, e.Message);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
         }
         
         [HttpPut(Name = "UpdateStep")]
         public async Task<ActionResult> Update([FromBody] UpdateStepCommand updateStepCommand)
         {
-            var result = await Mediator.Send(updateStepCommand);
-            return Ok(result.Step);
+            try
+            {
+                var result = await Mediator.Send(updateStepCommand);
+                return Ok(result.Step);
+            }
+            catch (UnauthorizedException e)
+            {
+                return StatusCode(401, e.Message);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
         }
         
         [HttpDelete("{id}")]
         public async Task<ActionResult> Delete([FromRoute] int id, [FromQuery] bool moveTasks)
         {
-            var deleteStepCommand = new DeleteStepCommand()
+            try
             {
-                StepId = id,
-                MoveTasks = moveTasks
-            };
-            await Mediator.Send(deleteStepCommand);
+                var deleteStepCommand = new DeleteStepCommand()
+                {
+                    StepId = id,
+                    MoveTasks = moveTasks
+                };
+                await Mediator.Send(deleteStepCommand);
         
-            return Ok();
+                return Ok();
+            }
+            catch (UnauthorizedException e)
+            {
+                return StatusCode(401, e.Message);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
         }
     }
 }

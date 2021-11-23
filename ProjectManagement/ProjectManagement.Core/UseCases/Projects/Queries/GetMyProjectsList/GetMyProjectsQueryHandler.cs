@@ -52,6 +52,12 @@ namespace ProjectManagement.Core.UseCases.Projects.Queries.GetMyProjectsList
             {
                 var projectSteps = stepsInMyProjects.Where(s => s.ProjectId == project.Id).ToList();
                 project.ProgressPercentage = _projectsPercentageService.GetProgressPercentageForProject(projectSteps);
+                project.Steps = projectSteps.Select(s => new ProjectStepDto()
+                {
+                    Id = s.Id,
+                    Name = s.Name,
+                    ProgressPercentage = s.Tasks != null ? _projectsPercentageService.GetProgressPercentageForStep(s.Tasks.ToList()) : 0
+                }).ToList();
             }
 
             return new()
