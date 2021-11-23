@@ -27,6 +27,7 @@
     <Folder Include="UseCases\ProjectAssignments\ViewModels" />
     <Folder Include="UseCases\Steps\Commands\" />
     <Folder Include="UseCases\Tasks\Queries" />
+    <Folder Include="UseCases\Tasks\ViewModels" />
   </ItemGroup>
 
 </Project>

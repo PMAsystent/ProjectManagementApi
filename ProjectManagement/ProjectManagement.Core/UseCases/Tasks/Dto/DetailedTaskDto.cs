@@ -1,25 +1,25 @@
 ﻿using System;
+using System.Collections.Generic;
 using Domain.Entities;
-using Domain.Enums;
-using MediatR;
 using ProjectManagement.Core.Base.Mappings;
-using ProjectManagement.Core.UseCases.Tasks.Dto;
 
-namespace ProjectManagement.Core.UseCases.Tasks.Commands.CreateTask
+namespace ProjectManagement.Core.UseCases.Tasks.Dto
 {
-    public class CreateTaskCommand : IRequest<DetailedTaskDto>, IMapFrom<Task>
+    public class DetailedTaskDto : IMapFrom<Task>
     {
-
+        public int Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
         public string Priority { get; set; }
         public string TaskStatus { get; set; }
         public DateTime DueDate { get; set; }
         public int StepId { get; set; }
+        public ICollection<TaskAssignemntDto> Assigns { get; set; }
+        public ICollection<SubtaskDto> Subtasks { get; set; }
         
         public void Mapping(MappingProfile profile)
         {
-            profile.CreateMap<CreateTaskCommand, Task>();
+            profile.CreateMap<DetailedTaskDto, Task>().ReverseMap();
         }
     }
 }
