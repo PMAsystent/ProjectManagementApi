@@ -32,7 +32,7 @@ namespace ProjectManagement.Core.UseCases.Tasks.Queries.GetTaskById
 
             var taskDto = _mapper.Map<DetailedTaskDto>(task);
             taskDto.Assigns = await _context.TaskAssignments
-                .Where(a => a.TaskId == task.Id)
+                .Where(a => a.TaskId == task.Id && a.isActive)
                 .ProjectTo<TaskAssignemntDto>(_mapper.ConfigurationProvider)
                 .ToListAsync(cancellationToken);
 
