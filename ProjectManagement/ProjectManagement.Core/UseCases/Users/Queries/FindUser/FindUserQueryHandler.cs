@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -31,12 +32,14 @@ namespace ProjectManagement.Core.UseCases.Users.Queries.FindUser
                 .ToListAsync(cancellationToken);
 
             string term = request.Term.Contains("@") ? request.Term.Split("@")[0] : request.Term;
+            var rx = new Regex(@"^([^@]+)");
             
             var usersByUserEmail = await _context.Users
-                .Where(u => u.Email.Contains(term) && !usersByUserName.Select(i => i.Id).Contains(u.Id))
+                .Where(u => !usersByUserName.Select(i => i.Id).Contains(u.Id))
                 .ProjectTo<UserDto>(_mapper.ConfigurationProvider)
                 .ToListAsync(cancellationToken);
 
+            usersByUserEmail = usersByUserEmail.Where(u => rx.Match(u.Email).Success && rx.Match(u.Email).Value.Contains(term)).ToList();
 
             var users = new List<UserDto>();
             
