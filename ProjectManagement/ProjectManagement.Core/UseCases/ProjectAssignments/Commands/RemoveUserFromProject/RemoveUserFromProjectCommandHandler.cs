@@ -1,6 +1,7 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using Domain.Entities;
+using Domain.Events;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using ProjectManagement.Core.Base.Exceptions;
@@ -11,10 +12,12 @@ namespace ProjectManagement.Core.UseCases.ProjectAssignments.Commands.RemoveUser
     public class RemoveUserFromProjectCommandHandler : IRequestHandler<RemoveUserFromProjectCommand>
     {
         private readonly IApplicationDbContext _context;
+        private readonly IDomainEventService _domainEventService;
 
-        public RemoveUserFromProjectCommandHandler(IApplicationDbContext context)
+        public RemoveUserFromProjectCommandHandler(IApplicationDbContext context, IDomainEventService domainEventService)
         {
             _context = context;
+            _domainEventService = domainEventService;
         }
 
         public async Task<Unit> Handle(RemoveUserFromProjectCommand request, CancellationToken cancellationToken)
@@ -30,8 +33,8 @@ namespace ProjectManagement.Core.UseCases.ProjectAssignments.Commands.RemoveUser
             _context.ProjectAssignments.Remove(projectAssignment);
             await _context.SaveChangesAsync(cancellationToken);
             
-            //TODO: Remove assigned tasks
-            
+            await _domainEventService.Publish(new ProjectAssignmentDeletedEvent(request.UserId, request.ProjectId));
+
             return Unit.Value;
         }
     }
