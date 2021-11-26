@@ -49,7 +49,7 @@ namespace ProjectManagement.Core.UseCases.Projects.Queries.GetProjectWithDetails
             {
                 Id = step.Id,
                 Name = step.Name,
-                ProgressPercentage = step.Tasks != null ? _projectsPercentageService.GetProgressPercentageForStep(step.Tasks.ToList()) : 0 
+                ProgressPercentage = step.Tasks.Any() ? _projectsPercentageService.GetProgressPercentageForStep(step.Tasks.ToList()) : 0 
             }).ToList();
 
             detailedProjectDto.ProjectTasks =
