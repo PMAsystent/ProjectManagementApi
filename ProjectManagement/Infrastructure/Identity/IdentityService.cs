@@ -38,13 +38,7 @@ namespace Infrastructure.Identity
             _settings = settings.Value;
         }
 
-        public async Task<bool> AuthorizeAsync(string userName, string policyName)
-        {
-            var user = _userManager.Users.SingleOrDefault(u => u.UserName == userName);
-            var principal = await _userClaimsPrincipalFactory.CreateAsync(user);
-            var result = await _authorizationService.AuthorizeAsync(principal, policyName);
-            return result.Succeeded;
-        }
+
 
         public async Task<Result> DeleteUserAsync(string userId)
         {
@@ -89,7 +83,12 @@ namespace Infrastructure.Identity
                 UserName = userName,
                 Email = email,
             };
+            var userCheck = _userManager.Users.SingleOrDefault(u => u.Email == email);
 
+            if (userCheck != null)
+            {
+                return (Result.Failure(new List<string> { "User already exist" }), "", "");
+            }
             var result = await _userManager.CreateAsync(user, password);
             string userNameResponse = "";
             string emailResponse = "";
@@ -108,7 +107,15 @@ namespace Infrastructure.Identity
         /// <param name="email"></param>
         /// <param name="password"></param>
         /// <returns></returns>
-        public async Task<JWTAuthorizationResult> LoginUserAsync(string email, string password)
+        /// 
+        public async Task<bool> AuthorizeAsync(string userName, string policyName)
+        {
+            var user = _userManager.Users.SingleOrDefault(u => u.UserName == userName);
+            var principal = await _userClaimsPrincipalFactory.CreateAsync(user);
+            var result = await _authorizationService.AuthorizeAsync(principal, policyName);
+            return result.Succeeded;
+        }
+        public async Task<(JWTAuthorizationResult Result, string UserName, string Email)> LoginUserAsync(string email, string password)
         {
             SignInResult result = new SignInResult();
             if (_signInManager != null)
@@ -116,10 +123,12 @@ namespace Infrastructure.Identity
                 var user = _userManager.Users.SingleOrDefault(u => u.Email == email);
 
                 if (user == null)
-                    return JWTAuthorizationResult.Failure(new string[] { "Email not found" });
+                    return (JWTAuthorizationResult.Failure(new string[] { "Email not found" }),"","");
 
                 result = await _signInManager.PasswordSignInAsync(user, password, true, false);
-                await AuthorizeAsync(user.UserName, "CanPurge"); //?? is it needed?
+
+                var test = _signInManager.Context.User;
+                await AuthorizeAsync(user.UserName, "CanPurge"); 
 
 
                 if (result.Succeeded == true)
@@ -136,11 +145,12 @@ namespace Infrastructure.Identity
 
                     await _userManager.SetAuthenticationTokenAsync(user, user.Email, "userToken", apiresult.Token);
 
-                    return apiresult;
+
+                    return (apiresult,user.UserName, user.Email);
                 }
                 else
                 {
-                    return JWTAuthorizationResult.Failure(new string[] { "Wrong password" });
+                    return (JWTAuthorizationResult.Failure(new string[] { "Wrong password" }),"","");
                 }
             }
 

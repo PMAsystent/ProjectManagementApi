@@ -68,9 +68,8 @@ namespace ProjectManagementApi
                     ValidateIssuerSigningKey = true,
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(settings.AuthKey)),
                     ValidateIssuer = false,
-                    ValidateLifetime = true,
-                    ValidAudience = Configuration["Tokens:Audience"],
-                    ValidateAudience = true
+                    ValidateAudience = false,
+                    ValidateLifetime=true
                     };
             });
             //Develop comments for learning purpose:

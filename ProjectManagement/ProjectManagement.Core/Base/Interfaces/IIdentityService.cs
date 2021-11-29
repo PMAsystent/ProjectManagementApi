@@ -11,12 +11,13 @@ namespace ProjectManagement.Core.Base.Interfaces
 
         Task<bool> AuthorizeAsync(string userId, string policyName);
 
-        Task<JWTAuthorizationResult> LoginUserAsync(string email, string password);
+        Task<(JWTAuthorizationResult Result, string UserName, string Email)>  LoginUserAsync(string email, string password);
 
         Task LogoutUserAsync(string userName);
         Task<Result> ChangePasswordAsync(string userName, string email, string oldPassword, string newPassword);
         Task<Result> ResetPasswordAsync(string userName, string email, string newPassword);
         Task<Result> ConfirmEmailAsync();
+        Task<bool> CheckIfUserWithEmailExists(string email);
         Task<Result> ChangeEmailAsync(string userName, string email, string newEmail);
         Task<(Result Result, string UserName, string Email)> RegisterUserAsync(string email, string userName, string password);
         Task<Result> DeleteUserAsync(string userId);

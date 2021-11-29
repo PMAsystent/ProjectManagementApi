@@ -16,6 +16,7 @@ namespace ProjectManagementApi.Controllers
         [HttpPost("RegisterUser")]
         public async Task<RegisterResponseDto> RegisterUser(RegisterUserCommand command)
         {
+          //  HttpContext.User.
             return await Mediator.Send(command);
         }
 
@@ -23,7 +24,7 @@ namespace ProjectManagementApi.Controllers
         public async Task<ActionResult<JWTAuthorizationResult>> LoginUser(LoginUserCommand command)
         {
             var result = await Mediator.Send(command);
-            if (result.Succeeded)
+            if (result.Token!="")
                 return new OkObjectResult(result.Token);
             return new UnauthorizedResult();
         }
@@ -66,7 +67,6 @@ namespace ProjectManagementApi.Controllers
         [HttpPatch("GetCurrentUserByToken")]
         public async Task<ActionResult<CheckTokenResponseDto>> GetCurrentUserByToken(CheckTokenCommand command)
         {
-            var test = HttpContext.User.Identity.IsAuthenticated;
             return await Mediator.Send(command);
         }
     }
