@@ -17,6 +17,8 @@ namespace ProjectManagement.Core.Authorization
         public int? StepId { get; set; }
         public int? TaskId { get; set; }
 
+        public int? SubtaskId { get; set; }
+
         class AssignedToProjectRequirementHandler : IAuthorizationHandler<AssignedToProjectRequirement>
         {
             private readonly IApplicationDbContext _context;
@@ -44,6 +46,13 @@ namespace ProjectManagement.Core.Authorization
                         var task = await _context.Tasks.Include(t => t.Step)
                             .FirstOrDefaultAsync(t => t.Id == requirement.TaskId, cancellationToken);
                         step = task?.Step;
+                    }
+                    else if (requirement.SubtaskId != null)
+                    {
+                        var subTask = await _context.Subtasks.Include(s => s.Task)
+                            .Include(s => s.Task.Step)
+                            .FirstOrDefaultAsync(t => t.Id == requirement.SubtaskId, cancellationToken);
+                        step = subTask?.Task.Step;
                     }
                     else
                     {
