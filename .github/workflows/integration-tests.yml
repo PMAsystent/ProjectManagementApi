@@ -2,7 +2,7 @@ name: Integration tests with MSSQL in container
 
 on:
   push:
-    branches: [ Develop, integration_tests/setup ]
+    branches: [ Develop ]
   pull_request:
     branches: [ Develop ]
 
