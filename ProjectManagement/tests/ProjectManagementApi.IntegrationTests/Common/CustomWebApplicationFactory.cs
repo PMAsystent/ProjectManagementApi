@@ -68,15 +68,6 @@ namespace ProjectManagementApi.IntegrationTests.Common
                     }
                 }
             });
-
-            builder.ConfigureTestServices(services =>
-            {
-                services.AddAuthentication("IntegrationTest")
-                    .AddScheme<AuthenticationSchemeOptions, TestAuthenticationHandler>(
-                        "IntegrationTest",
-                        options => { }
-                    );
-            });
         }
     }
 }

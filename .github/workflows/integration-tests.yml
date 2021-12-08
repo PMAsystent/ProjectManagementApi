@@ -28,9 +28,6 @@ jobs:
         files: ./ProjectManagement/ProjectManagementApi/appsettings.IntegrationTests.json
       env:
         ConnectionStrings.DefaultConnection: Server=localhost,1433; Database=ProjectManagementDB; User Id='SA'; Password='P@$$w0rd'
-        
-    - name: Read appsettings.IntegrationTests.json
-      run: "cat ProjectManagement/ProjectManagementApi/appsettings.IntegrationTests.json"
       
     - name: Setup .NET
       uses: actions/setup-dotnet@v1

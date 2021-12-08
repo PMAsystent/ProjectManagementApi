@@ -16,8 +16,6 @@ namespace ProjectManagementApi.IntegrationTests.Common
             Factory = factory;
             _output = output;
             Client = Factory.CreateClient();
-            Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("IntegrationTest");
-
         }
     }
 }
