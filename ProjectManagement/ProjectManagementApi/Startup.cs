@@ -15,12 +15,14 @@ using ProjectManagement.Core.Base.Interfaces;
 using ProjectManagementApi.Filters;
 using ProjectManagementApi.Services;
 using System.Text;
+using ProjectManagementApi.Configuration;
 
 namespace ProjectManagementApi
 {
     public class Startup
     {
         readonly string AllowPolicy = "MonopolyPolicy";
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -32,45 +34,18 @@ namespace ProjectManagementApi
         {
             services.AddApplication();
             services.AddInfrastructure(Configuration);
-            
-            var settingsSection = Configuration.GetSection("AppSettings");
-            var settings = settingsSection.Get<AppSettings>();
-            services.Configure<AppSettings>(settingsSection);
+            services.AddAuthentication(Configuration);
 
             services.AddSingleton<ICurrentUserService, CurrentUserService>();
             services.AddHttpContextAccessor();
 
             services.AddControllersWithViews(options =>
-                options.Filters.Add<ApiExceptionFilterAttribute>())
-                    .AddFluentValidation()
-                    .AddNewtonsoftJson();
-            
-            services.Configure<ApiBehaviorOptions>(options =>
-            {
-                options.SuppressModelStateInvalidFilter = true;
-            });
-            services.AddAuthentication(x =>
-            {
-                x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            })
-                .AddJwtBearer(options =>
-                {
-                    // IdentityServer emits a typ header by default, recommended extra check
-                    options.TokenValidationParameters.ValidTypes = new[] { "at+jwt" };
+                    options.Filters.Add<ApiExceptionFilterAttribute>())
+                .AddFluentValidation()
+                .AddNewtonsoftJson();
 
-                    //SET ONLY IN-DEV TODO: make this automatic
-                    options.RequireHttpsMetadata = false;
+            services.Configure<ApiBehaviorOptions>(options => { options.SuppressModelStateInvalidFilter = true; });
 
-                    options.SaveToken = true;
-                    options.TokenValidationParameters = new TokenValidationParameters
-                {
-                    ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(settings.AuthKey)),
-                    ValidateIssuer = false,
-                    ValidateAudience = false,
-                };
-            });
             //Develop comments for learning purpose:
             //Origin - Out base URL or URL'a used by our WebApi, For example: https://monopolyapi.net
             //Header - HTTP headers - used for passing additional information. CORS have main 10 headers, we can set many others headers, passing it to withheaders method
@@ -81,9 +56,9 @@ namespace ProjectManagementApi
                     builder =>
                     {
                         builder
-                        .AllowAnyOrigin()
-                        .AllowAnyHeader()
-                        .AllowAnyMethod();
+                            .AllowAnyOrigin()
+                            .AllowAnyHeader()
+                            .AllowAnyMethod();
                     });
             });
 
@@ -107,10 +82,10 @@ namespace ProjectManagementApi
                             Reference = new OpenApiReference()
                             {
                                 Type = ReferenceType.SecurityScheme,
-                                Id="Bearer"
+                                Id = "Bearer"
                             }
                         },
-                        new string[] {}
+                        new string[] { }
                     }
                 });
             });
@@ -141,11 +116,7 @@ namespace ProjectManagementApi
             app.UseCors(AllowPolicy);
             app.UseAuthentication();
             app.UseAuthorization();
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllers();
-            });
-
+            app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
         }
     }
 }
