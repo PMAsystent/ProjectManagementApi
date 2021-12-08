@@ -42,7 +42,7 @@ namespace ProjectManagement.Core.UseCases.Projects.Commands.CreateProject
             }, cancellationToken);
             await _context.SaveChangesAsync(cancellationToken);
 
-            return await GetDetailedProjectDto(project, projectAssignments);
+            return await GetDetailedProjectDto(project, projectAssignments, request.CurrentUserId);
         }
 
         private async Task<List<ProjectAssignment>> GetProjectAssignments(string currentUserId, int projectId,
@@ -97,7 +97,7 @@ namespace ProjectManagement.Core.UseCases.Projects.Commands.CreateProject
         }
 
         private async Task<DetailedProjectDto> GetDetailedProjectDto(Project project,
-            List<ProjectAssignment> projectAssignments)
+            List<ProjectAssignment> projectAssignments, string currentUserId)
         {
             var projectToReturn = _mapper.Map<DetailedProjectDto>(project);
             projectToReturn.ProjectTasks = new List<ProjectTaskDto>();
@@ -111,8 +111,20 @@ namespace ProjectManagement.Core.UseCases.Projects.Commands.CreateProject
                 {
                     UserId = assignment.UserId,
                     UserName = assignedUsers.SingleOrDefault(u => u.UserId == assignment.UserId)?.UserName,
-                    MemberType = assignment.MemberType
+                    MemberType = assignment.MemberType,
+                    ProjectRole = assignment.ProjectRole
                 });
+            }
+
+            var currentUser = await _context.Users.SingleOrDefaultAsync(u => u.ApplicationUserId == currentUserId);
+            var currentUserAssignment = assignedUsers.SingleOrDefault(u => u.UserId == currentUser.Id);
+            if (currentUserAssignment != null)
+            {
+                projectToReturn.CurrentUserInfoInProject = new CurrentUserInfoInProject()
+                {
+                    MemberType = currentUserAssignment.MemberType,
+                    ProjectRole = currentUserAssignment.ProjectRole
+                };
             }
 
             return projectToReturn;
