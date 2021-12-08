@@ -1,4 +1,4 @@
-name: Integration tests with MSSQL in container
+name: Integration tests
 
 on:
   push:
@@ -22,13 +22,16 @@ jobs:
     steps:
     - uses: actions/checkout@v2
         
-    - name: Replace connection string
+    - name: Replace connection string by MSSQL in container
       uses: microsoft/variable-substitution@v1
       with:
         files: ./ProjectManagement/ProjectManagementApi/appsettings.IntegrationTests.json
       env:
-        connectionStrings.DefaultConnection: Server=localhost,1433; Database=ProjectManagementDB; User Id='SA'; Password='P@$$w0rd'
+        ConnectionStrings.DefaultConnection: Server=localhost,1433; Database=ProjectManagementDB; User Id='SA'; Password='P@$$w0rd'
         
+    - name: Read appsettings.IntegrationTests.json
+      run: "cat ProjectManagement/ProjectManagementApi/appsettings.IntegrationTests.json"
+      
     - name: Setup .NET
       uses: actions/setup-dotnet@v1
       with:
