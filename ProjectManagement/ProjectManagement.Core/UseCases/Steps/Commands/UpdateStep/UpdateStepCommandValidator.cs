@@ -9,8 +9,6 @@ namespace ProjectManagement.Core.UseCases.Steps.Commands.UpdateStep
         {
             RuleFor(s => s.Name).NotEmpty();
             RuleFor(s => s.Name).MaximumLength(30);
-            RuleFor(s => s.Description).NotEmpty();
-            RuleFor(s => s.Description).MaximumLength(100);
             //TODO: Add more rules
         }
         

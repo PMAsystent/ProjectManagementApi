@@ -10,8 +10,8 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using ProjectManagement.Core.Base.Exceptions;
 using ProjectManagement.Core.Base.Interfaces;
+using ProjectManagement.Core.Base.Utils;
 using ProjectManagement.Core.UseCases.Projects.Dto;
-using ProjectManagement.Core.UseCases.Projects.Utils;
 
 namespace ProjectManagement.Core.UseCases.Projects.Queries.GetProjectWithDetails
 {
@@ -19,10 +19,10 @@ namespace ProjectManagement.Core.UseCases.Projects.Queries.GetProjectWithDetails
     {
         private readonly IApplicationDbContext _context;
         private readonly IMapper _mapper;
-        private readonly IProjectsPercentageService _projectsPercentageService;
+        private readonly IProgressPercentageService _projectsPercentageService;
 
         public GetProjectWithDetailsQueryHandler(IApplicationDbContext context, IMapper mapper,
-            IProjectsPercentageService projectsPercentageService)
+            IProgressPercentageService projectsPercentageService)
         {
             _context = context;
             _mapper = mapper;
@@ -40,6 +40,18 @@ namespace ProjectManagement.Core.UseCases.Projects.Queries.GetProjectWithDetails
 
             var detailedProjectDto = _mapper.Map<DetailedProjectDto>(project);
 
+            var stepsInProject =
+                await _context.Steps
+                    .Include(s => s.Tasks)
+                    .Where(s => s.ProjectId == detailedProjectDto.Id).ToListAsync(cancellationToken);
+
+            detailedProjectDto.ProjectSteps = stepsInProject.Select(step => new ProjectStepDto()
+            {
+                Id = step.Id,
+                Name = step.Name,
+                ProgressPercentage = step.Tasks.Any() ? _projectsPercentageService.GetProgressPercentageForStep(step.Tasks.ToList()) : 0 
+            }).ToList();
+
             detailedProjectDto.ProjectTasks =
                 await _context.Tasks.Where(t => detailedProjectDto.ProjectSteps
                         .Select(s => s.Id)
@@ -47,16 +59,6 @@ namespace ProjectManagement.Core.UseCases.Projects.Queries.GetProjectWithDetails
                     .ProjectTo<ProjectTaskDto>(_mapper.ConfigurationProvider)
                     .ToListAsync(cancellationToken);
             detailedProjectDto.ProjectAssignedUsers = await GetProjectAssignedUsers(detailedProjectDto.Id);
-
-            var stepsInProject =
-                await _context.Steps.Where(s => s.ProjectId == detailedProjectDto.Id).ToListAsync(cancellationToken);
-
-            detailedProjectDto.ProjectSteps = stepsInProject.Select(step => new ProjectStepDto()
-            {
-                Id = step.Id,
-                Name = step.Name,
-                ProgressPercentage = _projectsPercentageService.GetProgressPercentageForProject(new List<Step> { step })
-            }).ToList();
 
             detailedProjectDto.ProgressPercentage =
                 _projectsPercentageService.GetProgressPercentageForProject(stepsInProject);

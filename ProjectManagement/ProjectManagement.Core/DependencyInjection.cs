@@ -5,7 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using ProjectManagement.Core.Base.Behaviours;
 using System.Reflection;
 using MediatR.Behaviors.Authorization.Extensions.DependencyInjection;
-using ProjectManagement.Core.UseCases.Projects.Utils;
+using ProjectManagement.Core.Base.Utils;
 
 namespace ProjectManagement.Core
 {
@@ -25,7 +25,7 @@ namespace ProjectManagement.Core
             // Register all `IAuthorizer` implementations for a given assembly
             services.AddAuthorizersFromAssembly(Assembly.GetExecutingAssembly());
             
-            services.AddTransient<IProjectsPercentageService, ProjectsPercentageService>();
+            services.AddTransient<IProgressPercentageService, ProgressPercentageService>();
 
             return services;
         }

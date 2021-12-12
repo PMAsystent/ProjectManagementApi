@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -9,8 +7,8 @@ using Domain.Entities;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using ProjectManagement.Core.Base.Interfaces;
+using ProjectManagement.Core.Base.Utils;
 using ProjectManagement.Core.UseCases.Projects.Dto;
-using ProjectManagement.Core.UseCases.Projects.Utils;
 using ProjectManagement.Core.UseCases.Projects.ViewModels;
 using TaskStatus = Domain.Enums.TaskStatus;
 
@@ -20,10 +18,10 @@ namespace ProjectManagement.Core.UseCases.Projects.Queries.GetMyProjectsList
     {
         private readonly IApplicationDbContext _context;
         private readonly IMapper _mapper;
-        private readonly IProjectsPercentageService _projectsPercentageService;
+        private readonly IProgressPercentageService _projectsPercentageService;
 
         public GetMyProjectsQueryHandler(IApplicationDbContext context, IMapper mapper,
-            IProjectsPercentageService projectsPercentageService)
+            IProgressPercentageService projectsPercentageService)
         {
             _context = context;
             _mapper = mapper;
@@ -54,6 +52,12 @@ namespace ProjectManagement.Core.UseCases.Projects.Queries.GetMyProjectsList
             {
                 var projectSteps = stepsInMyProjects.Where(s => s.ProjectId == project.Id).ToList();
                 project.ProgressPercentage = _projectsPercentageService.GetProgressPercentageForProject(projectSteps);
+                project.Steps = projectSteps.Select(s => new ProjectStepDto()
+                {
+                    Id = s.Id,
+                    Name = s.Name,
+                    ProgressPercentage = s.Tasks != null ? _projectsPercentageService.GetProgressPercentageForStep(s.Tasks.ToList()) : 0
+                }).ToList();
             }
 
             return new()

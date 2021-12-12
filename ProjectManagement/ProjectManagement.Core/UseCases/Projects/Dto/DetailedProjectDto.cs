@@ -12,6 +12,7 @@ namespace ProjectManagement.Core.UseCases.Projects.Dto
         public string Description { get; set; }
         public DateTime DueDate { get; set; }
         public int ProgressPercentage { get; set; }
+        public DateTime Created { get; set; }
         public ICollection<ProjectStepDto> ProjectSteps { get; set; }
         public ICollection<ProjectTaskDto> ProjectTasks { get; set; }
         public ICollection<ProjectAssignedUserDto> ProjectAssignedUsers { get; set; }
