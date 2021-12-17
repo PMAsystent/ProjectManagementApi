@@ -21,7 +21,7 @@ namespace ProjectManagement.Core.Concrete.Identity.Commands
 
         public async Task<bool> Handle(LogoutUserCommand request, CancellationToken cancellationToken)
         {
-            await _identityService.LogoutUserAsync(request.UserName);
+           // await _identityService.LogoutUserAsync(request.UserName);
             return true;
         }
     }

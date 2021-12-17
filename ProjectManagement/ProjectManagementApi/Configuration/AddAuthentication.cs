@@ -34,7 +34,7 @@ namespace ProjectManagementApi.Configuration
 
         private static void AddApplicationAuthentication(IServiceCollection services, IConfiguration configuration)
         {
-            var settingsSection = configuration.GetSection("AppSettings");
+            var settingsSection = configuration.GetSection("Authentication");
             var settings = settingsSection.Get<AppSettings>();
             services.Configure<AppSettings>(settingsSection);
 

@@ -1,7 +1,13 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using ProjectManagement.Core.Base.Interfaces;
 using ProjectManagement.Core.Base.Model;
 using ProjectManagement.Core.Concrete.Identity.Commands;
+using ProjectManagement.Core.Concrete.Identity.Dto;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace ProjectManagementApi.Controllers
@@ -9,26 +15,26 @@ namespace ProjectManagementApi.Controllers
     [Route("api/[controller]")]
     public class AuthController : ApiControllerBase
     {
+        private readonly ICurrentUserService _currentUserService;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+
+        public AuthController(ICurrentUserService currentUserService, IHttpContextAccessor httpContextAccessor)
+        {
+            _currentUserService = currentUserService;
+            _httpContextAccessor = httpContextAccessor;
+        }
         [HttpPost("RegisterUser")]
-        public async Task<ActionResult<bool>> RegisterUser(RegisterUserCommand command)
+        public async Task<RegisterResponseDto> RegisterUser(RegisterUserCommand command)
         {
             return await Mediator.Send(command);
         }
 
-        /// <summary>
-        /// Logins users, and returns JWT token on successfull auth
-        /// </summary>
-        /// <param name="command"></param>
-        /// <returns>
-        /// 200, JWT token - if successful
-        /// 401 - if email, password pair not found
-        /// </returns>
         [HttpPost("LoginUser")]
-        public async Task<ActionResult<JWTAuthorizationResult>> LoginUser(LoginUserCommand command)
+        public async Task<ActionResult<LoginResponseDto>> LoginUser(LoginUserCommand command)
         {
             var result = await Mediator.Send(command);
-            if (result.Succeeded)
-                return new OkObjectResult(result.Token);
+            if (result.Token!="")
+                return new OkObjectResult(result);
             return new UnauthorizedResult();
         }
 
@@ -53,16 +59,22 @@ namespace ProjectManagementApi.Controllers
             return await Mediator.Send(command);
         }
 
-        [HttpPatch("ChangePassword")]
+        [HttpPost("ChangePassword")]
         [Authorize]
-        public async Task<ActionResult<bool>> ChangePassword(ChangePasswordCommand command)
+        public async Task<bool> ChangePassword(ChangePasswordCommand command)
         {
             return await Mediator.Send(command);
         }
 
-        [HttpPatch("ResetPassword")]
+        [HttpPost("ResetPassword")]
         [Authorize]
         public async Task<ActionResult<bool>> ResetPassword(ResetPasswordCommand command)
+        {
+            return await Mediator.Send(command);
+        }
+
+        [HttpPost("GetCurrentUserByToken")]
+        public async Task<ActionResult<CheckTokenResponseDto>> GetCurrentUserByToken(CheckTokenCommand command)
         {
             return await Mediator.Send(command);
         }

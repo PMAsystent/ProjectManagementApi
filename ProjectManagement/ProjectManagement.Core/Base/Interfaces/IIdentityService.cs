@@ -5,23 +5,15 @@ namespace ProjectManagement.Core.Base.Interfaces
 {
     public interface IIdentityService
     {
-        Task<string> GetUserNameAsync(string userId);
-
-        Task<bool> IsInRoleAsync(string userId, string role);
-
-        Task<bool> AuthorizeAsync(string userId, string policyName);
-
-        Task<JWTAuthorizationResult> LoginUserAsync(string email, string password);
-
-        Task LogoutUserAsync(string userName);
-        Task<Result> ChangePasswordAsync(string userName, string email, string oldPassword, string newPassword);
-        Task<Result> ResetPasswordAsync(string userName, string email, string newPassword);
-        Task<Result> ConfirmEmailAsync();
+        Task<(Result Result, string UserName, string Email, string Id)> RegisterUserAsync(string email, string userName, string password);
+        Task<(JWTAuthorizationResult Result, string UserName, string Email)> LoginUserAsync(string email, string password);
         Task<Result> ChangeEmailAsync(string userName, string email, string newEmail);
-        Task<(Result Result, string UserId)> RegisterUserAsync(string email, string userName, string password);
-
-        Task<Result> DeleteUserAsync(string userId);
-
+        Task<Result> ChangePasswordAsync(string userName, string email, string oldPassword, string newPassword);
+        Task<Result> ResetPasswordAsync(string userId, string email, string newPassword);
+        Task<Result> ConfirmEmailAsync();
+        Task<Result> DeleteUserAsync(string userId, string email, string password);
+        Task<(Result Result, string UserName, string Email)> CheckTokenAsync(string token);
         Task<bool> CheckIfUserWithEmailExists(string email);
+        Task<string> GetUserNameAsync(string userId);
     }
 }

@@ -2,11 +2,14 @@
 using MediatR;
 using System.Threading;
 using System.Threading.Tasks;
-using Domain.Events;
+using System.Collections.Generic;
+using ProjectManagement.Core.Concrete.Identity.Dto;
+using AutoMapper;
+using System;
 
 namespace ProjectManagement.Core.Concrete.Identity.Commands
 {
-    public class RegisterUserCommand : IRequest<bool>
+    public class RegisterUserCommand : IRequest<RegisterResponseDto>
     {
         public string UserName { get; set; }
 
@@ -15,25 +18,28 @@ namespace ProjectManagement.Core.Concrete.Identity.Commands
         public string Password { get; set; }
     }
 
-    public class RegisterUserCommandHandler : IRequestHandler<RegisterUserCommand, bool>
+    public class RegisterUserCommandHandler : IRequestHandler<RegisterUserCommand, RegisterResponseDto>
     {
         private readonly IIdentityService _identityService;
-        private readonly IDomainEventService _domainEventService;
+        private readonly IApplicationDbContext _context;
+        private readonly IMapper _mapper;
 
-        public RegisterUserCommandHandler(IIdentityService identityService, IDomainEventService domainEventService)
+        public RegisterUserCommandHandler(IApplicationDbContext context, IMapper mapper, IIdentityService identityService)
         {
             _identityService = identityService;
-            _domainEventService = domainEventService;
+            _context = context;
+            _mapper = mapper;
         }
 
-        public async Task<bool> Handle(RegisterUserCommand request, CancellationToken cancellationToken)
+        public async Task<RegisterResponseDto> Handle(RegisterUserCommand request, CancellationToken cancellationToken)
         {
-            var (result, userId) =
-                await _identityService.RegisterUserAsync(request.Email, request.UserName, request.Password);
+            var (Result, UserName, Email, Id) = await _identityService.RegisterUserAsync(request.Email,request.UserName, request.Password);
 
-            await _domainEventService.Publish(new UserRegisteredEvent(userId, request.UserName, request.Email));
+            await _context.Users.AddAsync(new Domain.Entities.User { ApplicationUserId = Id, Email = Email, UserName = UserName }, cancellationToken);
+            await _context.SaveChangesAsync(cancellationToken);
 
-            return result.Succeeded;
+
+            return new RegisterResponseDto { UserName=UserName, Email=Email, Errors = new List<string>(Result.Errors) };
         }
     }
 }

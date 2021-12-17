@@ -23,7 +23,7 @@ namespace ProjectManagement.Core.Concrete.Identity.Commands
 
         public async Task<bool> Handle(ConfirmEmailCommand request, CancellationToken cancellationToken)
         {
-            var result = await _identityService.LoginUserAsync(request.Email, request.Password);
+            var result = await _identityService.ConfirmEmailAsync();
             return result.Succeeded;
         }
     }
