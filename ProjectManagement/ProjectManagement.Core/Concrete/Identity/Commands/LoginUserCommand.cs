@@ -11,6 +11,7 @@ using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
 using System.Text.RegularExpressions;
 using System.Collections.Generic;
+using System;
 
 namespace ProjectManagement.Core.Concrete.Identity.Commands
 {
@@ -38,19 +39,20 @@ namespace ProjectManagement.Core.Concrete.Identity.Commands
         {
             var (Result, UserName, Email) = await _identityService.LoginUserAsync(request.Email, request.Password);
 
-            var user = await _context.Users
+            var users = await _context.Users
+                .Where(u => u.UserName == UserName && u.Email == Email)
+                .ProjectTo<UserDto>(_mapper.ConfigurationProvider)
                 .ToListAsync(cancellationToken);
 
-
-
+            var user = users.FirstOrDefault();
 
             if (Result.Succeeded)
             {
-                return new LoginResponseDto { Token = Result.Token, UserName = UserName, Email = Email };
+                return new LoginResponseDto { Token = Result.Token, User=user };
             }
             else
             {
-                return new LoginResponseDto { Token ="", UserName = UserName, Email = Email };
+                return new LoginResponseDto { Token =""};
             }
 
         }

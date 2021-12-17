@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ProjectManagement.Core.UseCases.Users.Queries.Dto;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,9 +9,7 @@ namespace ProjectManagement.Core.Concrete.Identity.Dto
 {
     public class CheckTokenResponseDto
     {
-        public string UserName { get; set; }
-
-        public string Email { get; set; }
+        public UserDto User { get; set; }
 
         public List<string> Errors { get; set; }
     }

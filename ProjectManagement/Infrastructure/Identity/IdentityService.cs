@@ -29,7 +29,7 @@ namespace Infrastructure.Identity
             _settings = settings.Value;
         }
 
-        public async Task<(Result Result, string UserName, string Email)> RegisterUserAsync(string email, string userName, string password)
+        public async Task<(Result Result, string UserName, string Email, string Id)> RegisterUserAsync(string email, string userName, string password)
         {
             //Create User 
             var user = new ApplicationUser
@@ -44,7 +44,7 @@ namespace Infrastructure.Identity
 
             if (userCheckEmail != null || userCheckName != null)
             {
-                return (Result.Failure(new List<string> { "User already exist" }), "", "");
+                return (Result.Failure(new List<string> { "User already exist" }), "", "", "");
             }
 
             //Create user
@@ -53,14 +53,17 @@ namespace Infrastructure.Identity
             //Check if user was corectly created
             string userNameResponse = "";
             string emailResponse = "";
+            string idResponse = "";
             if (result.Succeeded)
             {
                 userNameResponse = userName;
                 emailResponse = email;
+                var userCreated = await _userManager.FindByEmailAsync(email);
+                idResponse = userCreated.Id;
             }
 
             //Return proper response
-            return (result.ToApplicationResult(), userNameResponse, emailResponse);
+            return (result.ToApplicationResult(), userNameResponse, emailResponse, idResponse);
         }
 
         public async Task<(JWTAuthorizationResult Result, string UserName, string Email)> LoginUserAsync(string email, string password)
@@ -183,7 +186,7 @@ namespace Infrastructure.Identity
             var allUsers = await _userManager.Users.ToListAsync();
             for (int i = 0; i < allUsers.Count(); i++)
             {
-                var userToken = await _userManager.GetAuthenticationTokenAsync(allUsers[i], allUsers[i].Email, "userToken");
+                var userToken = await _userManager.GetAuthenticationTokenAsync(allUsers[i], allUsers[i].Email, "JWT");
                 if (token == userToken)
                 {
                     return (Result.Success(), allUsers[i].UserName, allUsers[i].Email);

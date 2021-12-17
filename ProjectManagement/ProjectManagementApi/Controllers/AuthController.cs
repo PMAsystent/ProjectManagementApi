@@ -30,11 +30,11 @@ namespace ProjectManagementApi.Controllers
         }
 
         [HttpPost("LoginUser")]
-        public async Task<ActionResult<JWTAuthorizationResult>> LoginUser(LoginUserCommand command)
+        public async Task<ActionResult<LoginResponseDto>> LoginUser(LoginUserCommand command)
         {
             var result = await Mediator.Send(command);
             if (result.Token!="")
-                return new OkObjectResult(result.Token);
+                return new OkObjectResult(result);
             return new UnauthorizedResult();
         }
 
@@ -63,7 +63,6 @@ namespace ProjectManagementApi.Controllers
         [Authorize]
         public async Task<bool> ChangePassword(ChangePasswordCommand command)
         {
-            var TEST = _currentUserService.UserId;
             return await Mediator.Send(command);
         }
 

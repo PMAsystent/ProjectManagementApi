@@ -1,17 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using ProjectManagement.Core.UseCases.Users.Queries.Dto;
 
 namespace ProjectManagement.Core.Concrete.Identity.Dto
 {
     public class LoginResponseDto
     {
         public string Token { get; set; }
-        public string UserName { get; set; }
-
-        public string Email { get; set; }
-
+        public UserDto User { get; set; }
     }
 }
