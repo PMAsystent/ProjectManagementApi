@@ -6,7 +6,6 @@ using ProjectManagement.Core.UseCases.Projects.Dto;
 using ProjectManagement.Core.UseCases.Projects.ViewModels;
 using System.Threading.Tasks;
 using MediatR.Behaviors.Authorization.Exceptions;
-using Microsoft.AspNetCore.Authorization;
 using ProjectManagement.Core.Base.Interfaces;
 using ProjectManagement.Core.Requests;
 using ProjectManagement.Core.UseCases.Projects.Commands.ArchiveOrUnArchiveProject;

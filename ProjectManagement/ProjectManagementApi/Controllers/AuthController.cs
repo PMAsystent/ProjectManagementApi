@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using ProjectManagement.Core.Base.Interfaces;
 using ProjectManagement.Core.Base.Model;
 using ProjectManagement.Core.Concrete.Identity.Commands;
 using ProjectManagement.Core.Concrete.Identity.Dto;
@@ -13,10 +15,17 @@ namespace ProjectManagementApi.Controllers
     [Route("api/[controller]")]
     public class AuthController : ApiControllerBase
     {
+        private readonly ICurrentUserService _currentUserService;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+
+        public AuthController(ICurrentUserService currentUserService, IHttpContextAccessor httpContextAccessor)
+        {
+            _currentUserService = currentUserService;
+            _httpContextAccessor = httpContextAccessor;
+        }
         [HttpPost("RegisterUser")]
         public async Task<RegisterResponseDto> RegisterUser(RegisterUserCommand command)
         {
-          //  HttpContext.User.
             return await Mediator.Send(command);
         }
 
@@ -50,21 +59,22 @@ namespace ProjectManagementApi.Controllers
             return await Mediator.Send(command);
         }
 
-        [HttpPatch("ChangePassword")]
+        [HttpPost("ChangePassword")]
         [Authorize]
-        public async Task<ActionResult<bool>> ChangePassword(ChangePasswordCommand command)
+        public async Task<bool> ChangePassword(ChangePasswordCommand command)
         {
+            var TEST = _currentUserService.UserId;
             return await Mediator.Send(command);
         }
 
-        [HttpPatch("ResetPassword")]
+        [HttpPost("ResetPassword")]
         [Authorize]
         public async Task<ActionResult<bool>> ResetPassword(ResetPasswordCommand command)
         {
             return await Mediator.Send(command);
         }
 
-        [HttpPatch("GetCurrentUserByToken")]
+        [HttpPost("GetCurrentUserByToken")]
         public async Task<ActionResult<CheckTokenResponseDto>> GetCurrentUserByToken(CheckTokenCommand command)
         {
             return await Mediator.Send(command);
