@@ -1,5 +1,7 @@
-﻿using Infrastructure.Identity.Helpers;
+﻿using IdentityServer4.Models;
+using Infrastructure.Identity.Helpers;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -10,6 +12,9 @@ using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Net.Mail;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
@@ -29,7 +34,7 @@ namespace Infrastructure.Identity
             _settings = settings.Value;
         }
 
-        public async Task<(Result Result, string UserName, string Email, string Id)> RegisterUserAsync(string email, string userName, string password)
+        public async Task<(Result Result, string UserName, string Email, string Id)> RegisterUserAsync(string email, string userName, string password, string apiUrl)
         {
             //Create User 
             var user = new ApplicationUser
@@ -37,7 +42,6 @@ namespace Infrastructure.Identity
                 UserName = userName,
                 Email = email,
             };
-
             //Check if user already exist
             var userCheckEmail = _userManager.Users.SingleOrDefault(u => u.Email == email);
             var userCheckName = _userManager.Users.SingleOrDefault(u => u.UserName == userName);
@@ -46,6 +50,14 @@ namespace Infrastructure.Identity
             {
                 return (Result.Failure(new List<string> { "User already exist" }), "", "", "");
             }
+
+            
+
+
+
+
+
+
 
             //Create user
             var result = await _userManager.CreateAsync(user, password);
@@ -60,10 +72,38 @@ namespace Infrastructure.Identity
                 emailResponse = email;
                 var userCreated = await _userManager.FindByEmailAsync(email);
                 idResponse = userCreated.Id;
+
+                string fromMail = "artur.mazela@gmail.com";
+                string fromPassword = "dgchbxbhnwqezaeb";
+
+                var token = await _userManager.GenerateEmailConfirmationTokenAsync(userCreated);
+                var confirmationLink = apiUrl + $"api/Auth/ConfirmEmail?userId={userCreated.Id}&token={token}";
+
+                MailMessage message = new MailMessage();
+                message.From = new MailAddress(fromMail);
+                message.Subject = "subject";
+                message.To.Add(new MailAddress(email));
+                message.Body = "<html><body> " + confirmationLink + " </body></html>";
+                message.IsBodyHtml = true;
+
+                var smtpClient = new SmtpClient("smtp.gmail.com")
+                {
+                    Port = 587,
+                    Credentials = new NetworkCredential(fromMail, fromPassword),
+                    EnableSsl = true,
+                };
+
+
+                await smtpClient.SendMailAsync(message);
             }
 
             //Return proper response
             return (result.ToApplicationResult(), userNameResponse, emailResponse, idResponse);
+        }
+
+        public async Task SendAccountConfirmationEmail(string email)
+        {
+
         }
 
         public async Task<(JWTAuthorizationResult Result, string UserName, string Email)> LoginUserAsync(string email, string password)
@@ -74,8 +114,13 @@ namespace Infrastructure.Identity
             if (user == null)
                 return (JWTAuthorizationResult.Failure(new string[] { "Email not found" }), "", "");
 
+
+            if (!user.EmailConfirmed)
+                return (JWTAuthorizationResult.Failure(new string[] { "Email not confirmed" }), "", "");
+
             //Sign in User
             var signResult = await _userManager.CheckPasswordAsync(user, password);
+
 
             //Create token response
             if (signResult)
@@ -152,9 +197,23 @@ namespace Infrastructure.Identity
             }
         }
 
-        public Task<Result> ConfirmEmailAsync()
+        public async Task<Result> ConfirmEmailAsync(string userId, string token)
         {
-            throw new NotImplementedException();
+            var user = await _userManager.FindByIdAsync(userId);
+
+            if (user != null)
+            {
+                var result = await _userManager.ConfirmEmailAsync(user, token);
+                return result.ToApplicationResult();
+            }
+            else if (user == null)
+            {
+                return (Result.Failure(new List<string> { "User not found" }));
+            }
+            else
+            {
+                return (Result.Failure(new List<string> { "Wrong confirmation  data" }));
+            }
         }
 
         public async Task<Result> DeleteUserAsync(string userId, string email, string password)
@@ -195,10 +254,8 @@ namespace Infrastructure.Identity
             return (Result.Failure(new List<string> { "User not found" }), "", "");
         }
 
-        public Task<bool> CheckIfUserWithEmailExists(string email)
-        {
-            throw new NotImplementedException();
-        }
+        public async Task<bool> CheckIfUserWithEmailExists(string email) =>
+            _userManager.Users.SingleOrDefault(u => u.Email == email) != null;
 
         public async Task<string> GetUserNameAsync(string userId)
         {

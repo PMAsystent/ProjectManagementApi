@@ -24,17 +24,28 @@ namespace ProjectManagementApi.Controllers
             _httpContextAccessor = httpContextAccessor;
         }
         [HttpPost("RegisterUser")]
-        public async Task<RegisterResponseDto> RegisterUser(RegisterUserCommand command)
+        public async Task<RegisterResponseDto> RegisterUser(RegisterUserBaseCommand command)
         {
-            return await Mediator.Send(command);
+            var requestUrl = $"{Request.Scheme}://{Request.Host.Value}/";
+            var requestUrl2 = $"{Request.Scheme}://{Request.Host.Value}/";
+            var test = Request;
+            try
+            {
+                return await Mediator.Send(new RegisterUserCommand(command, requestUrl));
+            }
+            catch(Exception e)
+            {
+                var tt = 5;
+            }
+            return null;
         }
 
         [HttpPost("LoginUser")]
         public async Task<ActionResult<LoginResponseDto>> LoginUser(LoginUserCommand command)
         {
             var result = await Mediator.Send(command);
-            if (result.Token!="")
-                return new OkObjectResult(result);
+            if (result.Token != "")
+                return result;
             return new UnauthorizedResult();
         }
 
@@ -45,11 +56,10 @@ namespace ProjectManagementApi.Controllers
             return await Mediator.Send(command);
         }
 
-        [HttpPost("ConfirmEmail")]
-        [Authorize]
-        public async Task<ActionResult<bool>> ConfirmEmail(ConfirmEmailCommand command)
+        [HttpGet("ConfirmEmail")]
+        public async Task<ActionResult<bool>> ConfirmEmail(string userId, string token)
         {
-            return await Mediator.Send(command);
+            return await Mediator.Send(new ConfirmEmailCommand { UserId = userId, Token = token.Replace(" ","+") });
         }
 
         [HttpPost("ChangeEmail")]
@@ -63,6 +73,7 @@ namespace ProjectManagementApi.Controllers
         [Authorize]
         public async Task<bool> ChangePassword(ChangePasswordCommand command)
         {
+            var test = _currentUserService.UserId;
             return await Mediator.Send(command);
         }
 

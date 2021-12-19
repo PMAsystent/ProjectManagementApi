@@ -16,6 +16,16 @@ namespace ProjectManagement.Core.Concrete.Identity.Commands
         public string Email { get; set; }
 
         public string Password { get; set; }
+
+        public string ApiUrl { get; set; }
+
+        public RegisterUserCommand(RegisterUserBaseCommand baseCommand, string apiUrl) 
+        {
+            UserName = baseCommand.UserName;
+            Email = baseCommand.Email;
+            Password = baseCommand.Password;
+            ApiUrl = apiUrl;
+        }
     }
 
     public class RegisterUserCommandHandler : IRequestHandler<RegisterUserCommand, RegisterResponseDto>
@@ -33,7 +43,7 @@ namespace ProjectManagement.Core.Concrete.Identity.Commands
 
         public async Task<RegisterResponseDto> Handle(RegisterUserCommand request, CancellationToken cancellationToken)
         {
-            var (Result, UserName, Email, Id) = await _identityService.RegisterUserAsync(request.Email,request.UserName, request.Password);
+            var (Result, UserName, Email, Id) = await _identityService.RegisterUserAsync(request.Email,request.UserName, request.Password, request.ApiUrl);
 
             await _context.Users.AddAsync(new Domain.Entities.User { ApplicationUserId = Id, Email = Email, UserName = UserName }, cancellationToken);
             await _context.SaveChangesAsync(cancellationToken);
