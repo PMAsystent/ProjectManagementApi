@@ -1,13 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ProjectManagement.Core.Base.Interfaces;
-using ProjectManagement.Core.Base.Model;
 using ProjectManagement.Core.Concrete.Identity.Commands;
 using ProjectManagement.Core.Concrete.Identity.Dto;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace ProjectManagementApi.Controllers
@@ -16,28 +12,23 @@ namespace ProjectManagementApi.Controllers
     public class AuthController : ApiControllerBase
     {
         private readonly ICurrentUserService _currentUserService;
-        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public AuthController(ICurrentUserService currentUserService, IHttpContextAccessor httpContextAccessor)
+        public AuthController(ICurrentUserService currentUserService)
         {
             _currentUserService = currentUserService;
-            _httpContextAccessor = httpContextAccessor;
         }
         [HttpPost("RegisterUser")]
         public async Task<RegisterResponseDto> RegisterUser(RegisterUserBaseCommand command)
         {
             var requestUrl = $"{Request.Scheme}://{Request.Host.Value}/";
-            var requestUrl2 = $"{Request.Scheme}://{Request.Host.Value}/";
-            var test = Request;
-            try
-            {
-                return await Mediator.Send(new RegisterUserCommand(command, requestUrl));
-            }
-            catch(Exception e)
-            {
-                var tt = 5;
-            }
-            return null;
+
+            return await Mediator.Send(new RegisterUserCommand(command, requestUrl));
+        }
+
+        [HttpGet("ConfirmEmail")]
+        public async Task<ActionResult<bool>> ConfirmEmail(string userId, string token)
+        {
+            return await Mediator.Send(new ConfirmEmailCommand { UserId = userId, Token = token.Replace(" ", "+") });
         }
 
         [HttpPost("LoginUser")]
@@ -56,24 +47,10 @@ namespace ProjectManagementApi.Controllers
             return await Mediator.Send(command);
         }
 
-        [HttpGet("ConfirmEmail")]
-        public async Task<ActionResult<bool>> ConfirmEmail(string userId, string token)
-        {
-            return await Mediator.Send(new ConfirmEmailCommand { UserId = userId, Token = token.Replace(" ","+") });
-        }
-
-        [HttpPost("ChangeEmail")]
+        [HttpPost("SendResetPasswordEmail")]
         [Authorize]
-        public async Task<ActionResult<bool>> ChangeEmail(ChangeEmailCommand command)
+        public async Task<ActionResult<bool>> SendResetPasswordEmail(SendResetPasswordEmailCommand command)
         {
-            return await Mediator.Send(command);
-        }
-
-        [HttpPost("ChangePassword")]
-        [Authorize]
-        public async Task<bool> ChangePassword(ChangePasswordCommand command)
-        {
-            var test = _currentUserService.UserId;
             return await Mediator.Send(command);
         }
 
@@ -84,7 +61,30 @@ namespace ProjectManagementApi.Controllers
             return await Mediator.Send(command);
         }
 
+        [HttpPost("ChangePassword")]
+        [Authorize]
+        public async Task<bool> ChangePassword(ChangePasswordCommand command)
+        {
+            return await Mediator.Send(command);
+        }
+
+        [HttpPost("SendChangeEmailAddressEmail")]
+        [Authorize]
+        public async Task<ActionResult<bool>> SendChangeEmailAddressEmail(SendChangeEmailAddressEmailCommand command)
+        {
+            return await Mediator.Send(command);
+        }
+
+        [HttpPost("ChangeEmail")]
+        [Authorize]
+        public async Task<ActionResult<bool>> ChangeEmail(ChangeEmailCommand command)
+        {
+            var test = _currentUserService.UserId;
+            return await Mediator.Send(command);
+        }
+
         [HttpPost("GetCurrentUserByToken")]
+        [Authorize]
         public async Task<ActionResult<CheckTokenResponseDto>> GetCurrentUserByToken(CheckTokenCommand command)
         {
             return await Mediator.Send(command);

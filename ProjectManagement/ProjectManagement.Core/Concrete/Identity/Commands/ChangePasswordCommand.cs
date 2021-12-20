@@ -16,15 +16,17 @@ namespace ProjectManagement.Core.Concrete.Identity.Commands
     public class ChangePasswordCommandHandler : IRequestHandler<ChangePasswordCommand, bool>
     {
         private readonly IIdentityService _identityService;
+        private readonly ICurrentUserService _currentUserService;
 
-        public ChangePasswordCommandHandler(IIdentityService identityService)
+        public ChangePasswordCommandHandler(IIdentityService identityService, ICurrentUserService currentUserService)
         {
             _identityService = identityService;
+            _currentUserService = currentUserService;
         }
 
         public async Task<bool> Handle(ChangePasswordCommand request, CancellationToken cancellationToken)
         {
-            var result = await _identityService.ChangePasswordAsync(request.UserName,request.Email, request.OldPassword,request.NewPassword);
+            var result = await _identityService.ChangePasswordAsync(_currentUserService.UserId,request.Email, request.OldPassword,request.NewPassword);
             return result.Succeeded;
         }
     }

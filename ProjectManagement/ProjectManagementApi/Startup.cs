@@ -15,6 +15,8 @@ using ProjectManagement.Core.Base.Interfaces;
 using ProjectManagementApi.Filters;
 using ProjectManagementApi.Services;
 using System.Text;
+using ProjectManagementApi.Configuration;
+using ProjectManagementApi.Middleware;
 
 namespace ProjectManagementApi
 {
@@ -32,12 +34,20 @@ namespace ProjectManagementApi
         {
             services.AddApplication();
             services.AddInfrastructure(Configuration);
+            services.AddCustomAuthentication(Configuration);
 
-            var settingsSection = Configuration.GetSection("Authentication");
-            var settings = settingsSection.Get<AppSettings>();
-            services.Configure<AppSettings>(settingsSection);
+            var settingsSectionAuth = Configuration.GetSection("Authentication");
+            var authSettings = settingsSectionAuth.Get<AuthSettings>();
+
+            var settingsSectionEmail = Configuration.GetSection("EmailProvider");
+            var emailSettings = settingsSectionEmail.Get<EmailProviderSettings>();
+
+            services.Configure<AuthSettings>(settingsSectionAuth);
+            services.Configure<EmailProviderSettings>(settingsSectionEmail);
 
             services.AddSingleton<ICurrentUserService, CurrentUserService>();
+            services.AddTransient<TokenManagerMiddleware>();
+            services.AddTransient<ITokenManager, TokenManager>();
             services.AddHttpContextAccessor();
 
             services.AddControllersWithViews(options =>
@@ -49,32 +59,7 @@ namespace ProjectManagementApi
             {
                 options.SuppressModelStateInvalidFilter = true;
             });
-            services.AddAuthentication(x =>
-            {
-                x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            })
-                .AddJwtBearer(options =>
-                {
-                    // IdentityServer emits a typ header by default, recommended extra check
-                    options.TokenValidationParameters.ValidTypes = new[] { "at+jwt" };
 
-                    //SET ONLY IN-DEV TODO: make this automatic
-                    options.RequireHttpsMetadata = false;
-                    options.SaveToken = true;
-                    options.TokenValidationParameters = new TokenValidationParameters();
-                    options.TokenValidationParameters.ValidateIssuerSigningKey = true;
-                    options.TokenValidationParameters.IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(settings.AuthKey));
-                    options.TokenValidationParameters.ValidateIssuer = true;
-                    options.TokenValidationParameters.ValidateAudience = true;
-                    options.TokenValidationParameters.ValidIssuer = settings.Issuer;
-                    options.TokenValidationParameters.ValidAudience = settings.Audience;
-                    options.TokenValidationParameters.ValidateLifetime = true;
-                });
-            //Develop comments for learning purpose:
-            //Origin - Out base URL or URL'a used by our WebApi, For example: https://monopolyapi.net
-            //Header - HTTP headers - used for passing additional information. CORS have main 10 headers, we can set many others headers, passing it to withheaders method
-            //Method - HTTP methods like GET, POST etc. We can set what methods we can use
             services.AddCors(options =>
             {
                 options.AddPolicy(name: AllowPolicy,
@@ -141,6 +126,7 @@ namespace ProjectManagementApi
             app.UseCors(AllowPolicy);
             app.UseAuthentication();
             app.UseAuthorization();
+            app.UseMiddleware<TokenManagerMiddleware>();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
