@@ -1,5 +1,4 @@
-﻿using System;
-using MediatR;
+﻿using MediatR;
 using ProjectManagement.Core.Base.Interfaces;
 using System.Threading;
 using System.Threading.Tasks;

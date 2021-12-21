@@ -20,11 +20,8 @@ namespace ProjectManagement.Core
             //services.AddTransient(typeof(IPipelineBehavior<,>), typeof(AuthorizationBehaviour<,>));
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(PerformanceBehaviour<,>));
-
             services.AddMediatorAuthorization(Assembly.GetExecutingAssembly());
-            // Register all `IAuthorizer` implementations for a given assembly
             services.AddAuthorizersFromAssembly(Assembly.GetExecutingAssembly());
-            
             services.AddTransient<IProgressPercentageService, ProgressPercentageService>();
 
             return services;
