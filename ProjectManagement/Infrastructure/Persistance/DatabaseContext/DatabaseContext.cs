@@ -11,22 +11,18 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using IdentityServer4.EntityFramework.Options;
 using Microsoft.AspNetCore.ApiAuthorization.IdentityServer;
-using Task = System.Threading.Tasks.Task;
 
 namespace Infrastructure.Persistance.DatabaseContext
 {
     public class ApplicationDbContext : ApiAuthorizationDbContext<ApplicationUser>, IApplicationDbContext
     {
-        private readonly IDomainEventService _domainEventService;
         private readonly ICurrentUserService _currentUserService;
 
         public ApplicationDbContext(
             DbContextOptions options,
             IOptions<OperationalStoreOptions> operationalStoreOptions,
-            IDomainEventService domainEventService,
             ICurrentUserService currentUserService) : base(options, operationalStoreOptions)
         {
-            _domainEventService = domainEventService;
             _currentUserService = currentUserService;
         }
 
@@ -39,7 +35,9 @@ namespace Infrastructure.Persistance.DatabaseContext
         public DbSet<TaskAssignment> TaskAssignments { get; set; }
         public DbSet<ProjectAssignment> ProjectAssignments { get; set; }
 
+#pragma warning disable CS0114 // Member hides inherited member; missing override keyword
         public DbSet<User> Users { get; set; }
+#pragma warning restore CS0114 // Member hides inherited member; missing override keyword
 
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = new())
         {

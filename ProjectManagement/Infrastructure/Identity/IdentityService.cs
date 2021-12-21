@@ -1,7 +1,4 @@
-﻿using IdentityServer4.Models;
-using Infrastructure.Identity.Helpers;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Infrastructure.Identity.Helpers;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -38,13 +35,12 @@ namespace Infrastructure.Identity
 
         public async Task<(Result Result, string UserName, string Email, string Id)> RegisterUserAsync(string email, string userName, string password, string apiUrl)
         {
-            //Create User 
             var user = new ApplicationUser
             {
                 UserName = userName,
                 Email = email,
             };
-            //Check if user already exist
+
             var userCheckEmail = _userManager.Users.SingleOrDefault(u => u.Email == email);
             var userCheckName = _userManager.Users.SingleOrDefault(u => u.UserName == userName);
 
@@ -53,48 +49,59 @@ namespace Infrastructure.Identity
                 return (Result.Failure(new List<string> { "User already exist" }), "", "", "");
             }
 
-            //Create user
             var result = await _userManager.CreateAsync(user, password);
 
-            //Check if user was corectly created
             string userNameResponse = "";
             string emailResponse = "";
             string idResponse = "";
+
             if (result.Succeeded)
             {
                 userNameResponse = userName;
                 emailResponse = email;
                 var userCreated = await _userManager.FindByEmailAsync(email);
                 idResponse = userCreated.Id;
-                await SendAccountConfirmationEmail(userCreated, apiUrl, email);
+                var emailResult = await SendAccountConfirmationEmail(userCreated, apiUrl, email);
+                if(!emailResult.Succeeded)
+                {
+                    await _userManager.DeleteAsync(userCreated);
+                    return (emailResult, "", "", "");
+                }
             }
 
-            //Return proper response
             return (result.ToApplicationResult(), userNameResponse, emailResponse, idResponse);
         }
 
-        public async Task SendAccountConfirmationEmail(ApplicationUser user, string apiUrl, string email)
+        public async Task<Result> SendAccountConfirmationEmail(ApplicationUser user, string apiUrl, string email)
         {
-            var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-            var confirmationLink = apiUrl + $"api/Auth/ConfirmEmail?userId={user.Id}&token={token}";
-
-            MailMessage message = new MailMessage
+            try
             {
-                From = new MailAddress(_emailSettings.SenderEmail),
-                Subject = "Account confirmation",
-                Body = "<html><body> " + confirmationLink + " </body></html>",
-                IsBodyHtml = true
-            };
+                var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                var confirmationLink = apiUrl + $"api/Auth/ConfirmEmail?userId={user.Id}&token={token}";
 
-            message.To.Add(new MailAddress(email));
+                MailMessage message = new MailMessage
+                {
+                    From = new MailAddress(_emailSettings.SenderEmail),
+                    Subject = "Account confirmation",
+                    Body = "<html><body> " + confirmationLink + " </body></html>",
+                    IsBodyHtml = true
+                };
 
-            var smtpClient = new SmtpClient(_emailSettings.SenderServer)
+                message.To.Add(new MailAddress(email));
+
+                var smtpClient = new SmtpClient(_emailSettings.SenderServer)
+                {
+                    Credentials = new NetworkCredential(_emailSettings.SenderEmail, _emailSettings.Password),
+                    EnableSsl = true,
+                };
+
+                await smtpClient.SendMailAsync(message);
+
+                return Result.Success();
+            }catch(Exception e)
             {
-                Credentials = new NetworkCredential(_emailSettings.SenderEmail, _emailSettings.Password),
-                EnableSsl = true,
-            };
-
-            await smtpClient.SendMailAsync(message);
+                return Result.Failure(new List<string> { e.Message });
+            }
         }
         public async Task<Result> ConfirmEmailAsync(string userId, string token)
         {
@@ -117,21 +124,16 @@ namespace Infrastructure.Identity
 
         public async Task<(JWTAuthorizationResult Result, string UserName, string Email)> LoginUserAsync(string email, string password)
         {
-            //Check if user exists
             var user = await _userManager.FindByEmailAsync(email);
-            var test2 = await _userManager.Users.ToListAsync();
 
             if (user == null)
                 return (JWTAuthorizationResult.Failure(new string[] { "Email not found" }), "", "");
 
-
             if (!user.EmailConfirmed)
                 return (JWTAuthorizationResult.Failure(new string[] { "Email not confirmed" }), "", "");
 
-            //Sign in User
             var signResult = await _userManager.CheckPasswordAsync(user, password);
 
-            //Create token response
             if (signResult)
             {
                 var apiresult = CreateToken(user);
@@ -170,37 +172,49 @@ namespace Infrastructure.Identity
             };
         }
 
-        public async Task SendResetPasswordEmail(string userId, string apiUrl, string email)
+        public async Task<Result> SendResetPasswordEmail(string userId, string apiUrl, string email)
         {
-            var userById = await _userManager.FindByIdAsync(userId);
-            var userByEmail = await _userManager.FindByEmailAsync(email);
+            try
+            {
+                var userById = await _userManager.FindByIdAsync(userId);
+                var userByEmail = await _userManager.FindByEmailAsync(email);
 
-            if (userByEmail == null || userById == null || userById.Id != userByEmail.Id)
-            { 
-                return;
+                if (userByEmail == null || userById == null)
+                {
+                    return (Result.Failure(new List<string> { "User not found" }));
+                }
+                else if (userById.Id != userByEmail.Id)
+                {
+                    return (Result.Failure(new List<string> { "User does not match token" }));
+                }
+
+                var token = await _userManager.GeneratePasswordResetTokenAsync(userById);
+                var resetPasswordLink = apiUrl + $"api/Auth/token={token}";
+
+                MailMessage message = new MailMessage
+                {
+                    From = new MailAddress(_emailSettings.SenderEmail),
+                    Subject = "Password reset link: ",
+                    Body = "<html><body> " + resetPasswordLink + " </body></html>",
+                    IsBodyHtml = true
+                };
+
+                message.To.Add(new MailAddress(email));
+
+                var smtpClient = new SmtpClient(_emailSettings.SenderServer)
+                {
+                    Credentials = new NetworkCredential(_emailSettings.SenderEmail, _emailSettings.Password),
+                    EnableSsl = true,
+                };
+
+                await smtpClient.SendMailAsync(message);
+
+                return (Result.Success());
             }
-
-            var token = await _userManager.GeneratePasswordResetTokenAsync(userById);
-            var resetPasswordLink = apiUrl + $"api/Auth/token={token}";
-
-            MailMessage message = new MailMessage
+            catch(Exception e)
             {
-                From = new MailAddress(_emailSettings.SenderEmail),
-                Subject = "Password reset link: ",
-                Body = "<html><body> " + resetPasswordLink + " </body></html>",
-                IsBodyHtml = true
-            };
-
-            message.To.Add(new MailAddress(email));
-
-            var smtpClient = new SmtpClient(_emailSettings.SenderServer)
-            {
-                Credentials = new NetworkCredential(_emailSettings.SenderEmail, _emailSettings.Password),
-                EnableSsl = true,
-            };
-
-
-            await smtpClient.SendMailAsync(message);
+                return (Result.Failure(new List<string> { e.Message }));
+            }
         }
 
         public async Task<Result> ResetPasswordAsync(string userId, string email, string newPassword, string token)
@@ -208,9 +222,13 @@ namespace Infrastructure.Identity
             var userById = await _userManager.FindByIdAsync(userId);
             var userByEmail = await _userManager.FindByEmailAsync(email);
 
-            if (userByEmail == null || userById == null || userById.Id != userByEmail.Id)
+            if (userByEmail == null || userById == null)
             {
                 return (Result.Failure(new List<string> { "User not found" }));
+            }
+            else if (userById.Id != userByEmail.Id)
+            {
+                return (Result.Failure(new List<string> { "User does not match token" }));
             }
             else if (userByEmail != null && userById!=null && userById.Id == userByEmail.Id)
             {
@@ -228,9 +246,13 @@ namespace Infrastructure.Identity
             var userById = await _userManager.FindByIdAsync(userId);
             var userByEmail = await _userManager.FindByEmailAsync(email);
 
-            if (userByEmail == null || userById == null || userById.Id != userByEmail.Id)
+            if (userByEmail == null || userById == null)
             {
                 return (Result.Failure(new List<string> { "User not found" }));
+            }
+            else if (userById.Id != userByEmail.Id)
+            {
+                return (Result.Failure(new List<string> { "User does not match token" }));
             }
             else if (userByEmail != null && userById != null && userById.Id == userByEmail.Id)
             {
@@ -243,36 +265,49 @@ namespace Infrastructure.Identity
             }
         }
 
-        public async Task SendChangeEmailAddressEmail(string userId, string apiUrl, string email, string newEmail)
+        public async Task<Result> SendChangeEmailAddressEmail(string userId, string apiUrl, string email, string newEmail)
         {
-            var userById = await _userManager.FindByIdAsync(userId);
-            var userByEmail = await _userManager.FindByEmailAsync(email);
-
-            if (userByEmail == null || userById == null || userById.Id != userByEmail.Id)
+            try
             {
-                return;
+                var userById = await _userManager.FindByIdAsync(userId);
+                var userByEmail = await _userManager.FindByEmailAsync(email);
+
+                if (userByEmail == null || userById == null)
+                {
+                    return (Result.Failure(new List<string> { "User not found" }));
+                }
+                else if (userById.Id != userByEmail.Id)
+                {
+                    return (Result.Failure(new List<string> { "User does not match token" }));
+                }
+
+                var token = await _userManager.GenerateChangeEmailTokenAsync(userById, newEmail);
+                var changeEmailLink = apiUrl + $"api/Auth/{token}";
+
+                MailMessage message = new MailMessage
+                {
+                    From = new MailAddress(_emailSettings.SenderEmail),
+                    Subject = "Change email link: ",
+                    Body = "<html><body> " + changeEmailLink + " </body></html>",
+                    IsBodyHtml = true
+                };
+
+                message.To.Add(new MailAddress(email));
+
+                var smtpClient = new SmtpClient(_emailSettings.SenderServer)
+                {
+                    Credentials = new NetworkCredential(_emailSettings.SenderEmail, _emailSettings.Password),
+                    EnableSsl = true,
+                };
+
+                await smtpClient.SendMailAsync(message);
+
+                return (Result.Success());
             }
-
-            var token = await _userManager.GenerateChangeEmailTokenAsync(userById, newEmail);
-            var changeEmailLink = apiUrl + $"api/Auth/{token}";
-
-            MailMessage message = new MailMessage
+            catch (Exception e)
             {
-                From = new MailAddress(_emailSettings.SenderEmail),
-                Subject = "Change email link: ",
-                Body = "<html><body> " + changeEmailLink + " </body></html>",
-                IsBodyHtml = true
-            };
-
-            message.To.Add(new MailAddress(email));
-
-            var smtpClient = new SmtpClient(_emailSettings.SenderServer)
-            {
-                Credentials = new NetworkCredential(_emailSettings.SenderEmail, _emailSettings.Password),
-                EnableSsl = true,
-            };
-
-            await smtpClient.SendMailAsync(message);
+                return (Result.Failure(new List<string> { e.Message }));
+            }
         }
 
         public async Task<Result> ChangeEmailAsync(string userId, string email, string newEmail, string token)
@@ -280,13 +315,17 @@ namespace Infrastructure.Identity
             var userById = await _userManager.FindByIdAsync(userId);
             var userByEmail = await _userManager.FindByEmailAsync(email);
 
-            if (userByEmail == null || userById == null || userById.Id != userByEmail.Id)
+            if (userByEmail == null || userById == null)
             {
                 return (Result.Failure(new List<string> { "User not found" }));
             }
+            else if (userById.Id != userByEmail.Id)
+            {
+                return (Result.Failure(new List<string> { "User does not match token" }));
+            }
             else if (userByEmail != null && userById != null && userById.Id == userByEmail.Id)
             {
-                var result = await _userManager.ChangeEmailAsync(userByEmail,newEmail, token);
+                var result = await _userManager.ChangeEmailAsync(userByEmail, newEmail, token);
                 return result.ToApplicationResult();
             }
             else
@@ -297,29 +336,27 @@ namespace Infrastructure.Identity
 
         public async Task<Result> DeleteUserAsync(string userId, string email, string password)
         {
-            var user = await _userManager.FindByEmailAsync(email);
-            var signResult = await _userManager.CheckPasswordAsync(user, password);
+            var userById = await _userManager.FindByIdAsync(userId);
+            var userByEmail = await _userManager.FindByEmailAsync(email);
 
-            if (user != null && user.Id == userId && signResult)
-            {
-                var result = await _userManager.DeleteAsync(user);
-
-                return result.ToApplicationResult();
-            }
-            else if (user == null)
+            if (userByEmail == null || userById == null)
             {
                 return (Result.Failure(new List<string> { "User not found" }));
             }
-            else if (user.Id == userId)
+            else if (userById.Id != userByEmail.Id)
             {
-                return (Result.Failure(new List<string> { "Wrong user id" }));
+                return (Result.Failure(new List<string> { "User does not match token" }));
+            }
+            else if (userByEmail != null && userById != null && userById.Id == userByEmail.Id)
+            {
+                var result = await _userManager.DeleteAsync(userByEmail);
+                return result.ToApplicationResult();
             }
             else
             {
-                return (Result.Failure(new List<string> { "Wrong password" }));
+                return (Result.Failure(new List<string> { "Wrong data" }));
             }
         }
-
 
         public async Task<bool> CheckIfUserWithEmailExists(string email) =>
             await _userManager.Users.SingleOrDefaultAsync(u => u.Email == email) != null;
@@ -336,9 +373,13 @@ namespace Infrastructure.Identity
             var userById = await _userManager.FindByIdAsync(userId);
             var userByEmail = await _userManager.FindByEmailAsync(email);
 
-            if (userByEmail == null || userById == null || userById.Id != userByEmail.Id)
+            if (userByEmail == null || userById == null)
             {
                 return (Result.Failure(new List<string> { "User not found" }));
+            }
+            else if (userById.Id != userByEmail.Id)
+            {
+                return (Result.Failure(new List<string> { "User does not match token" }));
             }
             else if (userByEmail != null && userById != null && userById.Id == userByEmail.Id)
             {
@@ -369,7 +410,7 @@ namespace Infrastructure.Identity
         public async Task<(Result Result, string UserName, string Email)> CheckTokenAsync(string token)
         {
             var allUsers = await _userManager.Users.ToListAsync();
-            for (int i = 0; i < allUsers.Count(); i++)
+            for (int i = 0; i < allUsers.Count; i++)
             {
                 var userToken = await _userManager.GetAuthenticationTokenAsync(allUsers[i], allUsers[i].Email, "JWT");
                 if (token == userToken)
@@ -381,24 +422,28 @@ namespace Infrastructure.Identity
             return (Result.Failure(new List<string> { "User not found" }), "", "");
         }
 
-        public async Task<Result> RefreshToken(string userId, string email, string token)
+        public async Task<JWTAuthorizationResult> RefreshToken(string userId, string email)
         {
             var userById = await _userManager.FindByIdAsync(userId);
             var userByEmail = await _userManager.FindByEmailAsync(email);
 
-            if (userByEmail == null || userById == null || userById.Id != userByEmail.Id)
+            if (userByEmail == null || userById == null)
             {
-                return (Result.Failure(new List<string> { "User not found" }));
+                return (JWTAuthorizationResult.Failure(new List<string> { "User not found" }));
+            }
+            else if (userById.Id != userByEmail.Id)
+            {
+                return (JWTAuthorizationResult.Failure(new List<string> { "User does not match token" }));
             }
             else if (userByEmail != null && userById != null && userById.Id == userByEmail.Id)
             {
                 var apiresult = CreateToken(userByEmail);
-                var result = await _userManager.SetAuthenticationTokenAsync(userByEmail, userByEmail.Email, "JWT", apiresult.Token);
-                return result.ToApplicationResult();
+                await _userManager.SetAuthenticationTokenAsync(userByEmail, userByEmail.Email, "JWT", apiresult.Token);
+                return apiresult;
             }
             else
             {
-                return (Result.Failure(new List<string> { "Wrong data" }));
+                return (JWTAuthorizationResult.Failure(new List<string> { "Wrong data" }));
             }
         }
     }

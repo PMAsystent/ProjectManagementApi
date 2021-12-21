@@ -1,8 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Primitives;
 using ProjectManagement.Core.Base.Interfaces;
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -40,8 +38,5 @@ public class TokenManager : ITokenManager
                 ? string.Empty
                 : authorizationHeader.Single().Split(" ").Last();
         }
-
-        private static string GetKey(string token)
-            => $"tokens:{token}:deactivated";
     }
 }

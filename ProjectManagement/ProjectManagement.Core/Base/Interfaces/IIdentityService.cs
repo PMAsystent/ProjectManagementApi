@@ -16,8 +16,9 @@ namespace ProjectManagement.Core.Base.Interfaces
         Task<(Result Result, string UserName, string Email)> CheckTokenAsync(string token);
         Task<bool> CheckIfUserWithEmailExists(string email);
         Task<string> GetUserNameAsync(string userId);
-        Task SendResetPasswordEmail(string userId, string apiUrl, string email);
-        Task SendChangeEmailAddressEmail(string userId, string apiUrl, string email, string newEmail);
+        Task<Result> SendResetPasswordEmail(string userId, string apiUrl, string email);
+        Task<Result> SendChangeEmailAddressEmail(string userId, string apiUrl, string email, string newEmail);
         Task<bool> CheckLogoutAsync(string userId);
+        Task<JWTAuthorizationResult> RefreshToken(string userId, string email);
     }
 }

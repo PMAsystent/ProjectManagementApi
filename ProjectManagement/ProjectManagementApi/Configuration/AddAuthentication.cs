@@ -48,23 +48,24 @@ namespace ProjectManagementApi.Configuration
                 x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
             })
-                           .AddJwtBearer(options =>
-                           {
-                    // IdentityServer emits a typ header by default, recommended extra check
+                .AddJwtBearer(options =>
+                {
                     options.TokenValidationParameters.ValidTypes = new[] { "at+jwt" };
 
                     //SET ONLY IN-DEV TODO: make this automatic
                     options.RequireHttpsMetadata = false;
-                               options.SaveToken = true;
-                               options.TokenValidationParameters = new TokenValidationParameters();
-                               options.TokenValidationParameters.ValidateIssuerSigningKey = true;
-                               options.TokenValidationParameters.IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(authSettings.AuthKey));
-                               options.TokenValidationParameters.ValidateIssuer = true;
-                               options.TokenValidationParameters.ValidateAudience = true;
-                               options.TokenValidationParameters.ValidIssuer = authSettings.Issuer;
-                               options.TokenValidationParameters.ValidAudience = authSettings.Audience;
-                               options.TokenValidationParameters.ValidateLifetime = true;
-                           });
+                    options.SaveToken = true;
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuerSigningKey = true,
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(authSettings.AuthKey)),
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
+                        ValidIssuer = authSettings.Issuer,
+                        ValidAudience = authSettings.Audience,
+                        ValidateLifetime = true
+                    };
+                });
         }
     }
 }

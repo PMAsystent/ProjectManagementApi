@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using ProjectManagement.Core.Base.Interfaces;
 using ProjectManagement.Core.Concrete.Identity.Commands;
 using ProjectManagement.Core.Concrete.Identity.Dto;
-using System;
 using System.Threading.Tasks;
 
 namespace ProjectManagementApi.Controllers
@@ -11,12 +10,6 @@ namespace ProjectManagementApi.Controllers
     [Route("api/[controller]")]
     public class AuthController : ApiControllerBase
     {
-        private readonly ICurrentUserService _currentUserService;
-
-        public AuthController(ICurrentUserService currentUserService)
-        {
-            _currentUserService = currentUserService;
-        }
         [HttpPost("RegisterUser")]
         public async Task<RegisterResponseDto> RegisterUser(RegisterUserBaseCommand command)
         {
@@ -35,9 +28,7 @@ namespace ProjectManagementApi.Controllers
         public async Task<ActionResult<LoginResponseDto>> LoginUser(LoginUserCommand command)
         {
             var result = await Mediator.Send(command);
-            if (result.Token != "")
-                return result;
-            return new UnauthorizedResult();
+            return result;
         }
 
         [HttpPost("LogoutUser")]
@@ -49,43 +40,49 @@ namespace ProjectManagementApi.Controllers
 
         [HttpPost("SendResetPasswordEmail")]
         [Authorize]
-        public async Task<ActionResult<bool>> SendResetPasswordEmail(SendResetPasswordEmailCommand command)
+        public async Task<ActionResult<SendResetPasswordEmailDto>> SendResetPasswordEmail(SendResetPasswordEmailCommand command)
         {
             return await Mediator.Send(command);
         }
 
         [HttpPost("ResetPassword")]
         [Authorize]
-        public async Task<ActionResult<bool>> ResetPassword(ResetPasswordCommand command)
+        public async Task<ActionResult<ResetPasswordDto>> ResetPassword(ResetPasswordCommand command)
         {
             return await Mediator.Send(command);
         }
 
         [HttpPost("ChangePassword")]
         [Authorize]
-        public async Task<bool> ChangePassword(ChangePasswordCommand command)
+        public async Task<ChangePasswordDto> ChangePassword(ChangePasswordCommand command)
         {
             return await Mediator.Send(command);
         }
 
         [HttpPost("SendChangeEmailAddressEmail")]
         [Authorize]
-        public async Task<ActionResult<bool>> SendChangeEmailAddressEmail(SendChangeEmailAddressEmailCommand command)
+        public async Task<ActionResult<SendChangeAddressEmailDto>> SendChangeEmailAddressEmail(SendChangeEmailAddressEmailCommand command)
         {
             return await Mediator.Send(command);
         }
 
         [HttpPost("ChangeEmail")]
         [Authorize]
-        public async Task<ActionResult<bool>> ChangeEmail(ChangeEmailCommand command)
+        public async Task<ActionResult<ChangeEmailDto>> ChangeEmail(ChangeEmailCommand command)
         {
-            var test = _currentUserService.UserId;
             return await Mediator.Send(command);
         }
 
         [HttpPost("GetCurrentUserByToken")]
         [Authorize]
         public async Task<ActionResult<CheckTokenResponseDto>> GetCurrentUserByToken(CheckTokenCommand command)
+        {
+            return await Mediator.Send(command);
+        }
+
+        [HttpPost("RefreshToken")]
+        [Authorize]
+        public async Task<ActionResult<RefreshTokenResponseDto>> RefreshToken(RefreshTokenCommand command)
         {
             return await Mediator.Send(command);
         }

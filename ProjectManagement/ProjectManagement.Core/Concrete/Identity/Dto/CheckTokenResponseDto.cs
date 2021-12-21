@@ -1,9 +1,5 @@
 ﻿using ProjectManagement.Core.UseCases.Users.Queries.Dto;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ProjectManagement.Core.Concrete.Identity.Dto
 {

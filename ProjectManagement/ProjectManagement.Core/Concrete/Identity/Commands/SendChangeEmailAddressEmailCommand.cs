@@ -1,23 +1,20 @@
 ﻿using MediatR;
 using ProjectManagement.Core.Base.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using ProjectManagement.Core.Concrete.Identity.Dto;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace ProjectManagement.Core.Concrete.Identity.Commands
 {
 
-    public class SendChangeEmailAddressEmailCommand : IRequest<bool>
+    public class SendChangeEmailAddressEmailCommand : IRequest<SendChangeAddressEmailDto>
     {
         public string Email { get; set; }
 
         public string NewEmail { get; set; }
     }
 
-    public class SendChangeEmailAddressEmailCommandHandler : IRequestHandler<SendChangeEmailAddressEmailCommand, bool>
+    public class SendChangeEmailAddressEmailCommandHandler : IRequestHandler<SendChangeEmailAddressEmailCommand, SendChangeAddressEmailDto>
     {
         private readonly IIdentityService _identityService;
         private readonly ICurrentUserService _currentUserService;
@@ -28,10 +25,10 @@ namespace ProjectManagement.Core.Concrete.Identity.Commands
             _currentUserService = currentUserService;
         }
 
-        public async Task<bool> Handle(SendChangeEmailAddressEmailCommand request, CancellationToken cancellationToken)
+        public async Task<SendChangeAddressEmailDto> Handle(SendChangeEmailAddressEmailCommand request, CancellationToken cancellationToken)
         {
-            await _identityService.SendChangeEmailAddressEmail(_currentUserService.UserId, "test", request.Email, request.NewEmail);
-            return true;
+            var result = await _identityService.SendChangeEmailAddressEmail(_currentUserService.UserId, "test", request.Email, request.NewEmail);
+            return result.Succeeded ? new SendChangeAddressEmailDto { IsSented = true } : new SendChangeAddressEmailDto { IsSented = false, Errors = result.Errors };
         }
     }
 }

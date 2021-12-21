@@ -1,20 +1,17 @@
 ﻿using MediatR;
 using ProjectManagement.Core.Base.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using ProjectManagement.Core.Concrete.Identity.Dto;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace ProjectManagement.Core.Concrete.Identity.Commands
 {
-    public class SendResetPasswordEmailCommand : IRequest<bool>
+    public class SendResetPasswordEmailCommand : IRequest<SendResetPasswordEmailDto>
     {
         public string Email { get; set; }
     }
 
-    public class SendResetPasswordEmailCommandHandler : IRequestHandler<SendResetPasswordEmailCommand, bool>
+    public class SendResetPasswordEmailCommandHandler : IRequestHandler<SendResetPasswordEmailCommand, SendResetPasswordEmailDto>
     {
         private readonly IIdentityService _identityService;
         private readonly ICurrentUserService _currentUserService;
@@ -25,10 +22,11 @@ namespace ProjectManagement.Core.Concrete.Identity.Commands
             _currentUserService = currentUserService;
         }
 
-        public async Task<bool> Handle(SendResetPasswordEmailCommand request, CancellationToken cancellationToken)
+        public async Task<SendResetPasswordEmailDto> Handle(SendResetPasswordEmailCommand request, CancellationToken cancellationToken)
         {
-            await _identityService.SendResetPasswordEmail(_currentUserService.UserId, "test", request.Email);
-            return true;
+            var result = await _identityService.SendResetPasswordEmail(_currentUserService.UserId, "test", request.Email);
+
+            return result.Succeeded ? new SendResetPasswordEmailDto { IsSented = true } : new SendResetPasswordEmailDto { IsSented = false, Errors = result.Errors };
         }
     }
 }

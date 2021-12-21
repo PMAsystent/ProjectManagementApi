@@ -1,20 +1,17 @@
 ﻿using FluentValidation.AspNetCore;
 using Infrastructure;
 using Infrastructure.Identity.Helpers;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using ProjectManagement.Core;
 using ProjectManagement.Core.Base.Interfaces;
 using ProjectManagementApi.Filters;
 using ProjectManagementApi.Services;
-using System.Text;
 using ProjectManagementApi.Configuration;
 using ProjectManagementApi.Middleware;
 
@@ -22,7 +19,7 @@ namespace ProjectManagementApi
 {
     public class Startup
     {
-        readonly string AllowPolicy = "MonopolyPolicy";
+        readonly string AllowPolicy = "ProjectManagementPolicy";
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -95,7 +92,7 @@ namespace ProjectManagementApi
                                 Id="Bearer"
                             }
                         },
-                        new string[] {}
+                        System.Array.Empty<string>()
                     }
                 });
             });

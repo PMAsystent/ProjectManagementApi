@@ -44,7 +44,6 @@ namespace ProjectManagement.Core.Concrete.Identity.Commands
 
             await _domainEventService.Publish(new UserRegisteredEvent(Id, request.UserName, request.Email));
 
-
             return new RegisterResponseDto { UserName=UserName, Email=Email, Errors = new List<string>(Result.Errors) };
         }
     }
