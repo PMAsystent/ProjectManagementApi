@@ -61,12 +61,13 @@ namespace Infrastructure.Identity
                 emailResponse = email;
                 var userCreated = await _userManager.FindByEmailAsync(email);
                 idResponse = userCreated.Id;
-                var emailResult = await SendAccountConfirmationEmail(userCreated, apiUrl, email);
+                return (result.ToApplicationResult(), userNameResponse, emailResponse, idResponse);
+                /*var emailResult = await SendAccountConfirmationEmail(userCreated, apiUrl, email);
                 if(!emailResult.Succeeded)
                 {
                     await _userManager.DeleteAsync(userCreated);
                     return (emailResult, "", "", "");
-                }
+                }*/
             }
 
             return (result.ToApplicationResult(), userNameResponse, emailResponse, idResponse);
@@ -129,8 +130,8 @@ namespace Infrastructure.Identity
             if (user == null)
                 return (JWTAuthorizationResult.Failure(new string[] { "Email not found" }), "", "");
 
-            if (!user.EmailConfirmed)
-                return (JWTAuthorizationResult.Failure(new string[] { "Email not confirmed" }), "", "");
+            /*if (!user.EmailConfirmed)
+                return (JWTAuthorizationResult.Failure(new string[] { "Email not confirmed" }), "", "");*/
 
             var signResult = await _userManager.CheckPasswordAsync(user, password);
 
