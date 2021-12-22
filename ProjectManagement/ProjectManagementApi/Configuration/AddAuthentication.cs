@@ -10,7 +10,7 @@ namespace ProjectManagementApi.Configuration
 {
     public static class AddCustomAuth
     {
-        public static void AddAuthentication(this IServiceCollection services, IConfiguration configuration)
+        public static void AddCustomAuthentication(this IServiceCollection services, IConfiguration configuration)
         {
             if (configuration.GetValue<bool>("Testing"))
             {
@@ -34,30 +34,36 @@ namespace ProjectManagementApi.Configuration
 
         private static void AddApplicationAuthentication(IServiceCollection services, IConfiguration configuration)
         {
-            var settingsSection = configuration.GetSection("Authentication");
-            var settings = settingsSection.Get<AppSettings>();
-            services.Configure<AppSettings>(settingsSection);
+            var settingsSectionAuth = configuration.GetSection("Authentication");
+            var authSettings = settingsSectionAuth.Get<AuthSettings>();
+
+            var settingsSectionEmail = configuration.GetSection("EmailProvider");
+            var emailSettings = settingsSectionEmail.Get<EmailProviderSettings>();
+
+            services.Configure<AuthSettings>(settingsSectionAuth);
+            services.Configure<EmailProviderSettings>(settingsSectionEmail);
 
             services.AddAuthentication(x =>
-                {
-                    x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                    x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-                })
+            {
+                x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
                 .AddJwtBearer(options =>
                 {
-                    // IdentityServer emits a typ header by default, recommended extra check
                     options.TokenValidationParameters.ValidTypes = new[] { "at+jwt" };
 
                     //SET ONLY IN-DEV TODO: make this automatic
                     options.RequireHttpsMetadata = false;
-
                     options.SaveToken = true;
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
                         ValidateIssuerSigningKey = true,
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(settings.AuthKey)),
-                        ValidateIssuer = false,
-                        ValidateAudience = false,
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(authSettings.AuthKey)),
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
+                        ValidIssuer = authSettings.Issuer,
+                        ValidAudience = authSettings.Audience,
+                        ValidateLifetime = true
                     };
                 });
         }

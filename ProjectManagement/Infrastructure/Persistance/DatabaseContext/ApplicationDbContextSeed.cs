@@ -1,11 +1,11 @@
-﻿using Task = System.Threading.Tasks.Task;
-
-namespace Infrastructure.Persistance.DatabaseContext
+﻿namespace Infrastructure.Persistance.DatabaseContext
 {
     public static class ApplicationDbContextSeed
     {
-        public static async Task SeedSampleDataAsync(ApplicationDbContext context)
+        //Change to public static async Task SeedSampleDataAsync(ApplicationDbContext context) to configure
+        public static void SeedSampleDataAsync()
         {
+            return;
             // if (!context.Projects.Any())
             // {
             //     context.Projects.Add(new()

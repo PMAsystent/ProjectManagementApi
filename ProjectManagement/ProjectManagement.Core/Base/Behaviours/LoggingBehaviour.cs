@@ -30,7 +30,7 @@ namespace ProjectManagement.Core.Base.Behaviours
                 userName = await _identityService.GetUserNameAsync(userId);
             }
 
-            _logger.LogInformation("Fymate Request: {Name} {@UserId} {@UserName} {@Request}",
+            _logger.LogInformation("Project Management Request: {Name} {@UserId} {@UserName} {@Request}",
                 requestName, userId, userName, request);
         }
     }

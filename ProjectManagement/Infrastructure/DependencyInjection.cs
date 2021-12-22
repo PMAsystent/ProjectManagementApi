@@ -39,6 +39,7 @@ namespace Infrastructure
 
             services.AddTransient<IIdentityService, IdentityService>();
 
+
             services.AddAuthentication()
                .AddIdentityServerJwt();
 

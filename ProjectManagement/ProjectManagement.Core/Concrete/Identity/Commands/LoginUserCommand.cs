@@ -2,16 +2,12 @@
 using MediatR;
 using System.Threading;
 using System.Threading.Tasks;
-using ProjectManagement.Core.Base.Model;
 using ProjectManagement.Core.Concrete.Identity.Dto;
 using AutoMapper;
 using System.Linq;
 using ProjectManagement.Core.UseCases.Users.Queries.Dto;
 using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
-using System.Text.RegularExpressions;
-using System.Collections.Generic;
-using System;
 
 namespace ProjectManagement.Core.Concrete.Identity.Commands
 {
@@ -39,22 +35,21 @@ namespace ProjectManagement.Core.Concrete.Identity.Commands
         {
             var (Result, UserName, Email) = await _identityService.LoginUserAsync(request.Email, request.Password);
 
-            var users = await _context.Users
-                .Where(u => u.UserName == UserName && u.Email == Email)
-                .ProjectTo<UserDto>(_mapper.ConfigurationProvider)
-                .ToListAsync(cancellationToken);
-
-            var user = users.FirstOrDefault();
-
             if (Result.Succeeded)
             {
-                return new LoginResponseDto { Token = Result.Token, User=user };
+                var users = await _context.Users
+                    .Where(u => u.UserName == UserName && u.Email == Email)
+                    .ProjectTo<UserDto>(_mapper.ConfigurationProvider)
+                    .ToListAsync(cancellationToken);
+
+                var user = users.FirstOrDefault();
+
+                return new LoginResponseDto { Token = Result.Token, User=user, Errors = Result.Errors };
             }
             else
             {
-                return new LoginResponseDto { Token =""};
+                return new LoginResponseDto { Token ="", Errors = Result.Errors};
             }
-
         }
     }
 }
