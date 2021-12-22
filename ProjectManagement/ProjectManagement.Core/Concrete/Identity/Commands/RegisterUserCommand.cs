@@ -42,7 +42,10 @@ namespace ProjectManagement.Core.Concrete.Identity.Commands
         {
             var (Result, UserName, Email, Id) = await _identityService.RegisterUserAsync(request.Email,request.UserName, request.Password, request.ApiUrl);
 
-            await _domainEventService.Publish(new UserRegisteredEvent(Id, request.UserName, request.Email));
+            if(Result.Succeeded)
+            {
+                await _domainEventService.Publish(new UserRegisteredEvent(Id, request.UserName, request.Email));
+            }
 
             return new RegisterResponseDto { UserName=UserName, Email=Email, Errors = new List<string>(Result.Errors) };
         }
