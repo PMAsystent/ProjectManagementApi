@@ -1,0 +1,44 @@
+﻿name: Develop - database update
+
+on:
+  pull_request:
+    branches:
+      - Develop
+  push: 
+    branches:
+      - Develop
+  workflow_dispatch:
+
+env:
+  AZURE_DB_SERVER_NAME: pm-asystent.database.windows.net
+    
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v2
+      - uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 5.0.x
+
+      - name: Install EF Tool
+        run: |
+          dotnet new tool-manifest
+          dotnet tool install dotnet-ef
+
+      - name: Generate migration script
+        run: dotnet ef migrations script --output "db-update.sql" --idempotent
+        working-directory: ./ProjectManagement/ProjectManagementApi
+        
+      - name: Azure SQL Deploy
+        uses: Azure/sql-action@v1
+        with:
+          server-name: ${{ env.AZURE_DB_SERVER_NAME }}
+          connection-string: ${{ secrets.DEVELOP_DB_CONNECTION_STRING }}
+          sql-file: ./ProjectManagement/ProjectManagementApi/db-update.sql
