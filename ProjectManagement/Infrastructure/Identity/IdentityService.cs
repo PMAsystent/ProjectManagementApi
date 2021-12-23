@@ -1,8 +1,10 @@
 ﻿using Infrastructure.Identity.Helpers;
+using MailKit.Net.Smtp;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using MimeKit;
 using ProjectManagement.Core.Base.Interfaces;
 using ProjectManagement.Core.Base.Model;
 using System;
@@ -10,7 +12,6 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Net;
-using System.Net.Mail;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
@@ -61,9 +62,10 @@ namespace Infrastructure.Identity
                 emailResponse = email;
                 var userCreated = await _userManager.FindByEmailAsync(email);
                 idResponse = userCreated.Id;
+                var emailResult = await SendAccountConfirmationEmail(userCreated, apiUrl, email);
                 return (result.ToApplicationResult(), userNameResponse, emailResponse, idResponse);
-                /*var emailResult = await SendAccountConfirmationEmail(userCreated, apiUrl, email);
-                if(!emailResult.Succeeded)
+               
+                /*if(!emailResult.Succeeded)
                 {
                     await _userManager.DeleteAsync(userCreated);
                     return (emailResult, "", "", "");
@@ -80,7 +82,30 @@ namespace Infrastructure.Identity
                 var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                 var confirmationLink = apiUrl + $"api/Auth/ConfirmEmail?userId={user.Id}&token={token}";
 
-                MailMessage message = new MailMessage
+
+                var message = new MimeMessage();
+                message.From.Add(new MailboxAddress("Email Test", _emailSettings.SenderEmail));
+
+                message.To.Add(new MailboxAddress("User name", email));
+
+                message.Subject = "Confirm link: ";
+
+                message.Body = new TextPart("plain")
+                {
+                    Text = "<html><body> " + confirmationLink + " </body></html>",
+                };
+
+                using (var client = new SmtpClient())
+                {
+                    client.Connect(_emailSettings.SenderServer, 587, false);
+                    client.Authenticate(_emailSettings.SenderEmail, "1234azer&");
+                    client.Send(message);
+                    client.Disconnect(true);
+                }
+
+
+
+                /*MailMessage message = new MailMessage
                 {
                     From = new MailAddress(_emailSettings.SenderEmail),
                     Subject = "Account confirmation",
@@ -96,7 +121,7 @@ namespace Infrastructure.Identity
                     EnableSsl = true,
                 };
 
-                await smtpClient.SendMailAsync(message);
+                await smtpClient.SendMailAsync(message);*/
 
                 return Result.Success();
             }catch(Exception e)
@@ -192,25 +217,40 @@ namespace Infrastructure.Identity
                 var token = await _userManager.GeneratePasswordResetTokenAsync(userById);
                 var resetPasswordLink = apiUrl + $"api/Auth/token={token}";
 
-                MailMessage message = new MailMessage
-                {
-                    From = new MailAddress(_emailSettings.SenderEmail),
-                    Subject = "Password reset link: ",
-                    Body = "<html><body> " + resetPasswordLink + " </body></html>",
-                    IsBodyHtml = true
-                };
 
-                message.To.Add(new MailAddress(email));
 
-                var smtpClient = new SmtpClient(_emailSettings.SenderServer)
-                {
-                    Credentials = new NetworkCredential(_emailSettings.SenderEmail, _emailSettings.Password),
-                    EnableSsl = true,
-                };
 
-                await smtpClient.SendMailAsync(message);
 
-                return (Result.Success());
+
+
+
+
+
+
+
+
+
+
+
+            /*MailMessage message = new MailMessage
+            {
+                From = new MailAddress(_emailSettings.SenderEmail),
+                Subject = "Password reset link: ",
+                Body = "<html><body> " + resetPasswordLink + " </body></html>",
+                IsBodyHtml = true
+            };
+
+            message.To.Add(new MailAddress(email));
+
+            var smtpClient = new SmtpClient(_emailSettings.SenderServer)
+            {
+                Credentials = new NetworkCredential(_emailSettings.SenderEmail, _emailSettings.Password),
+                EnableSsl = true,
+            };
+
+            await smtpClient.SendMailAsync(message);*/
+
+            return (Result.Success());
             }
             catch(Exception e)
             {
@@ -285,7 +325,7 @@ namespace Infrastructure.Identity
                 var token = await _userManager.GenerateChangeEmailTokenAsync(userById, newEmail);
                 var changeEmailLink = apiUrl + $"api/Auth/{token}";
 
-                MailMessage message = new MailMessage
+                /*MailMessage message = new MailMessage
                 {
                     From = new MailAddress(_emailSettings.SenderEmail),
                     Subject = "Change email link: ",
@@ -301,7 +341,7 @@ namespace Infrastructure.Identity
                     EnableSsl = true,
                 };
 
-                await smtpClient.SendMailAsync(message);
+                await smtpClient.SendMailAsync(message);*/
 
                 return (Result.Success());
             }
