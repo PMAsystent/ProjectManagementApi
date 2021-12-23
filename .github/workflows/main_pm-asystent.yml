@@ -1,7 +1,4 @@
-# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
-# More GitHub Actions for Azure: https://github.com/Azure/actions
-
-name: Build and deploy ASP.Net Core app to Azure Web App - pm-asystent
+name: Build and deploy
 
 on:
   push:
@@ -15,6 +12,16 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+          
+      - uses: microsoft/variable-substitution@v1
+          with:
+            files: "ProjectManagement/ProjectManagementApi/appsettings.json"
+          env:
+            ApplicationInsights.InstrumentationKey: ${{ secrets.INSTRUMENTATION_KEY }}
+            ConnectionStrings.DefaultConnection: ${{ secrets.PRODUCTION_CONNECTION_STRING }}
+            
+      - name: Read appsettings.json
+        run: "cat ProjectManagement/ProjectManagementApi/appsettings.json"
 
       - name: Set up .NET Core
         uses: actions/setup-dotnet@v1
@@ -24,9 +31,11 @@ jobs:
 
       - name: Build with dotnet
         run: dotnet build --configuration Release
+        working-directory: ./ProjectManagement/ProjectManagementApi
 
       - name: dotnet publish
         run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp
+        working-directory: ./ProjectManagement/ProjectManagementApi
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v2
