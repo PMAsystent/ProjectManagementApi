@@ -1,76 +1,84 @@
-# Project Management
-Desription of our project
+#   Project Management - Api
+Project Management is application created under university science club - "Referencja"
 
 ## Table of contents
 * [General info](#general-info)
+    * [Screenshotss](#screenshots)
+* [Technologies and libraries](#technologies-and-libraries)
 * [Getting Started](#getting-started)
     * [Prerequisites](#prerequisites)
     * [Installation](#installation)
-* [Usage](#usage)
-* [Technologies](#technologies)
 * [Features](#features)
 * [Status](#status)
 * [License](#license)
 * [Contact](#contact)
 
 ## General info
-Add more general information about project. What the purpose of the project is? Motivation?
+Project Management is group project to train our .NET and React skills by creating interesting useful app for project management
+
+### Screenshots - Design of application
+<img src="/screenshots/Login.png" alt="First screenshot"> <img src="/screenshots/Projects.png" alt="Second screenshot">
+<img src="/screenshots/Task.png" alt="Thirdscreenshot">
+## Technologies and libraries
+* ASP.NET Core 5
+* Entity Framework Core 5
+* React 17
+* SignalR
+* MediatR
+* AutoMapper
+* FluentValidation
+* NUnit, FluentAssertions & Moq
+* Newtonsoft.Json
+* SQL Server
 
 ## Getting Started
-This is an example of how you may give instructions on setting up your project locally. To get a local copy up and running follow these simple example steps.
+The easiest way to get started is to follow few step to install all dependencies and run the projects
 
 ### Prerequisites
-
-This is an example of how to list things you need to use the software and how to install them.(.NET SDK, NodeJS - all commends)
 * npm
 ```sh
 npm install npm@latest -g
 ```
+* .net 5.0
+[dotnet](https://dotnet.microsoft.com/download)
 
 ### Installation
 
 1. Clone the repo
 ```sh
-git clone https://github.com/your_username_/Project-Name.git
+git clone https://github.com/GoToWinThat/ProjectManagementApi.git
 ```
 2. Install NPM packages
 ```sh
 npm install
 ```
-
-## Usage
-Want to contribute? Great!
-
-To fix a bug or enhance an existing module, follow these steps:
-
-- Fork the repo
-- Create a new branch (`git checkout -b improve-feature`)
-- Make the appropriate changes in the files
-- Add changes to reflect the changes made
-- Commit your changes (`git commit -am 'Improve feature'`)
-- Push to the branch (`git push origin improve-feature`)
-- Create a Pull Request 
-
-## Technologies
-Like .net, node, react,boostrap,EF core etc - basicly all languages, frameworks, libraries
-
+3. Install Nuget packages
+```sh
+dotnet restore
+```
+4. Run server 
+```sh
+dotnet run
+```
+5. Run clients
+```sh
+npm start
+```
 
 ## Features
-List of features ready and TODOs for future development
-* Awesome feature 1
-* Awesome feature 2
-* Awesome feature 3
-
-To-do list:
-* Wow improvement to be done 1
-* Wow improvement to be done 2
 
 ## Status
-Project is: _in progress_, _finished_, _no longer continue_ and why?
+Project is in progress. We are curently working on our first version of server side. Currently brake due to other  university
 
 ## License
-
-Distributed under the MIT License. See `LICENSE` for more information.
+Distributed under the MIT License.
 
 ## Contact
-Created by [@mazela](www.ms.polsl.pl) - feel free to contact me!
+Created by:
+[@mazela](artur.mazela@gmail.com)
+[@lubera](artur.mazela@gmail.com)
+[@kajstura](artur.mazela@gmail.com)
+[@sobieszczyk](artur.mazela@gmail.com)
+[@nawrot](artur.mazela@gmail.com)
+[@jaskolski](artur.mazela@gmail.com)
+Feel free to contact us!
