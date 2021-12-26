@@ -65,11 +65,11 @@ namespace Infrastructure.Identity
                 var emailResult = await SendAccountConfirmationEmail(userCreated, apiUrl, email);
                 return (result.ToApplicationResult(), userNameResponse, emailResponse, idResponse);
                
-                /*if(!emailResult.Succeeded)
+                if(!emailResult.Succeeded)
                 {
                     await _userManager.DeleteAsync(userCreated);
                     return (emailResult, "", "", "");
-                }*/
+                }
             }
 
             return (result.ToApplicationResult(), userNameResponse, emailResponse, idResponse);
