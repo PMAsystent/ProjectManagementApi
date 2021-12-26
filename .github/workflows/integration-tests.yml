@@ -1,8 +1,6 @@
 name: Integration tests
 
 on:
-  push:
-    branches: [ Develop, main ]
   pull_request:
     branches: [ Develop, main ]
 

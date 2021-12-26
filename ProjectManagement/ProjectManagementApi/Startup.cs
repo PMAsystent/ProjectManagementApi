@@ -32,6 +32,8 @@ namespace ProjectManagementApi
             services.AddApplication();
             services.AddInfrastructure(Configuration);
             services.AddCustomAuthentication(Configuration);
+            
+            services.AddApplicationInsightsTelemetry(Configuration["ApplicationInsights:InstrumentationKey"]);
 
             var settingsSectionAuth = Configuration.GetSection("Authentication");
             var authSettings = settingsSectionAuth.Get<AuthSettings>();
