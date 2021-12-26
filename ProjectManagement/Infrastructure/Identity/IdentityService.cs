@@ -1,4 +1,5 @@
 ﻿using Infrastructure.Identity.Helpers;
+using Infrastructure.Services;
 using MailKit.Net.Smtp;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -11,7 +12,6 @@ using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
-using System.Net;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
@@ -80,28 +80,7 @@ namespace Infrastructure.Identity
                 var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                 var confirmationLink = apiUrl + $"api/Auth/ConfirmEmail?userId={user.Id}&token={token}";
 
-
-                var message = new MimeMessage();
-                message.From.Add(new MailboxAddress("Project Management", _emailSettings.SenderEmail));
-
-                message.To.Add(new MailboxAddress("User name", email));
-
-                message.Subject = "Confirm link: ";
-
-                message.Body = new TextPart("plain")
-                {
-                    Text = confirmationLink,
-                };
-
-                using (var client = new SmtpClient())
-                {
-                    client.Connect(_emailSettings.SenderServer, 587, false);
-                    client.Authenticate(_emailSettings.SenderEmail, "1234azer&");
-                    client.Send(message);
-                    client.Disconnect(true);
-                }
-
-                return Result.Success();
+                return EmailService.SendEmail(email, "Confirm link: ", confirmationLink, _emailSettings);
             }
             catch (Exception e)
             {
@@ -196,28 +175,7 @@ namespace Infrastructure.Identity
                 var token = await _userManager.GeneratePasswordResetTokenAsync(userById);
                 var resetPasswordLink = apiUrl + $"api/Auth/token={token}";
 
-                var message = new MimeMessage();
-
-                message.From.Add(new MailboxAddress("Project Management", _emailSettings.SenderEmail));
-
-                message.To.Add(new MailboxAddress("User name", email));
-
-                message.Subject = "Reset password: ";
-
-                message.Body = new TextPart("plain")
-                {
-                    Text = resetPasswordLink,
-                };
-
-                using (var client = new SmtpClient())
-                {
-                    client.Connect(_emailSettings.SenderServer, 587, false);
-                    client.Authenticate(_emailSettings.SenderEmail, "1234azer&");
-                    client.Send(message);
-                    client.Disconnect(true);
-                }
-
-                return (Result.Success());
+                return EmailService.SendEmail(email, "Reset password: ", resetPasswordLink, _emailSettings);
             }
             catch (Exception e)
             {
@@ -292,28 +250,7 @@ namespace Infrastructure.Identity
                 var token = await _userManager.GenerateChangeEmailTokenAsync(userById, newEmail);
                 var changeEmailLink = apiUrl + $"api/Auth/{token}";
 
-                var message = new MimeMessage();
-
-                message.From.Add(new MailboxAddress("Project Management", _emailSettings.SenderEmail));
-
-                message.To.Add(new MailboxAddress("User name", email));
-
-                message.Subject = "Change email: ";
-
-                message.Body = new TextPart("plain")
-                {
-                    Text = changeEmailLink,
-                };
-
-                using (var client = new SmtpClient())
-                {
-                    client.Connect(_emailSettings.SenderServer, 587, false);
-                    client.Authenticate(_emailSettings.SenderEmail, "1234azer&");
-                    client.Send(message);
-                    client.Disconnect(true);
-                }
-
-                return (Result.Success());
+                return EmailService.SendEmail(email, "Reset email: ", changeEmailLink, _emailSettings);
             }
             catch (Exception e)
             {
