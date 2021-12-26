@@ -1,16 +1,17 @@
 ﻿using Infrastructure.Identity.Helpers;
+using Infrastructure.Services;
+using MailKit.Net.Smtp;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using MimeKit;
 using ProjectManagement.Core.Base.Interfaces;
 using ProjectManagement.Core.Base.Model;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
-using System.Net;
-using System.Net.Mail;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
@@ -62,7 +63,7 @@ namespace Infrastructure.Identity
                 var userCreated = await _userManager.FindByEmailAsync(email);
                 idResponse = userCreated.Id;
                 var emailResult = await SendAccountConfirmationEmail(userCreated, apiUrl, email);
-                if(!emailResult.Succeeded)
+                if (!emailResult.Succeeded)
                 {
                     await _userManager.DeleteAsync(userCreated);
                     return (emailResult, "", "", "");
@@ -79,26 +80,9 @@ namespace Infrastructure.Identity
                 var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                 var confirmationLink = apiUrl + $"api/Auth/ConfirmEmail?userId={user.Id}&token={token}";
 
-                MailMessage message = new MailMessage
-                {
-                    From = new MailAddress(_emailSettings.SenderEmail),
-                    Subject = "Account confirmation",
-                    Body = "<html><body> " + confirmationLink + " </body></html>",
-                    IsBodyHtml = true
-                };
-
-                message.To.Add(new MailAddress(email));
-
-                var smtpClient = new SmtpClient(_emailSettings.SenderServer)
-                {
-                    Credentials = new NetworkCredential(_emailSettings.SenderEmail, _emailSettings.Password),
-                    EnableSsl = true,
-                };
-
-                await smtpClient.SendMailAsync(message);
-
-                return Result.Success();
-            }catch(Exception e)
+                return EmailService.SendEmail(email, "Confirm link: ", confirmationLink, _emailSettings);
+            }
+            catch (Exception e)
             {
                 return Result.Failure(new List<string> { e.Message });
             }
@@ -191,27 +175,9 @@ namespace Infrastructure.Identity
                 var token = await _userManager.GeneratePasswordResetTokenAsync(userById);
                 var resetPasswordLink = apiUrl + $"api/Auth/token={token}";
 
-                MailMessage message = new MailMessage
-                {
-                    From = new MailAddress(_emailSettings.SenderEmail),
-                    Subject = "Password reset link: ",
-                    Body = "<html><body> " + resetPasswordLink + " </body></html>",
-                    IsBodyHtml = true
-                };
-
-                message.To.Add(new MailAddress(email));
-
-                var smtpClient = new SmtpClient(_emailSettings.SenderServer)
-                {
-                    Credentials = new NetworkCredential(_emailSettings.SenderEmail, _emailSettings.Password),
-                    EnableSsl = true,
-                };
-
-                await smtpClient.SendMailAsync(message);
-
-                return (Result.Success());
+                return EmailService.SendEmail(email, "Reset password: ", resetPasswordLink, _emailSettings);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 return (Result.Failure(new List<string> { e.Message }));
             }
@@ -230,7 +196,7 @@ namespace Infrastructure.Identity
             {
                 return (Result.Failure(new List<string> { "User does not match token" }));
             }
-            else if (userByEmail != null && userById!=null && userById.Id == userByEmail.Id)
+            else if (userByEmail != null && userById != null && userById.Id == userByEmail.Id)
             {
                 var result = await _userManager.ResetPasswordAsync(userByEmail, token, newPassword);
                 return result.ToApplicationResult();
@@ -284,25 +250,7 @@ namespace Infrastructure.Identity
                 var token = await _userManager.GenerateChangeEmailTokenAsync(userById, newEmail);
                 var changeEmailLink = apiUrl + $"api/Auth/{token}";
 
-                MailMessage message = new MailMessage
-                {
-                    From = new MailAddress(_emailSettings.SenderEmail),
-                    Subject = "Change email link: ",
-                    Body = "<html><body> " + changeEmailLink + " </body></html>",
-                    IsBodyHtml = true
-                };
-
-                message.To.Add(new MailAddress(email));
-
-                var smtpClient = new SmtpClient(_emailSettings.SenderServer)
-                {
-                    Credentials = new NetworkCredential(_emailSettings.SenderEmail, _emailSettings.Password),
-                    EnableSsl = true,
-                };
-
-                await smtpClient.SendMailAsync(message);
-
-                return (Result.Success());
+                return EmailService.SendEmail(email, "Reset email: ", changeEmailLink, _emailSettings);
             }
             catch (Exception e)
             {
@@ -394,13 +342,13 @@ namespace Infrastructure.Identity
 
         public async Task<bool> CheckLogoutAsync(string userId)
         {
-            if(userId==null)
+            if (userId == null)
             {
                 return true;
             }
             var userById = await _userManager.FindByIdAsync(userId);
             var userToken = await _userManager.GetAuthenticationTokenAsync(userById, userById.Email, "JWT");
-            if(userToken==_authSettings.LogoutToken)
+            if (userToken == _authSettings.LogoutToken)
             {
                 return false;
             }

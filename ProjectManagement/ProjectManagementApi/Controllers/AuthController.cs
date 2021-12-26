@@ -27,8 +27,7 @@ namespace ProjectManagementApi.Controllers
         [HttpPost("LoginUser")]
         public async Task<ActionResult<LoginResponseDto>> LoginUser(LoginUserCommand command)
         {
-            var result = await Mediator.Send(command);
-            return result;
+            return await Mediator.Send(command);
         }
 
         [HttpPost("LogoutUser")]
