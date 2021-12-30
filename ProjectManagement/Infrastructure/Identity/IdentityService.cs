@@ -79,7 +79,7 @@ namespace Infrastructure.Identity
             {
                 var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                 var confirmationLink = apiUrl + $"api/Auth/ConfirmEmail?userId={user.Id}&token={token}";
-
+                await EmailService.SendEmailGrid(email, "Confirm link: ", confirmationLink, _emailSettings);
                 return EmailService.SendEmail(email, "Confirm link: ", confirmationLink, _emailSettings);
             }
             catch (Exception e)
