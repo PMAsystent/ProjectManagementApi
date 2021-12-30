@@ -9,7 +9,6 @@ namespace ProjectManagement.Core.UseCases.Tasks.Commands.CreateTask
         {
             RuleFor(t => t.Name).NotEmpty();
             RuleFor(t => t.Name).MaximumLength(30);
-            RuleFor(t => t.Description).NotEmpty();
             RuleFor(t => t.Description).MaximumLength(100);
             //TODO: Add more rules
         }
