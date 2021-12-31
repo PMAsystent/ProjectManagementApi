@@ -11,11 +11,11 @@ namespace ProjectManagementApi.Controllers
     public class AuthController : ApiControllerBase
     {
         [HttpPost("RegisterUser")]
-        public async Task<RegisterResponseDto> RegisterUser(RegisterUserBaseCommand command)
+        public async Task<RegisterResponseDto> RegisterUser(RegisterUserCommand command)
         {
-            var requestUrl = $"{Request.Scheme}://{Request.Host.Value}/";
+            //var requestUrl = $"{Request.Scheme}://{Request.Host.Value}/";
 
-            return await Mediator.Send(new RegisterUserCommand(command, requestUrl));
+            return await Mediator.Send(command);
         }
 
         [HttpGet("ConfirmEmail")]
