@@ -34,7 +34,7 @@ namespace Infrastructure.Identity
             _emailSettings = settingsEmail.Value;
         }
 
-        public async Task<(Result Result, string UserName, string Email, string Id)> RegisterUserAsync(string email, string userName, string password, string apiUrl)
+        public async Task<(Result Result, string UserName, string Email, string Id)> RegisterUserAsync(string email, string userName, string password)
         {
             var user = new ApplicationUser
             {
@@ -62,7 +62,7 @@ namespace Infrastructure.Identity
                 emailResponse = email;
                 var userCreated = await _userManager.FindByEmailAsync(email);
                 idResponse = userCreated.Id;
-                var emailResult = await SendAccountConfirmationEmail(userCreated, apiUrl, email);
+                var emailResult = await SendAccountConfirmationEmail(userCreated, email);
                 if (!emailResult.Succeeded)
                 {
                     await _userManager.DeleteAsync(userCreated);
@@ -73,14 +73,13 @@ namespace Infrastructure.Identity
             return (result.ToApplicationResult(), userNameResponse, emailResponse, idResponse);
         }
 
-        public async Task<Result> SendAccountConfirmationEmail(ApplicationUser user, string apiUrl, string email)
+        public async Task<Result> SendAccountConfirmationEmail(ApplicationUser user, string email)
         {
             try
             {
                 var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                var confirmationLink = apiUrl + $"api/Auth/ConfirmEmail?userId={user.Id}&token={token}";
-                await EmailService.SendEmailGrid(email, "Confirm link: ", confirmationLink, _emailSettings);
-                return EmailService.SendEmail(email, "Confirm link: ", confirmationLink, _emailSettings);
+                var confirmationLink = _emailSettings.ClientUrl + $"{_emailSettings.ConfirmUrl}?userId={user.Id}&token={token}";
+                return await EmailService.SendEmail(email, confirmationLink, _emailSettings);
             }
             catch (Exception e)
             {
@@ -145,7 +144,7 @@ namespace Infrastructure.Identity
 
             return apiresult;
         }
-        private IEnumerable<Claim> GetTokenClaims(ApplicationUser user)
+        private static IEnumerable<Claim> GetTokenClaims(ApplicationUser user)
         {
             return new List<Claim>
             {
@@ -156,7 +155,7 @@ namespace Infrastructure.Identity
             };
         }
 
-        public async Task<Result> SendResetPasswordEmail(string userId, string apiUrl, string email)
+        public async Task<Result> SendResetPasswordEmail(string userId, string email)
         {
             try
             {
@@ -173,9 +172,9 @@ namespace Infrastructure.Identity
                 }
 
                 var token = await _userManager.GeneratePasswordResetTokenAsync(userById);
-                var resetPasswordLink = apiUrl + $"api/Auth/token={token}";
+                var resetPasswordLink = _emailSettings.ClientUrl + $"{_emailSettings.ResetPasswordUrl}?token={token}";
 
-                return EmailService.SendEmail(email, "Reset password: ", resetPasswordLink, _emailSettings);
+                return await EmailService.SendEmail(email, resetPasswordLink, _emailSettings);
             }
             catch (Exception e)
             {
@@ -231,7 +230,7 @@ namespace Infrastructure.Identity
             }
         }
 
-        public async Task<Result> SendChangeEmailAddressEmail(string userId, string apiUrl, string email, string newEmail)
+        public async Task<Result> SendChangeEmailAddressEmail(string userId, string email, string newEmail)
         {
             try
             {
@@ -248,9 +247,9 @@ namespace Infrastructure.Identity
                 }
 
                 var token = await _userManager.GenerateChangeEmailTokenAsync(userById, newEmail);
-                var changeEmailLink = apiUrl + $"api/Auth/{token}";
+                var changeEmailLink = _emailSettings.ClientUrl + $"{_emailSettings.ResetEmailUrl}?token={token}";
 
-                return EmailService.SendEmail(email, "Reset email: ", changeEmailLink, _emailSettings);
+                return await EmailService.SendEmail(email, changeEmailLink, _emailSettings);
             }
             catch (Exception e)
             {
@@ -346,8 +345,10 @@ namespace Infrastructure.Identity
             {
                 return true;
             }
+
             var userById = await _userManager.FindByIdAsync(userId);
             var userToken = await _userManager.GetAuthenticationTokenAsync(userById, userById.Email, "JWT");
+
             if (userToken == _authSettings.LogoutToken)
             {
                 return false;

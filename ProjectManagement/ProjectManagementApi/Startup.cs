@@ -32,22 +32,18 @@ namespace ProjectManagementApi
             services.AddApplication();
             services.AddInfrastructure(Configuration);
             services.AddCustomAuthentication(Configuration);
-            
             services.AddApplicationInsightsTelemetry(Configuration["ApplicationInsights:InstrumentationKey"]);
 
-            var settingsSectionAuth = Configuration.GetSection("Authentication");
-            var authSettings = settingsSectionAuth.Get<AuthSettings>();
+            services.Configure<AuthSettings>(Configuration.GetSection("Authentication"));
+            services.Configure<EmailProviderSettings>(Configuration.GetSection("EmailProvider"));
 
-            var settingsSectionEmail = Configuration.GetSection("EmailProvider");
-            var emailSettings = settingsSectionEmail.Get<EmailProviderSettings>();
-
-            services.Configure<AuthSettings>(settingsSectionAuth);
-            services.Configure<EmailProviderSettings>(settingsSectionEmail);
-
-            services.AddSingleton<ICurrentUserService, CurrentUserService>();
-            services.AddTransient<TokenManagerMiddleware>();
-            services.AddTransient<ITokenManager, TokenManager>();
             services.AddHttpContextAccessor();
+
+            services.AddTransient<TokenManagerMiddleware>();
+            services.AddSingleton<ICurrentUserService, CurrentUserService>();
+            services.AddTransient<ITokenManager, TokenManager>();
+
+
 
             services.AddControllersWithViews(options =>
                 options.Filters.Add<ApiExceptionFilterAttribute>())
