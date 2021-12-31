@@ -19,8 +19,12 @@ namespace Infrastructure.Services
                 var to = new EmailAddress(email);
                 var msg = MailHelper.CreateSingleEmail(from, to, settings.ConfirmMessage, "", settings.ConfirmMessage + " " + link);
                 var response = await client.SendEmailAsync(msg);
+                if(response.IsSuccessStatusCode)
+                {
+                    return Result.Success();
+                }
+                return Result.Failure(new List<string> { response.StatusCode.ToString() });
 
-                return Result.Success();
             }
             catch (Exception e)
             {
