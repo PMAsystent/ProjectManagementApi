@@ -127,6 +127,12 @@ namespace ProjectManagement.Core.UseCases.Projects.Commands.CreateProject
                 };
             }
 
+            projectToReturn.ProjectCreator = new ProjectAssignedUserDto()
+            {
+                UserId = currentUser.Id,
+                UserName = currentUser.UserName
+            };
+            
             return projectToReturn;
         }
     }

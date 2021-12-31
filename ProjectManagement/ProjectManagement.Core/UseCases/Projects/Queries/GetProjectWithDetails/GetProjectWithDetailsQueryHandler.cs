@@ -58,6 +58,7 @@ namespace ProjectManagement.Core.UseCases.Projects.Queries.GetProjectWithDetails
                         .Contains(t.StepId))
                     .ProjectTo<ProjectTaskDto>(_mapper.ConfigurationProvider)
                     .ToListAsync(cancellationToken);
+            
             detailedProjectDto.ProjectAssignedUsers = await GetProjectAssignedUsers(detailedProjectDto.Id);
 
             detailedProjectDto.ProgressPercentage =
@@ -66,8 +67,20 @@ namespace ProjectManagement.Core.UseCases.Projects.Queries.GetProjectWithDetails
             detailedProjectDto.CurrentUserInfoInProject =
                 await GetCurrentUserInfoInProject(request.CurrentUserId, detailedProjectDto.ProjectAssignedUsers);
 
+            detailedProjectDto.ProjectCreator = await GetProjectCreator(project.CreatedBy);
 
             return detailedProjectDto;
+        }
+
+        private async Task<ProjectAssignedUserDto> GetProjectCreator(string userId)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.ApplicationUserId == userId);
+
+            return new()
+            {
+                UserId = user.Id,
+                UserName = user.UserName
+            };
         }
 
         private async Task<ICollection<ProjectAssignedUserDto>> GetProjectAssignedUsers(int projectId)

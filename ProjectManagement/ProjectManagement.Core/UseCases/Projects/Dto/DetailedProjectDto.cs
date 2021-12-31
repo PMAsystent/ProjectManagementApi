@@ -18,6 +18,8 @@ namespace ProjectManagement.Core.UseCases.Projects.Dto
         public ICollection<ProjectAssignedUserDto> ProjectAssignedUsers { get; set; }
         public CurrentUserInfoInProject CurrentUserInfoInProject { get; set; }
 
+        public ProjectAssignedUserDto ProjectCreator { get; set; }
+
         public static void Mapping(MappingProfile profile)
         {
             profile.CreateMap<Project, DetailedProjectDto>()

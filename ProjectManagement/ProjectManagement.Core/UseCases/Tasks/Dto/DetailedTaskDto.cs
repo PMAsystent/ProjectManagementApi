@@ -14,7 +14,7 @@ namespace ProjectManagement.Core.UseCases.Tasks.Dto
         public string TaskStatus { get; set; }
         public DateTime DueDate { get; set; }
         public int StepId { get; set; }
-        public ICollection<TaskAssignemntDto> Assigns { get; set; }
+        public ICollection<TaskAssignedUserDto> AssignedUser { get; set; }
         public ICollection<SubtaskDto> Subtasks { get; set; }
         
         public void Mapping(MappingProfile profile)

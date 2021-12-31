@@ -1,8 +1,10 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
+using Domain.Entities;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using ProjectManagement.Core.Base.Exceptions;
@@ -31,17 +33,24 @@ namespace ProjectManagement.Core.UseCases.Tasks.Queries.GetTaskById
             }
 
             var taskDto = _mapper.Map<DetailedTaskDto>(task);
-            taskDto.Assigns = await _context.TaskAssignments
-                .Where(a => a.TaskId == task.Id && a.isActive)
-                .ProjectTo<TaskAssignemntDto>(_mapper.ConfigurationProvider)
-                .ToListAsync(cancellationToken);
-
+            taskDto.AssignedUser =  _mapper.Map<List<User>, ICollection<TaskAssignedUserDto>>(await GetAssignedUsers(request.TaskId));
             taskDto.Subtasks = await _context.Subtasks
                 .Where(s => s.TaskId == task.Id)
                 .ProjectTo<SubtaskDto>(_mapper.ConfigurationProvider)
                 .ToListAsync(cancellationToken);
 
             return taskDto;
+        }
+        
+        private async Task<List<User>> GetAssignedUsers(int taskId)
+        {
+            var taskAssignments =  await _context.TaskAssignments
+                .Where(a => a.TaskId == taskId && a.isActive)
+                .ToListAsync();
+            
+            return await _context.Users
+                .Where(u => taskAssignments.Select(a => a.UserId).Contains(u.Id))
+                .ToListAsync();
         }
     }
 }
