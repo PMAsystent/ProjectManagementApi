@@ -1,42 +1,28 @@
-﻿using MimeKit;
-using ProjectManagement.Core.Base.Interfaces;
-using ProjectManagement.Core.Base.Model;
+﻿using ProjectManagement.Core.Base.Model;
 using System;
 using Infrastructure.Identity.Helpers;
-using MailKit.Net.Smtp;
 using System.Collections.Generic;
+using SendGrid;
+using SendGrid.Helpers.Mail;
+using System.Threading.Tasks;
 
 namespace Infrastructure.Services
 {
     static class EmailService
     {
-        static public Result SendEmail(string email, string subject, string link, EmailProviderSettings settings)
+        static public async Task<Result> SendEmail(string email, string link, EmailProviderSettings settings)
         {
             try
             {
-                var message = new MimeMessage();
-                message.From.Add(new MailboxAddress("Project Management", settings.SenderEmail));
-
-                message.To.Add(new MailboxAddress("User name", email));
-
-                message.Subject = subject;
-
-                message.Body = new TextPart("plain")
-                {
-                    Text = link,
-                };
-
-                using (var client = new SmtpClient())
-                {
-                    client.Connect(settings.SenderServer, 587, false);
-                    client.Authenticate(settings.SenderEmail, settings.Password);
-                    client.Send(message);
-                    client.Disconnect(true);
-                }
+                var client = new SendGridClient(settings.SendGridApiKey);
+                var from = new EmailAddress(settings.SenderEmail, "PMAsystent");
+                var to = new EmailAddress(email);
+                var msg = MailHelper.CreateSingleEmail(from, to, settings.ConfirmMessage, "", settings.ConfirmMessage + " " + link);
+                var response = await client.SendEmailAsync(msg);
 
                 return Result.Success();
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 return Result.Failure(new List<string> { e.Message });
             }

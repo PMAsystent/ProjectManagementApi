@@ -24,7 +24,7 @@ namespace ProjectManagement.Core.Concrete.Identity.Commands
 
         public async Task<SendResetPasswordEmailDto> Handle(SendResetPasswordEmailCommand request, CancellationToken cancellationToken)
         {
-            var result = await _identityService.SendResetPasswordEmail(_currentUserService.UserId, "test", request.Email);
+            var result = await _identityService.SendResetPasswordEmail(_currentUserService.UserId, request.Email);
 
             return result.Succeeded ? new SendResetPasswordEmailDto { IsSented = true } : new SendResetPasswordEmailDto { IsSented = false, Errors = result.Errors };
         }

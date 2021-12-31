@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Domain.Entities;
 using Domain.Enums;
 using MediatR;
@@ -15,6 +16,7 @@ namespace ProjectManagement.Core.UseCases.Tasks.Commands.CreateTask
         public string Priority { get; set; }
         public string TaskStatus { get; set; }
         public DateTime DueDate { get; set; }
+        public ICollection<CreateTaskAssignmentDto> AssignedUsers { get; set; }
         public int StepId { get; set; }
         
         public void Mapping(MappingProfile profile)

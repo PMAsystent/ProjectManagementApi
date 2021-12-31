@@ -27,7 +27,7 @@ namespace ProjectManagement.Core.Concrete.Identity.Commands
 
         public async Task<SendChangeAddressEmailDto> Handle(SendChangeEmailAddressEmailCommand request, CancellationToken cancellationToken)
         {
-            var result = await _identityService.SendChangeEmailAddressEmail(_currentUserService.UserId, "test", request.Email, request.NewEmail);
+            var result = await _identityService.SendChangeEmailAddressEmail(_currentUserService.UserId, request.Email, request.NewEmail);
             return result.Succeeded ? new SendChangeAddressEmailDto { IsSented = true } : new SendChangeAddressEmailDto { IsSented = false, Errors = result.Errors };
         }
     }
