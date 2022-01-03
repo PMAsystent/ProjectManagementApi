@@ -19,6 +19,7 @@ jobs:
         env:
           ApplicationInsights.InstrumentationKey: ${{ secrets.INSTRUMENTATION_KEY }}
           ConnectionStrings.DefaultConnection: ${{ secrets.PRODUCTION_CONNECTION_STRING }}
+          EmailProvider.SendGridApiKey: ${{ secrets.SENDGRID_KEY }}
             
       - name: Read appsettings.json
         run: "cat ProjectManagement/ProjectManagementApi/appsettings.json"
