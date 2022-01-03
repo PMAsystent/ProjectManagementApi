@@ -16,14 +16,14 @@ namespace Infrastructure.Services
             {
                 var client = new SendGridClient(settings.SendGridApiKey);
                 var from = new EmailAddress(settings.SenderEmail, "PMAsystent");
-                var to = new EmailAddress(email);
-                var msg = MailHelper.CreateSingleEmail(from, to, settings.ConfirmMessage, "", settings.ConfirmMessage + " " + link);
+                var to = new EmailAddress(email, "PMAsystent");
+                var msg = MailHelper.CreateSingleEmail(from, to, settings.ConfirmMessage, "PMAsystent", settings.ConfirmMessage + " " + link);
                 var response = await client.SendEmailAsync(msg);
                 if(response.IsSuccessStatusCode)
                 {
                     return Result.Success();
                 }
-                return Result.Failure(new List<string> { response.StatusCode.ToString() });
+                return Result.Failure(new List<string> { "Email service error: " + response.StatusCode.ToString() });
 
             }
             catch (Exception e)
