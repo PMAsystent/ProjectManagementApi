@@ -1,7 +1,9 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
 using Domain.Entities;
+using Domain.Enums;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using ProjectManagement.Core.Base.Exceptions;
@@ -28,6 +30,18 @@ namespace ProjectManagement.Core.UseCases.ProjectAssignments.Commands.UpdateProj
             {
                 throw new NotFoundException(
                     $"{nameof(ProjectAssignment)} with user({request.UserId} in project({request.ProjectId}) does not exists.");
+            }
+            
+            ProjectRole role;
+            ProjectMemberType memberType;
+            
+            if (!Enum.TryParse(request.ProjectRole, out role))
+            {
+                throw new ArgumentException("Wrong project role");
+            }
+            if (!Enum.TryParse(request.MemberType, out memberType))
+            {
+                throw new ArgumentException("Wrong member type");
             }
 
             _mapper.Map(request, projectAssignment);
