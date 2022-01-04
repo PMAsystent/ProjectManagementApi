@@ -5,6 +5,7 @@ using AutoMapper;
 using Domain.Entities;
 using Domain.Enums;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using ProjectManagement.Core.Base.Interfaces;
 
 namespace ProjectManagement.Core.UseCases.ProjectAssignments.Commands.AddUserToProject
@@ -25,13 +26,17 @@ namespace ProjectManagement.Core.UseCases.ProjectAssignments.Commands.AddUserToP
             ProjectRole role;
             ProjectMemberType memberType;
             
-            if (Enum.TryParse(request.ProjectRole, out role))
+            if (!Enum.TryParse(request.ProjectRole, out role))
             {
                 throw new ArgumentException("Wrong project role");
             }
-            if (Enum.TryParse(request.MemberType, out memberType))
+            if (!Enum.TryParse(request.MemberType, out memberType))
             {
                 throw new ArgumentException("Wrong member type");
+            }
+            if (await UserAlreadyAssigned(request.UserId, request.ProjectId))
+            {
+                throw new Exception("User already assigned");
             }
             
             var projectAssignment = _mapper.Map<ProjectAssignment>(request);
@@ -39,6 +44,14 @@ namespace ProjectManagement.Core.UseCases.ProjectAssignments.Commands.AddUserToP
             await _context.SaveChangesAsync(cancellationToken);
             
             return Unit.Value;
+        }
+
+        private async Task<bool> UserAlreadyAssigned(int userId, int projectId)
+        {
+            var assigment = await _context.ProjectAssignments
+                .FirstOrDefaultAsync(a => a.ProjectId == projectId && a.UserId == userId);
+
+            return assigment != null;
         }
     }
 }
