@@ -18,7 +18,7 @@ namespace ProjectManagementApi.Controllers
             return await Mediator.Send(command);
         }
 
-        [HttpPost("ConfirmEmail")]
+        [HttpGet("ConfirmEmail")]
         public async Task<ActionResult<bool>> ConfirmEmail(string userId, string token)
         {
             return await Mediator.Send(new ConfirmEmailCommand { UserId = userId, Token = token.Replace(" ", "+") });
