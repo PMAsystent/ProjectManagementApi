@@ -72,7 +72,7 @@ namespace ProjectManagementApi.Controllers
             return await Mediator.Send(command);
         }
 
-        [HttpPost("GetCurrentUserByToken")]
+        [HttpGet("GetCurrentUserByToken")]
         [Authorize]
         public async Task<ActionResult<CheckTokenResponseDto>> GetCurrentUserByToken(CheckTokenCommand command)
         {
