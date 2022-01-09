@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ProjectManagement.Core.UseCases.Users.Queries.CheckIfUserWithEmailExistsQuery;
 using ProjectManagement.Core.UseCases.Users.Queries.FindUser;
+using ProjectManagement.Core.UseCases.Users.Queries.FindUserInProject;
+using ProjectManagement.Core.UseCases.Users.ViewsModels;
 
 namespace ProjectManagementApi.Controllers
 {
@@ -23,13 +26,23 @@ namespace ProjectManagementApi.Controllers
             }
         }
         
+        [Authorize]
         [HttpGet("findUsers")]
-        public async Task<ActionResult> FindUsers([FromQuery]string term)
+        public async Task<ActionResult> FindUsers([FromQuery]string term, [FromQuery]int? projectId)
         {
             try
             {
-                var query = new FindUserQuery(term);
-                var result = await Mediator.Send(query);
+                UserVm result;
+                if (projectId is > 0)
+                {
+                    var query = new FindUserInProjectQuery(term, projectId.Value);
+                    result = await Mediator.Send(query);
+                }
+                else
+                {
+                    var query = new FindUserQuery(term);
+                    result = await Mediator.Send(query);
+                }
                 return Ok(result);
             }
             catch (ArgumentException e)
