@@ -13,10 +13,12 @@ namespace ProjectManagement.Core.UseCases.Tasks.Dto
         public string Priority { get; set; }
         public string TaskStatus { get; set; }
         public DateTime DueDate { get; set; }
+        public int ProgressPercentage { get; set; }
+
         public int StepId { get; set; }
         public ICollection<TaskAssignedUserDto> AssignedUser { get; set; }
         public ICollection<SubtaskDto> Subtasks { get; set; }
-        
+
         public void Mapping(MappingProfile profile)
         {
             profile.CreateMap<DetailedTaskDto, Task>().ReverseMap();

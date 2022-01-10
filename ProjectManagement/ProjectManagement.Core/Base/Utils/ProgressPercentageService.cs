@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Domain.Entities;
 using Domain.Enums;
@@ -39,6 +40,16 @@ namespace ProjectManagement.Core.Base.Utils
             }
 
             return tasksInStep.Count(t => t.TaskStatus == TaskStatus.Done.ToString()) * 100 / tasksInStep.Count;
+        }
+
+        public int GetProgressPercentageForTask(Task task)
+        {
+            if (task.Subtasks == null || task.Subtasks.Count == 0)
+            {
+                return task.TaskStatus == TaskStatus.Done.ToString() ? 100 : 0;
+            }
+
+            return task.Subtasks.Count(s => s.IsDone) * 100 / task.Subtasks.Count;
         }
     }
 }

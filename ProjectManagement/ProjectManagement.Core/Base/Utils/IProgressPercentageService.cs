@@ -7,5 +7,6 @@ namespace ProjectManagement.Core.Base.Utils
     {
         int GetProgressPercentageForProject(List<Step> stepsInProject);
         int GetProgressPercentageForStep(List<Task> tasksInStep);
+        int GetProgressPercentageForTask(Task task);
     }
 }
