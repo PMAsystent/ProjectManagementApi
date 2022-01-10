@@ -37,7 +37,7 @@ namespace ProjectManagementApi.IntegrationTests.Controllers.Tasks
         public async Task GetTaskWithDetailsAndValidateProgressPercentageForTask1()
         {
             var response = await Client.GetAsync($"/api/Tasks/{Utilities.P1S1Task1.Id}");
-            response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+            response.EnsureSuccessStatusCode();
             
             var task = await Utilities.GetResponseContent<DetailedTaskDto>(response);
             task.ProgressPercentage.Should().Be(50);
@@ -47,7 +47,7 @@ namespace ProjectManagementApi.IntegrationTests.Controllers.Tasks
         public async Task GetTaskWithDetailsAndValidateProgressPercentageForTask2()
         {
             var response = await Client.GetAsync($"/api/Tasks/{Utilities.P1S1Task2.Id}");
-            response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+            response.EnsureSuccessStatusCode();
             
             var task = await Utilities.GetResponseContent<DetailedTaskDto>(response);
             task.ProgressPercentage.Should().Be(50);
@@ -57,7 +57,7 @@ namespace ProjectManagementApi.IntegrationTests.Controllers.Tasks
         public async Task GetTaskWithDetailsAndValidateProgressPercentageForTask3()
         {
             var response = await Client.GetAsync($"/api/Tasks/{Utilities.P1S1Task3.Id}");
-            response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+            response.EnsureSuccessStatusCode();
             
             var task = await Utilities.GetResponseContent<DetailedTaskDto>(response);
             task.ProgressPercentage.Should().Be(100);

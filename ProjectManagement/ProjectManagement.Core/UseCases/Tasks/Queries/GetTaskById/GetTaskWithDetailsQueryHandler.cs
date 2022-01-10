@@ -9,7 +9,9 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using ProjectManagement.Core.Base.Exceptions;
 using ProjectManagement.Core.Base.Interfaces;
+using ProjectManagement.Core.Base.Utils;
 using ProjectManagement.Core.UseCases.Tasks.Dto;
+using Task = Domain.Entities.Task;
 
 namespace ProjectManagement.Core.UseCases.Tasks.Queries.GetTaskById
 {
@@ -17,10 +19,15 @@ namespace ProjectManagement.Core.UseCases.Tasks.Queries.GetTaskById
     {
         private readonly IApplicationDbContext _context;
         private readonly IMapper _mapper;
+        private readonly IProgressPercentageService _progressPercentageService;
 
-        public GetTaskWithDetailsQueryHandler(IApplicationDbContext context, IMapper mapper)
+        public GetTaskWithDetailsQueryHandler(
+            IApplicationDbContext context,
+            IMapper mapper,
+            IProgressPercentageService progressPercentageService)
         {
             _mapper = mapper;
+            _progressPercentageService = progressPercentageService;
             _context = context;
         }
 
@@ -33,21 +40,24 @@ namespace ProjectManagement.Core.UseCases.Tasks.Queries.GetTaskById
             }
 
             var taskDto = _mapper.Map<DetailedTaskDto>(task);
-            taskDto.AssignedUser =  _mapper.Map<List<User>, ICollection<TaskAssignedUserDto>>(await GetAssignedUsers(request.TaskId));
+            taskDto.AssignedUser =
+                _mapper.Map<List<User>, ICollection<TaskAssignedUserDto>>(await GetAssignedUsers(request.TaskId));
             taskDto.Subtasks = await _context.Subtasks
                 .Where(s => s.TaskId == task.Id)
                 .ProjectTo<SubtaskDto>(_mapper.ConfigurationProvider)
                 .ToListAsync(cancellationToken);
 
+            taskDto.ProgressPercentage = _progressPercentageService.GetProgressPercentageForTask(_mapper.Map<Task>(taskDto));
+
             return taskDto;
         }
-        
+
         private async Task<List<User>> GetAssignedUsers(int taskId)
         {
-            var taskAssignments =  await _context.TaskAssignments
+            var taskAssignments = await _context.TaskAssignments
                 .Where(a => a.TaskId == taskId && a.isActive)
                 .ToListAsync();
-            
+
             return await _context.Users
                 .Where(u => taskAssignments.Select(a => a.UserId).Contains(u.Id))
                 .ToListAsync();
