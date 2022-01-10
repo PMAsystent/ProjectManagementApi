@@ -8,7 +8,6 @@ namespace ProjectManagement.Core.UseCases.Subtasks.Commands.CreateSubtask
         public CreateSubtaskCommandValidator()
         {
             RuleFor(s => s.Name).NotEmpty();
-            RuleFor(s => s.Name).MaximumLength(100);
             RuleFor(s => s.TaskId).GreaterThan(0);
         }
     }
