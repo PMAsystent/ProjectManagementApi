@@ -13,6 +13,7 @@ namespace ProjectManagement.Core.UseCases.Projects.Dto
         public DateTime DueDate { get; set; }
         public bool IsActive { get; set; }
         public int ProgressPercentage { get; set; }
+        public int ActiveTasksCount { get; set; }
 
         public ICollection<ProjectStepDto> Steps { get; set; }
 
