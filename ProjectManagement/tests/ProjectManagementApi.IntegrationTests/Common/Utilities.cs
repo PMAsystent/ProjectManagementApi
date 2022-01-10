@@ -1,23 +1,26 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using Domain.Entities;
+using Domain.Enums;
 using Infrastructure.Identity;
 using Infrastructure.Persistance.DatabaseContext;
 using Newtonsoft.Json;
+using Task = Domain.Entities.Task;
+using TaskStatus = Domain.Enums.TaskStatus;
 
 namespace ProjectManagementApi.IntegrationTests.Common
 {
     public static class Utilities
     {
-#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
         private static ApplicationDbContext Context { get; set; }
-#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+        public static User User1 { get; private set; } = null!;
+        public static Task P1S1Task1 { get; private set; } = null!;
+        public static Task P1S1Task2 { get; private set; } = null!;
+        public static Task P1S1Task3 { get; private set; } = null!;
 
-#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
-        public static User User1 { get; set; }
-#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 
         public static void InitializeDbForTests(ApplicationDbContext context)
         {
@@ -49,6 +52,7 @@ namespace ProjectManagementApi.IntegrationTests.Common
         {
             //TODO: implement seed
             SeedUsers();
+            SeedProjects();
         }
 
         private static void SeedUsers()
@@ -73,6 +77,95 @@ namespace ProjectManagementApi.IntegrationTests.Common
             Context.SaveChanges();
 
             User1 = user;
+        }
+
+        private static void SeedProjects()
+        {
+            var task1 = new Task()
+            {
+                Name = "p1s1 task1",
+                Priority = TaskPriority.High.ToString(),
+                TaskStatus = TaskStatus.ToDo.ToString(),
+                DueDate = DateTime.UtcNow.AddDays(2),
+                Subtasks = new List<Subtask>()
+                {
+                    new()
+                    {
+                        Name = "p1s1t1 subtask1",
+                        IsDone = true
+                    },
+                    new()
+                    {
+                        Name = "p1s1t1 subtask2",
+                        IsDone = false
+                    },
+                }
+            };
+
+            var task2 = new Task()
+            {
+                Name = "p1s1 task2",
+                Priority = TaskPriority.High.ToString(),
+                TaskStatus = TaskStatus.Done.ToString(),
+                DueDate = DateTime.UtcNow.AddDays(2),
+                Subtasks = new List<Subtask>()
+                {
+                    new()
+                    {
+                        Name = "p1s1t2 subtask1",
+                        IsDone = true
+                    },
+                    new()
+                    {
+                        Name = "p1s1t2 subtask2",
+                        IsDone = false
+                    },
+                }
+            };
+
+            var task3 = new Task()
+            {
+                Name = "p1s1 task3",
+                Priority = TaskPriority.High.ToString(),
+                TaskStatus = TaskStatus.Done.ToString(),
+                DueDate = DateTime.UtcNow.AddDays(2),
+            };
+
+            var project = new Project()
+            {
+                Name = "project1",
+                DueDate = DateTime.UtcNow.AddDays(14),
+                IsActive = true,
+                Assigns = new List<ProjectAssignment>()
+                {
+                    new()
+                    {
+                        MemberType = ProjectMemberType.Manager.ToString(),
+                        ProjectRole = ProjectRole.SuperMember.ToString(),
+                        UserId = User1.Id
+                    }
+                },
+                Steps = new List<Step>()
+                {
+                    new()
+                    {
+                        Name = "p1 step1",
+                        Tasks = new List<Task>()
+                        {
+                            task1,
+                            task2,
+                            task3
+                        }
+                    }
+                }
+            };
+
+            Context.Projects.Add(project);
+            Context.SaveChanges();
+
+            P1S1Task1 = task1;
+            P1S1Task2 = task2;
+            P1S1Task3 = task3;
         }
     }
 }
