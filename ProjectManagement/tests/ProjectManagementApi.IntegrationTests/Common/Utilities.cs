@@ -145,7 +145,7 @@ namespace ProjectManagementApi.IntegrationTests.Common
                     {
                         Name = "p1s1 task4",
                         Priority = TaskPriority.High.ToString(),
-                        TaskStatus = TaskStatus.Done.ToString(),
+                        TaskStatus = TaskStatus.InProgress.ToString(),
                         DueDate = DateTime.UtcNow.AddDays(2),
                     }
                 }
