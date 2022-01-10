@@ -17,6 +17,8 @@ namespace ProjectManagementApi.IntegrationTests.Common
     {
         private static ApplicationDbContext Context { get; set; }
         public static User User1 { get; private set; } = null!;
+        public static Project Project1 { get; private set; } = null!;
+        public static Step P1Step1 { get; private set; }= null!;
         public static Task P1S1Task1 { get; private set; } = null!;
         public static Task P1S1Task2 { get; private set; } = null!;
         public static Task P1S1Task3 { get; private set; } = null!;
@@ -131,6 +133,24 @@ namespace ProjectManagementApi.IntegrationTests.Common
                 DueDate = DateTime.UtcNow.AddDays(2),
             };
 
+            var step1 = new Step()
+            {
+                Name = "p1 step1",
+                Tasks = new List<Task>()
+                {
+                    task1,
+                    task2,
+                    task3,
+                    new()
+                    {
+                        Name = "p1s1 task4",
+                        Priority = TaskPriority.High.ToString(),
+                        TaskStatus = TaskStatus.Done.ToString(),
+                        DueDate = DateTime.UtcNow.AddDays(2),
+                    }
+                }
+            };
+
             var project = new Project()
             {
                 Name = "project1",
@@ -145,27 +165,18 @@ namespace ProjectManagementApi.IntegrationTests.Common
                         UserId = User1.Id
                     }
                 },
-                Steps = new List<Step>()
-                {
-                    new()
-                    {
-                        Name = "p1 step1",
-                        Tasks = new List<Task>()
-                        {
-                            task1,
-                            task2,
-                            task3
-                        }
-                    }
-                }
+                Steps = new List<Step>() { step1 }
             };
 
             Context.Projects.Add(project);
             Context.SaveChanges();
 
+            Project1 = project;
+            P1Step1 = step1;
             P1S1Task1 = task1;
             P1S1Task2 = task2;
             P1S1Task3 = task3;
         }
+
     }
 }
