@@ -12,6 +12,7 @@ using ProjectManagement.Core.Base.Exceptions;
 using ProjectManagement.Core.Base.Interfaces;
 using ProjectManagement.Core.Base.Utils;
 using ProjectManagement.Core.UseCases.Projects.Dto;
+using Task = Domain.Entities.Task;
 
 namespace ProjectManagement.Core.UseCases.Projects.Queries.GetProjectWithDetails
 {
@@ -49,16 +50,26 @@ namespace ProjectManagement.Core.UseCases.Projects.Queries.GetProjectWithDetails
             {
                 Id = step.Id,
                 Name = step.Name,
-                ProgressPercentage = step.Tasks.Any() ? _projectsPercentageService.GetProgressPercentageForStep(step.Tasks.ToList()) : 0 
+                ProgressPercentage = step.Tasks.Any()
+                    ? _projectsPercentageService.GetProgressPercentageForStep(step.Tasks.ToList())
+                    : 0
             }).ToList();
 
-            detailedProjectDto.ProjectTasks =
-                await _context.Tasks.Where(t => detailedProjectDto.ProjectSteps
-                        .Select(s => s.Id)
-                        .Contains(t.StepId))
-                    .ProjectTo<ProjectTaskDto>(_mapper.ConfigurationProvider)
-                    .ToListAsync(cancellationToken);
-            
+            var projectTasks = await _context.Tasks
+                .Include(t => t.Subtasks)
+                .Where(t => detailedProjectDto.ProjectSteps
+                    .Select(s => s.Id)
+                    .Contains(t.StepId))
+                .ToListAsync(cancellationToken);
+
+            detailedProjectDto.ProjectTasks = _mapper.Map<List<ProjectTaskDto>>(projectTasks);
+
+            foreach (var task in detailedProjectDto.ProjectTasks)
+            {
+                var taskWithSubtasks = projectTasks.SingleOrDefault(t => t.Id == task.Id);
+                task.ProgressPercentage = _projectsPercentageService.GetProgressPercentageForTask(taskWithSubtasks);
+            }
+
             detailedProjectDto.ProjectAssignedUsers = await GetProjectAssignedUsers(detailedProjectDto.Id);
 
             detailedProjectDto.ProgressPercentage =
