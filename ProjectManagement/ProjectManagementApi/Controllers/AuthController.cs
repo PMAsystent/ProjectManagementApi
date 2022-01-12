@@ -74,9 +74,9 @@ namespace ProjectManagementApi.Controllers
 
         [HttpGet("GetCurrentUserByToken")]
         [Authorize]
-        public async Task<ActionResult<CheckTokenResponseDto>> GetCurrentUserByToken(CheckTokenCommand command)
+        public async Task<ActionResult<CheckTokenResponseDto>> GetCurrentUserByToken(string token)
         {
-            return await Mediator.Send(command);
+            return await Mediator.Send(new CheckTokenCommand() { Token = token});
         }
 
         [HttpPost("RefreshToken")]
