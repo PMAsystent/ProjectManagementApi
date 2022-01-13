@@ -27,7 +27,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Controllers\Subtasks" />
       <Folder Include="Controllers\TaskAssignments" />
     </ItemGroup>
 
