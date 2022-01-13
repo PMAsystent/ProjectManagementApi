@@ -32,6 +32,7 @@ namespace ProjectManagementApi.Controllers
         {
             try
             {
+                //TODO: Split into two endpoints
                 UserVm result;
                 if (projectId is > 0)
                 {

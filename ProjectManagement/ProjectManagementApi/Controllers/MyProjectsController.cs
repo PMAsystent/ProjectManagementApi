@@ -111,8 +111,7 @@ namespace ProjectManagementApi.Controllers
         }
 
         [HttpPut]
-        public async Task<ActionResult> UpdateProject(
-            [FromBody] UpdateProjectCommand updateProjectCommand)
+        public async Task<ActionResult> UpdateProject([FromBody] UpdateProjectCommand updateProjectCommand)
         {
             try
             {

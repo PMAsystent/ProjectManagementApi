@@ -24,21 +24,27 @@ namespace ProjectManagement.Core.UseCases.ProjectAssignments.Commands.UpdateProj
 
         public async Task<Unit> Handle(UpdateProjectAssignmentCommand request, CancellationToken cancellationToken)
         {
-            var projectAssignment = await _context.ProjectAssignments.SingleOrDefaultAsync(a =>
-                a.UserId == request.UserId && a.ProjectId == request.ProjectId, cancellationToken);
+            var projectAssignment = await _context.ProjectAssignments
+                .SingleOrDefaultAsync(a =>
+                        a.UserId == request.UserId &&
+                        a.ProjectId == request.ProjectId,
+                    cancellationToken);
+            
             if (projectAssignment == null)
             {
                 throw new NotFoundException(
                     $"{nameof(ProjectAssignment)} with user({request.UserId} in project({request.ProjectId}) does not exists.");
             }
-            
+
+            // TODO: Move to validator 
             ProjectRole role;
             ProjectMemberType memberType;
-            
+
             if (!Enum.TryParse(request.ProjectRole, out role))
             {
                 throw new ArgumentException("Wrong project role");
             }
+
             if (!Enum.TryParse(request.MemberType, out memberType))
             {
                 throw new ArgumentException("Wrong member type");
