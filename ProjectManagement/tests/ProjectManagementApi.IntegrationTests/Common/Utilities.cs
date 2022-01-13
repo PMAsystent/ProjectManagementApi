@@ -142,7 +142,15 @@ namespace ProjectManagementApi.IntegrationTests.Common
                 Priority = TaskPriority.High.ToString(),
                 TaskStatus = TaskStatus.ToDo.ToString(),
                 DueDate = DateTime.UtcNow.AddDays(2),
-                Subtasks = new List<Subtask>() { subtask1, subtask2 }
+                Subtasks = new List<Subtask>() { subtask1, subtask2 },
+                Assigns = new List<TaskAssignment>()
+                {
+                    new ()
+                    {
+                        isActive = true,
+                        UserId = User1.Id
+                    }
+                }
             };
 
             var task2 = new Task()
