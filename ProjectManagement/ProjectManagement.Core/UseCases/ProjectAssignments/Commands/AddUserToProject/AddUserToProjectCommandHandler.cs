@@ -23,6 +23,7 @@ namespace ProjectManagement.Core.UseCases.ProjectAssignments.Commands.AddUserToP
         
         public async Task<Unit> Handle(AddUserToProjectCommand request, CancellationToken cancellationToken)
         {
+            // TODO: Move to validator 
             ProjectRole role;
             ProjectMemberType memberType;
             

@@ -16,9 +16,17 @@ namespace ProjectManagementApi.IntegrationTests.Common
     public static class Utilities
     {
         private static ApplicationDbContext Context { get; set; }
+        
         public static User User1 { get; private set; } = null!;
+        public static User User2 { get; private set; } = null!;
+        public static User User3 { get; private set; } = null!;
+
+
         public static Project Project1 { get; private set; } = null!;
-        public static Step P1Step1 { get; private set; }= null!;
+        public static Project Project2 { get; private set; } = null!;
+        
+        public static Step P1Step1 { get; private set; } = null!;
+        
         public static Task P1S1Task1 { get; private set; } = null!;
         public static Task P1S1Task2 { get; private set; } = null!;
         public static Task P1S1Task3 { get; private set; } = null!;
@@ -52,7 +60,6 @@ namespace ProjectManagementApi.IntegrationTests.Common
 
         private static void SeedForTests()
         {
-            //TODO: implement seed
             SeedUsers();
             SeedProjects();
         }
@@ -65,7 +72,22 @@ namespace ProjectManagementApi.IntegrationTests.Common
                 Email = "integration@tests.pl",
                 UserName = "integration.tests"
             };
-            Context.Add(authUser);
+
+            var authUser2 = new ApplicationUser()
+            {
+                Id = Guid.NewGuid().ToString(),
+                Email = "user2@test.pl",
+                UserName = "user2"
+            };
+            
+            var authUser3 = new ApplicationUser()
+            {
+                Id = Guid.NewGuid().ToString(),
+                Email = "user3@test.pl",
+                UserName = "user3"
+            };
+
+            Context.AddRange(new List<ApplicationUser>() { authUser, authUser2, authUser3 });
             Context.SaveChanges();
 
             var user = new User()
@@ -75,11 +97,28 @@ namespace ProjectManagementApi.IntegrationTests.Common
                 ApplicationUserId = authUser.Id
             };
 
-            Context.Users.Add(user);
+            var user2 = new User()
+            {
+                Email = authUser2.Email,
+                UserName = authUser2.UserName,
+                ApplicationUserId = authUser2.Id
+            };
+            
+            var user3 = new User()
+            {
+                Email = authUser3.Email,
+                UserName = authUser3.UserName,
+                ApplicationUserId = authUser3.Id
+            };
+
+            Context.Users.AddRange(new List<User>() { user, user2, user3 });
             Context.SaveChanges();
 
             User1 = user;
+            User2 = user2;
+            User3 = user3;
         }
+
 
         private static void SeedProjects()
         {
@@ -163,20 +202,33 @@ namespace ProjectManagementApi.IntegrationTests.Common
                         MemberType = ProjectMemberType.Manager.ToString(),
                         ProjectRole = ProjectRole.SuperMember.ToString(),
                         UserId = User1.Id
+                    },
+                    new()
+                    {
+                        MemberType = ProjectMemberType.Manager.ToString(),
+                        ProjectRole = ProjectRole.Member.ToString(),
+                        UserId = User3.Id
                     }
                 },
                 Steps = new List<Step>() { step1 }
             };
 
-            Context.Projects.Add(project);
+            var project2 = new Project()
+            {
+                Name = "project2",
+                DueDate = DateTime.UtcNow.AddDays(8),
+                IsActive = true
+            };
+
+            Context.Projects.AddRange(new List<Project>() { project, project2 });
             Context.SaveChanges();
 
             Project1 = project;
+            Project2 = project2;
             P1Step1 = step1;
             P1S1Task1 = task1;
             P1S1Task2 = task2;
             P1S1Task3 = task3;
         }
-
     }
 }
