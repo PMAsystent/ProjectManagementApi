@@ -16,7 +16,7 @@ namespace ProjectManagementApi.IntegrationTests.Common
     public static class Utilities
     {
         private static ApplicationDbContext Context { get; set; }
-        
+
         public static User User1 { get; private set; } = null!;
         public static User User2 { get; private set; } = null!;
         public static User User3 { get; private set; } = null!;
@@ -24,12 +24,14 @@ namespace ProjectManagementApi.IntegrationTests.Common
 
         public static Project Project1 { get; private set; } = null!;
         public static Project Project2 { get; private set; } = null!;
-        
+
         public static Step P1Step1 { get; private set; } = null!;
-        
+
         public static Task P1S1Task1 { get; private set; } = null!;
         public static Task P1S1Task2 { get; private set; } = null!;
         public static Task P1S1Task3 { get; private set; } = null!;
+
+        public static Subtask P1S1T1Subtask1 { get; private set; } = null!;
 
 
         public static void InitializeDbForTests(ApplicationDbContext context)
@@ -79,7 +81,7 @@ namespace ProjectManagementApi.IntegrationTests.Common
                 Email = "user2@test.pl",
                 UserName = "user2"
             };
-            
+
             var authUser3 = new ApplicationUser()
             {
                 Id = Guid.NewGuid().ToString(),
@@ -103,7 +105,7 @@ namespace ProjectManagementApi.IntegrationTests.Common
                 UserName = authUser2.UserName,
                 ApplicationUserId = authUser2.Id
             };
-            
+
             var user3 = new User()
             {
                 Email = authUser3.Email,
@@ -122,25 +124,25 @@ namespace ProjectManagementApi.IntegrationTests.Common
 
         private static void SeedProjects()
         {
+            var subtask1 = new Subtask()
+            {
+                Name = "p1s1t1 subtask1",
+                IsDone = true
+            };
+
+            var subtask2 = new Subtask()
+            {
+                Name = "p1s1t1 subtask2",
+                IsDone = false
+            };
+
             var task1 = new Task()
             {
                 Name = "p1s1 task1",
                 Priority = TaskPriority.High.ToString(),
                 TaskStatus = TaskStatus.ToDo.ToString(),
                 DueDate = DateTime.UtcNow.AddDays(2),
-                Subtasks = new List<Subtask>()
-                {
-                    new()
-                    {
-                        Name = "p1s1t1 subtask1",
-                        IsDone = true
-                    },
-                    new()
-                    {
-                        Name = "p1s1t1 subtask2",
-                        IsDone = false
-                    },
-                }
+                Subtasks = new List<Subtask>() { subtask1, subtask2 }
             };
 
             var task2 = new Task()
@@ -190,7 +192,7 @@ namespace ProjectManagementApi.IntegrationTests.Common
                 }
             };
 
-            var project = new Project()
+            var project1 = new Project()
             {
                 Name = "project1",
                 DueDate = DateTime.UtcNow.AddDays(14),
@@ -221,15 +223,16 @@ namespace ProjectManagementApi.IntegrationTests.Common
                 IsActive = true
             };
 
-            Context.Projects.AddRange(new List<Project>() { project, project2 });
+            Context.Projects.AddRange(new List<Project>() { project1, project2 });
             Context.SaveChanges();
 
-            Project1 = project;
+            Project1 = project1;
             Project2 = project2;
             P1Step1 = step1;
             P1S1Task1 = task1;
             P1S1Task2 = task2;
             P1S1Task3 = task3;
+            P1S1T1Subtask1 = subtask1;
         }
     }
 }
