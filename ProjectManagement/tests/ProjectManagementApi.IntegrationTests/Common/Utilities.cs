@@ -201,7 +201,7 @@ namespace ProjectManagementApi.IntegrationTests.Common
                     {
                         MemberType = ProjectMemberType.Manager.ToString(),
                         ProjectRole = ProjectRole.SuperMember.ToString(),
-                        UserId = User1.Id
+                        UserId = User1.Id,
                     },
                     new()
                     {
@@ -210,7 +210,8 @@ namespace ProjectManagementApi.IntegrationTests.Common
                         UserId = User3.Id
                     }
                 },
-                Steps = new List<Step>() { step1 }
+                Steps = new List<Step>() { step1 },
+                CreatedBy = User1.ApplicationUserId
             };
 
             var project2 = new Project()
