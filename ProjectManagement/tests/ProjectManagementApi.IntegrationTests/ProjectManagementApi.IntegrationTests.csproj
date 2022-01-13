@@ -26,8 +26,4 @@
       <ProjectReference Include="..\..\ProjectManagementApi\ProjectManagementApi.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Controllers\TaskAssignments" />
-    </ItemGroup>
-
 </Project>
