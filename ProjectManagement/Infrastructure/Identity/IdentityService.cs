@@ -162,16 +162,12 @@ namespace Infrastructure.Identity
                 var userById = await _userManager.FindByIdAsync(userId);
                 var userByEmail = await _userManager.FindByEmailAsync(email);
 
-                if (userByEmail == null || userById == null)
+                if (userByEmail == null)
                 {
                     return (Result.Failure(new List<string> { "User not found" }));
                 }
-                else if (userById.Id != userByEmail.Id)
-                {
-                    return (Result.Failure(new List<string> { "User does not match token" }));
-                }
 
-                var token = await _userManager.GeneratePasswordResetTokenAsync(userById);
+                var token = await _userManager.GeneratePasswordResetTokenAsync(userByEmail);
                 var resetPasswordLink = _emailSettings.ClientUrl + $"{_emailSettings.ResetPasswordUrl}?token={token}";
 
                 return await EmailService.SendEmail(email, resetPasswordLink, _emailSettings);
@@ -187,15 +183,15 @@ namespace Infrastructure.Identity
             var userById = await _userManager.FindByIdAsync(userId);
             var userByEmail = await _userManager.FindByEmailAsync(email);
 
-            if (userByEmail == null || userById == null)
+            if (userByEmail == null)
             {
                 return (Result.Failure(new List<string> { "User not found" }));
             }
-            else if (userById.Id != userByEmail.Id)
+            /*else if (userById.Id != userByEmail.Id)
             {
                 return (Result.Failure(new List<string> { "User does not match token" }));
-            }
-            else if (userByEmail != null && userById != null && userById.Id == userByEmail.Id)
+            }*/
+            else if (userByEmail != null)
             {
                 var result = await _userManager.ResetPasswordAsync(userByEmail, token, newPassword);
                 return result.ToApplicationResult();
@@ -237,16 +233,16 @@ namespace Infrastructure.Identity
                 var userById = await _userManager.FindByIdAsync(userId);
                 var userByEmail = await _userManager.FindByEmailAsync(email);
 
-                if (userByEmail == null || userById == null)
+                if (userByEmail == null)
                 {
                     return (Result.Failure(new List<string> { "User not found" }));
                 }
-                else if (userById.Id != userByEmail.Id)
+                /*else if (userById.Id != userByEmail.Id)
                 {
                     return (Result.Failure(new List<string> { "User does not match token" }));
-                }
+                }*/
 
-                var token = await _userManager.GenerateChangeEmailTokenAsync(userById, newEmail);
+                var token = await _userManager.GenerateChangeEmailTokenAsync(userByEmail, newEmail);
                 var changeEmailLink = _emailSettings.ClientUrl + $"{_emailSettings.ResetEmailUrl}?token={token}";
 
                 return await EmailService.SendEmail(email, changeEmailLink, _emailSettings);
@@ -262,15 +258,15 @@ namespace Infrastructure.Identity
             var userById = await _userManager.FindByIdAsync(userId);
             var userByEmail = await _userManager.FindByEmailAsync(email);
 
-            if (userByEmail == null || userById == null)
+            if (userByEmail == null)
             {
                 return (Result.Failure(new List<string> { "User not found" }));
             }
-            else if (userById.Id != userByEmail.Id)
+           /* else if (userById.Id != userByEmail.Id)
             {
                 return (Result.Failure(new List<string> { "User does not match token" }));
-            }
-            else if (userByEmail != null && userById != null && userById.Id == userByEmail.Id)
+            }*/
+            else if (userByEmail != null)
             {
                 var result = await _userManager.ChangeEmailAsync(userByEmail, newEmail, token);
                 return result.ToApplicationResult();

@@ -31,8 +31,11 @@ namespace ProjectManagement.Core.Concrete.Identity.Commands
         public async Task<ChangeEmailDto> Handle(ChangeEmailCommand request, CancellationToken cancellationToken)
         {
             var result = await _identityService.ChangeEmailAsync(_currentUserService.UserId, request.Email, request.NewEmail, request.Token);
-            
-            await _domainEventService.Publish(new UserEmailChangedEvent(request.Email, request.NewEmail));
+
+            if(result.Succeeded)
+            {
+                await _domainEventService.Publish(new UserEmailChangedEvent(request.Email, request.NewEmail));
+            }
 
             return result.Succeeded ? new ChangeEmailDto { IsChanged = true } : new ChangeEmailDto { IsChanged = false, Errors = result.Errors };
         }

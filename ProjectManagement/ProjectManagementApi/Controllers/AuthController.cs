@@ -38,7 +38,6 @@ namespace ProjectManagementApi.Controllers
         }
 
         [HttpPost("SendResetPasswordEmail")]
-        [Authorize]
         public async Task<ActionResult<SendResetPasswordEmailDto>> SendResetPasswordEmail(SendResetPasswordEmailCommand command)
         {
             return await Mediator.Send(command);
@@ -58,7 +57,6 @@ namespace ProjectManagementApi.Controllers
         }
 
         [HttpPost("SendChangeEmailAddressEmail")]
-        [Authorize]
         public async Task<ActionResult<SendChangeAddressEmailDto>> SendChangeEmailAddressEmail(SendChangeEmailAddressEmailCommand command)
         {
             return await Mediator.Send(command);
