@@ -13,8 +13,6 @@ namespace ProjectManagementApi.Controllers
         [HttpPost("RegisterUser")]
         public async Task<RegisterResponseDto> RegisterUser(RegisterUserCommand command)
         {
-            //var requestUrl = $"{Request.Scheme}://{Request.Host.Value}/";
-
             return await Mediator.Send(command);
         }
 
