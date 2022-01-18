@@ -47,7 +47,7 @@ namespace Infrastructure.Identity
 
             if (userCheckEmail != null || userCheckName != null)
             {
-                return (Result.Failure(new List<string> { "User already exist" }), "", "", "");
+                return (Result.Failure(new List<string> { "Użytkownik już istnieje" }), "", "", "");
             }
 
             var result = await _userManager.CreateAsync(user, password);
@@ -79,7 +79,7 @@ namespace Infrastructure.Identity
             {
                 var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                 var confirmationLink = _emailSettings.ClientUrl + $"{_emailSettings.ConfirmUrl}?userId={user.Id}&token={token}";
-                return await EmailService.SendEmail(email, confirmationLink, _emailSettings);
+                return await EmailService.SendEmail(email, confirmationLink, _emailSettings, _emailSettings.ConfirmMessageId);
             }
             catch (Exception e)
             {
@@ -97,11 +97,11 @@ namespace Infrastructure.Identity
             }
             else if (user == null)
             {
-                return (Result.Failure(new List<string> { "User not found" }));
+                return (Result.Failure(new List<string> { "Konto nie istnieje" }));
             }
             else
             {
-                return (Result.Failure(new List<string> { "Wrong confirmation  data" }));
+                return (Result.Failure(new List<string> { "Błąd wprowadzonych danych" }));
             }
         }
 
@@ -110,10 +110,10 @@ namespace Infrastructure.Identity
             var user = await _userManager.FindByEmailAsync(email);
 
             if (user == null)
-                return (JWTAuthorizationResult.Failure(new string[] { "Email not found" }), "", "");
+                return (JWTAuthorizationResult.Failure(new string[] { "Konto nie istnieje" }), "", "");
 
             if (!user.EmailConfirmed)
-                return (JWTAuthorizationResult.Failure(new string[] { "Email not confirmed" }), "", "");
+                return (JWTAuthorizationResult.Failure(new string[] { "Niepotwierdzony adres email" }), "", "");
 
             var signResult = await _userManager.CheckPasswordAsync(user, password);
 
@@ -125,7 +125,7 @@ namespace Infrastructure.Identity
             }
             else
             {
-                return (JWTAuthorizationResult.Failure(new string[] { "Wrong password" }), "", "");
+                return (JWTAuthorizationResult.Failure(new string[] { "Niepoprawne hasło" }), "", "");
             }
         }
 
@@ -164,13 +164,13 @@ namespace Infrastructure.Identity
 
                 if (userByEmail == null)
                 {
-                    return (Result.Failure(new List<string> { "User not found" }));
+                    return (Result.Failure(new List<string> { "Brak użytkownika w bazie" }));
                 }
 
                 var token = await _userManager.GeneratePasswordResetTokenAsync(userByEmail);
                 var resetPasswordLink = _emailSettings.ClientUrl + $"{_emailSettings.ResetPasswordUrl}?token={token}";
 
-                return await EmailService.SendEmail(email, resetPasswordLink, _emailSettings);
+                return await EmailService.SendEmail(email, resetPasswordLink, _emailSettings, _emailSettings.ResetPasswordMessageId);
             }
             catch (Exception e)
             {
@@ -180,17 +180,12 @@ namespace Infrastructure.Identity
 
         public async Task<Result> ResetPasswordAsync(string userId, string email, string newPassword, string token)
         {
-            var userById = await _userManager.FindByIdAsync(userId);
             var userByEmail = await _userManager.FindByEmailAsync(email);
 
             if (userByEmail == null)
             {
-                return (Result.Failure(new List<string> { "User not found" }));
+                return (Result.Failure(new List<string> { "Brak użytkownika w bazie" }));
             }
-            /*else if (userById.Id != userByEmail.Id)
-            {
-                return (Result.Failure(new List<string> { "User does not match token" }));
-            }*/
             else if (userByEmail != null)
             {
                 var result = await _userManager.ResetPasswordAsync(userByEmail, token, newPassword);
@@ -198,7 +193,7 @@ namespace Infrastructure.Identity
             }
             else
             {
-                return (Result.Failure(new List<string> { "Wrong data" }));
+                return (Result.Failure(new List<string> { "Niepoprawne dane" }));
             }
         }
 
@@ -209,11 +204,11 @@ namespace Infrastructure.Identity
 
             if (userByEmail == null || userById == null)
             {
-                return (Result.Failure(new List<string> { "User not found" }));
+                return (Result.Failure(new List<string> { "Brak użytkownika w bazie" }));
             }
             else if (userById.Id != userByEmail.Id)
             {
-                return (Result.Failure(new List<string> { "User does not match token" }));
+                return (Result.Failure(new List<string> { "Token nie należy do użytkownika" }));
             }
             else if (userByEmail != null && userById != null && userById.Id == userByEmail.Id)
             {
@@ -222,7 +217,7 @@ namespace Infrastructure.Identity
             }
             else
             {
-                return (Result.Failure(new List<string> { "Wrong data" }));
+                return (Result.Failure(new List<string> { "Niepoprawne dane" }));
             }
         }
 
@@ -235,17 +230,13 @@ namespace Infrastructure.Identity
 
                 if (userByEmail == null)
                 {
-                    return (Result.Failure(new List<string> { "User not found" }));
+                    return (Result.Failure(new List<string> { "Brak użytkownika w bazie" }));
                 }
-                /*else if (userById.Id != userByEmail.Id)
-                {
-                    return (Result.Failure(new List<string> { "User does not match token" }));
-                }*/
 
                 var token = await _userManager.GenerateChangeEmailTokenAsync(userByEmail, newEmail);
                 var changeEmailLink = _emailSettings.ClientUrl + $"{_emailSettings.ResetEmailUrl}?token={token}";
 
-                return await EmailService.SendEmail(email, changeEmailLink, _emailSettings);
+                return await EmailService.SendEmail(email, changeEmailLink, _emailSettings, _emailSettings.ResetEmailMessageId);
             }
             catch (Exception e)
             {
@@ -260,12 +251,8 @@ namespace Infrastructure.Identity
 
             if (userByEmail == null)
             {
-                return (Result.Failure(new List<string> { "User not found" }));
+                return (Result.Failure(new List<string> { "Brak użytkownika w bazie" }));
             }
-           /* else if (userById.Id != userByEmail.Id)
-            {
-                return (Result.Failure(new List<string> { "User does not match token" }));
-            }*/
             else if (userByEmail != null)
             {
                 var result = await _userManager.ChangeEmailAsync(userByEmail, newEmail, token);
@@ -273,7 +260,7 @@ namespace Infrastructure.Identity
             }
             else
             {
-                return (Result.Failure(new List<string> { "Wrong data" }));
+                return (Result.Failure(new List<string> { "Niepoprawne dane" }));
             }
         }
 
@@ -284,11 +271,11 @@ namespace Infrastructure.Identity
 
             if (userByEmail == null || userById == null)
             {
-                return (Result.Failure(new List<string> { "User not found" }));
+                return (Result.Failure(new List<string> { "Brak użytkownika w bazie" }));
             }
             else if (userById.Id != userByEmail.Id)
             {
-                return (Result.Failure(new List<string> { "User does not match token" }));
+                return (Result.Failure(new List<string> { "Token nie należy do użytkownika" }));
             }
             else if (userByEmail != null && userById != null && userById.Id == userByEmail.Id)
             {
@@ -297,7 +284,7 @@ namespace Infrastructure.Identity
             }
             else
             {
-                return (Result.Failure(new List<string> { "Wrong data" }));
+                return (Result.Failure(new List<string> { "Niepoprawne dane" }));
             }
         }
 
@@ -318,11 +305,11 @@ namespace Infrastructure.Identity
 
             if (userByEmail == null || userById == null)
             {
-                return (Result.Failure(new List<string> { "User not found" }));
+                return (Result.Failure(new List<string> { "Brak użytkownika w bazie" }));
             }
             else if (userById.Id != userByEmail.Id)
             {
-                return (Result.Failure(new List<string> { "User does not match token" }));
+                return (Result.Failure(new List<string> { "Token nie należy do użytkownika" }));
             }
             else if (userByEmail != null && userById != null && userById.Id == userByEmail.Id)
             {
@@ -331,7 +318,7 @@ namespace Infrastructure.Identity
             }
             else
             {
-                return (Result.Failure(new List<string> { "Wrong data" }));
+                return (Result.Failure(new List<string> { "Niepoprawne dane" }));
             }
         }
 
@@ -364,7 +351,7 @@ namespace Infrastructure.Identity
                 }
             }
 
-            return (Result.Failure(new List<string> { "User not found" }), "", "");
+            return (Result.Failure(new List<string> { "Brak użytkownika w bazie" }), "", "");
         }
 
         public async Task<JWTAuthorizationResult> RefreshToken(string userId, string email)
@@ -374,11 +361,11 @@ namespace Infrastructure.Identity
 
             if (userByEmail == null || userById == null)
             {
-                return (JWTAuthorizationResult.Failure(new List<string> { "User not found" }));
+                return (JWTAuthorizationResult.Failure(new List<string> { "Brak użytkownika w bazie" }));
             }
             else if (userById.Id != userByEmail.Id)
             {
-                return (JWTAuthorizationResult.Failure(new List<string> { "User does not match token" }));
+                return (JWTAuthorizationResult.Failure(new List<string> { "Token nie należy do użytkownika" }));
             }
             else if (userByEmail != null && userById != null && userById.Id == userByEmail.Id)
             {
@@ -388,7 +375,7 @@ namespace Infrastructure.Identity
             }
             else
             {
-                return (JWTAuthorizationResult.Failure(new List<string> { "Wrong data" }));
+                return (JWTAuthorizationResult.Failure(new List<string> { "Niepoprawne dane" }));
             }
         }
     }
