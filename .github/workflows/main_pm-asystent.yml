@@ -20,6 +20,9 @@ jobs:
           ApplicationInsights.InstrumentationKey: ${{ secrets.INSTRUMENTATION_KEY }}
           ConnectionStrings.DefaultConnection: ${{ secrets.PRODUCTION_CONNECTION_STRING }}
           EmailProvider.SendGridApiKey: ${{ secrets.SENDGRID_KEY }}
+          EmailProvider.ConfirmMessageId: ${{ secrets.SENDGRID_CONFIRM_KEY }}
+          EmailProvider.ResetEmailMessageId: ${{ secrets.SENDGRID_RESET_EMAIL_KEY }}
+          EmailProvider.ResetPasswordMessageId: ${{ secrets.SENDGRID_RESET_PASSWORD_KEY }}
             
       - name: Read appsettings.json
         run: "cat ProjectManagement/ProjectManagementApi/appsettings.json"
